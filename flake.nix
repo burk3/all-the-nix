@@ -52,6 +52,10 @@
       ];
       systems.modules = with inputs; [
         catppuccin.nixosModules.catppuccin
+        determinate.nixosModules.default
+        lanzaboote.nixosModules.lanzaboote
+        niri.nixosModules.niri
+        programsdb.nixosModules.programs-sqlite
       ];
       channels-config = {
         # Allow unfree packages.

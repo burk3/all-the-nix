@@ -17,10 +17,6 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
-  catppuccin.flavor = "frappe";
-  catppuccin.accent = "teal";
-  catppuccin.enable = true;
-
   t11s = {
     enable = true;
     guiCommon.enable = true;
