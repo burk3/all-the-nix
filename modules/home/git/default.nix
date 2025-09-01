@@ -1,9 +1,9 @@
-{ pkg, config, lib, ... }:
+{ config, lib, ... }:
 let
   cfg = config.t11s.git;
 in
 {
-  options = with lib; {
+  options.t11s.git = with lib; {
     enable = mkEnableOption "Enable t11s";
   };
   config = lib.mkIf cfg.enable {

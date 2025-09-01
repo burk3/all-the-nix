@@ -2,14 +2,13 @@
   lib,
   pkgs,
   config,
-  inputs,
   ...
 }:
 let
   cfg = config.t11s.shell;
 in
 {
-  options = {
+  options.t11s.shell = {
     enable = lib.mkEnableOption "Enable standard shell configuration";
   };
   config = lib.mkIf cfg.enable {
@@ -41,7 +40,7 @@ in
           "completion"
         ];
       };
-      initExtra = ''
+      initContent = ''
         set -k # INTERACTIVE_COMMENTS
         source ${pkgs.zsh-vi-mode}/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
       '';
