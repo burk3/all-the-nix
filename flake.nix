@@ -50,7 +50,7 @@
       homes.modules = with inputs; [
         catppuccin.homeModules.catppuccin
       ];
-      systems.modules = with inputs; [
+      systems.modules.nixos = with inputs; [
         catppuccin.nixosModules.catppuccin
         determinate.nixosModules.default
         lanzaboote.nixosModules.lanzaboote

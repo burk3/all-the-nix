@@ -1,6 +1,7 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, inputs, ... }:
 {
   imports = [
+    inputs.nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
     ./hardware-configuration.nix
   ];
   ### identity

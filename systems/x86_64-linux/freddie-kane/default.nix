@@ -1,6 +1,7 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, inputs, ... }:
 {
   imports = [
+    inputs.nixos-hardware.nixosModules.framework-13-7040-amd
     ./hardware-configuration.nix
     ./power.nix
   ];
@@ -8,6 +9,8 @@
   networking.hostName = "freddie-kane"; # Define your hostname.
   time.timeZone = "America/Los_Angeles";
 
+  t11s.enable = true;
+  t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
   ### nix
 #  nix = {
 #    settings = {
@@ -89,5 +92,8 @@
     };
     rocmOverrideGfx = "11.0.3";
   };
+
+  ### dont change this probably
+  system.stateVersion = "24.11"; # Did you read the comment?
 }
     

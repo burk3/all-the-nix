@@ -1,11 +1,14 @@
 # from https://forge.lel.lol/patrick/nix-config/src/branch/master/modules/ensure-pcr.nix
 {
   lib,
-  utils,
+  #utils,
+  inputs,
+  pkgs,
   config,
   ...
 }:
 let
+  utils = import "${inputs.nixpkgs}/nixos/lib/utils.nix" {inherit lib pkgs config; };
   inherit (lib)
     head
     optional
