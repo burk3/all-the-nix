@@ -19,6 +19,16 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  # the good stuff
+  t11s = {
+    enable = true;
+    guiCommon.enable = true;
+    hypr.enable = true;
+    neovim.enable = true;
+    shell.enable = true;
+    git.enable = true;
+  };
+
   #services.home-manager.autoExpire
   programs.git = {
     userName = "Burke Cates";
