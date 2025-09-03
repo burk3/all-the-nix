@@ -8,6 +8,11 @@
   networking.hostName = "juicy-j";
   time.timeZone = "America/Los_Angeles";
 
+  t11s.enable = true;
+  t11s.mainUser.name = "burke";
+  t11s.mainUser.description = "Burke Cates";
+  t11s.remotebuild.serveBuilds = true;
+
   ### firmware/hardware/lowlevel
   boot = {
     lanzaboote = {
@@ -43,6 +48,7 @@
 
   ### Software
   services.sshd.enable = true;
+  services.xserver.displayManager.gdm.autoSuspend = false;
 
   # doesn't work for now. ollama just doesn't support :(
   #services.ollama = {

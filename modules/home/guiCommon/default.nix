@@ -8,7 +8,6 @@ with lib;
     enable = mkEnableOption "enable common gui apps/configs";
   };
   config = mkIf cfg.enable {
-    nixpkgs.config.allowUnfree = true;
     home.packages = with pkgs; [
       vscode.fhs
       bitwarden-desktop

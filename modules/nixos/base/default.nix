@@ -11,17 +11,25 @@
 let cfg = config.t11s; in
 with lib;
 {
-  options.t11s = {
+  options.t11s = with types; {
     enable = mkEnableOption "standard t11s host stuff";
+    mainUser.name = mkOption {
+      type = str;
+      description = "main user of these systems. account will be created and be trusted user";
+    };
+    mainUser.description = mkOption {
+      type = str;
+      default = "";
+      description = "Description of the main user";
+    };
   };
   config = mkIf cfg.enable {
-    nix = {
-      extraOptions = ''
-        experimental-features = nix-command flakes
-        builders-use-substitutes = true
-        lazy-trees = true
-      '';
-    };
+    nix.extraOptions = ''
+      experimental-features = nix-command flakes
+      builders-use-substitutes = true
+      lazy-trees = true
+    '';
+    nix.settings.trusted-users = [ cfg.mainUser.name ];
 
     # for nixbuild.net
     programs.ssh.extraConfig = ''
@@ -201,9 +209,9 @@ with lib;
     #system.userActivationScripts.zshrc = "touch .zshrc";
 
     # Define a user account. Don't forget to set a password with ‘passwd’.
-    users.users.burke = {
+    users.users.${cfg.mainUser.name} = {
       isNormalUser = true;
-      description = "Burke Cates";
+      description = cfg.mainUser.description;
       shell = pkgs.zsh;
       extraGroups = [
         "docker"

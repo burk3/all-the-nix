@@ -10,7 +10,10 @@
   time.timeZone = "America/Los_Angeles";
 
   t11s.enable = true;
+  t11s.mainUser.name = "burke";
+  t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
+
   ### nix
 #  nix = {
 #    settings = {
