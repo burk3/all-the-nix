@@ -1,5 +1,4 @@
-{ pkgs, lib, inputs, ... }:
-{
+{ pkgs, lib, inputs, ... }: {
   imports = [
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
     ./hardware-configuration.nix
@@ -15,32 +14,32 @@
   t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
 
   ### nix
-#  nix = {
-#    settings = {
-#      substituters = [ "ssh://eu.nixbuild.net" ];
-#      trusted-public-keys = [ "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U=" ];
-#    };
-#    distributedBuilds = true;
-#    buildMachines = [
-#      {
-#        hostName = "eu.nixbuild.net";
-#        system = "x86_64-linux";
-#        maxJobs = 100;
-#        supportedFeatures = [ "benchmark" "big-parallel" ];
-#        sshKey = "/root/.ssh/nixbuild-dot-net";
-#      }
-#    }
-#      hostName = "lil-debbie.lan";
-#      maxJobs = 48;
-#      sshUser = "nixbuilder";
-#      sshKey = "/root/.ssh/id_ed25519";
-#      system = "x86_64-linux";
-#      protocol = "ssh-ng";
-#      supportedFeatures = [ "nixos-test" "big-parallel" "kvm" ];
-#    }
-#    ];
-#  };
-  
+  #  nix = {
+  #    settings = {
+  #      substituters = [ "ssh://eu.nixbuild.net" ];
+  #      trusted-public-keys = [ "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U=" ];
+  #    };
+  #    distributedBuilds = true;
+  #    buildMachines = [
+  #      {
+  #        hostName = "eu.nixbuild.net";
+  #        system = "x86_64-linux";
+  #        maxJobs = 100;
+  #        supportedFeatures = [ "benchmark" "big-parallel" ];
+  #        sshKey = "/root/.ssh/nixbuild-dot-net";
+  #      }
+  #    }
+  #      hostName = "lil-debbie.lan";
+  #      maxJobs = 48;
+  #      sshUser = "nixbuilder";
+  #      sshKey = "/root/.ssh/id_ed25519";
+  #      system = "x86_64-linux";
+  #      protocol = "ssh-ng";
+  #      supportedFeatures = [ "nixos-test" "big-parallel" "kvm" ];
+  #    }
+  #    ];
+  #  };
+
   ### firmware/hardware/lowlevel
   boot = {
     plymouth.enable = true;
@@ -66,7 +65,7 @@
   };
 
   services.hardware.bolt.enable = true;
-  
+
   ### Net
   networking.networkmanager.enable = true;
   networking.networkmanager.wifi.powersave = true;
@@ -91,7 +90,8 @@
     enable = true;
     acceleration = "rocm";
     environmentVariables = {
-      HCC_AMDGPU_TARGET = "gfx1103"; # used to be necessary, but doesn't seem to anymore
+      HCC_AMDGPU_TARGET =
+        "gfx1103"; # used to be necessary, but doesn't seem to anymore
     };
     rocmOverrideGfx = "11.0.3";
   };
@@ -99,4 +99,4 @@
   ### dont change this probably
   system.stateVersion = "24.11"; # Did you read the comment?
 }
-    
+

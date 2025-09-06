@@ -1,10 +1,7 @@
 { config, lib, pkgs, ... }:
 # make this place feel just like home
-let
-  cfg = config.t11s;
-in
-with lib;
-{
+let cfg = config.t11s;
+in with lib; {
   options.t11s = with types; {
     enable = mkEnableOption "Enable base configuration";
     catppuccinFlavor = mkOption {
@@ -30,6 +27,16 @@ with lib;
     programs.bat.enable = true;
     programs.nh.enable = true;
 
-    home.packages = with pkgs; [ cachix unzip nmap ];
+    home.packages = with pkgs; [
+      cachix
+      unzip
+      nmap
+      dig
+      nmap
+      fastfetch
+      neofetch
+    ];
+
+    home.sessionPath = [ "$HOME/.local/bin" ];
   };
 }
