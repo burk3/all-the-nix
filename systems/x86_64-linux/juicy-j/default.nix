@@ -1,4 +1,8 @@
 { pkgs, lib, inputs, ... }:
+let
+  ethIF = "enp191s0";
+  wifiIF = "wlp192s0";
+in
 {
   imports = [
     inputs.nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
@@ -31,10 +35,11 @@
 
   ### Net
   networking.useDHCP = false;
+  networking.interfaces.${ethIF}.wakeOnLan.enable = true;
   systemd.network = {
     enable = true;
     networks."10-ether" = {
-      matchConfig.Type = "ether";
+      matchConfig.Name = ethIF;
       networkConfig.DHCP = "yes";
     };
   };
@@ -49,6 +54,7 @@
   ### Software
   services.sshd.enable = true;
   services.xserver.displayManager.gdm.autoSuspend = false;
+  environment.systemPackages = with pkgs; [ via ];
 
   # doesn't work for now. ollama just doesn't support :(
   #services.ollama = {
