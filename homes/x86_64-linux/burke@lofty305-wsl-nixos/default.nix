@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ ... }:
 {
   imports = [ ./ai.nix ];
   # Home Manager needs a bit of information about you and the paths it should
@@ -23,6 +23,7 @@
     enable = true;
     neovim.enable = true;
     shell.enable = true;
+    shell.wsl = true;
     git.enable = true;
     wslSSHAgent.enable = true;
   };
@@ -31,10 +32,4 @@
     userName = "Burke Cates";
     userEmail = "burke.cates@gmail.com";
   };
-
-
-  # this will make starship faster on wsl when in windows directories
-  programs.starship.settings.git_status.windows_starship =
-    "/mnt/c/Program Files/starship/bin/starship.exe";
-  # TODO pull this via a non-flake input for great good
 }

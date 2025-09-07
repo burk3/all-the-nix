@@ -23,6 +23,7 @@
     enable = true;
     neovim.enable = true;
     shell.enable = true;
+    shell.wsl = true;
     git.enable = true;
     wslSSHAgent = true;
   };
@@ -45,9 +46,4 @@
   programs.zsh.profileExtra = ''
     source /etc/profile.d/nix.sh
   '';
-
-  # this will make starship faster on wsl when in windows directories
-  programs.starship.settings.git_status.windows_starship =
-    "/mnt/c/Program Files/starship/bin/starship.exe";
-  # TODO pull this via a non-flake input for great good
 }

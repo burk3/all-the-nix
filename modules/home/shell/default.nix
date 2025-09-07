@@ -7,11 +7,17 @@
 let
   cfg = config.t11s.shell;
 in
+with lib;
 {
   options.t11s.shell = {
-    enable = lib.mkEnableOption "Enable standard shell configuration";
+    enable = mkEnableOption "Enable standard shell configuration";
+    wsl = mkOption {
+      description = "configure wsl-specific things like the starship windows executable path";
+      type = types.bool;
+      default = false;
+    };
   };
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     home.packages = with pkgs; [ zsh-completions ];
 
     programs.direnv = {
@@ -86,6 +92,7 @@ in
         rust = {
           format = "[$symbol($version )]($style)";
         };
+        git_status.windows_starship = mkIf cfg.wsl "${pkgs.t11s.starship-win}/bin/starship.exe";
       };
     };
   };
