@@ -9,7 +9,7 @@ stdenv.mkDerivation {
     stripRoot = false;
     hash = "sha256-GcwreB8BXYGNKJihE2xeelsroy+JFqLK1NK7Ycqxw5g=";
   };
-  
+
   dontBuild = true;
   dontConfigure = true;
 

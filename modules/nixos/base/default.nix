@@ -275,35 +275,36 @@ with lib;
       package = pkgs.mullvad-vpn;
     };
 
-
     # List packages installed in system profile. To search, run:
     # $ nix search wget
-    environment.systemPackages = with pkgs; [
-      nix-tree
-      curl
-      wget
-      file
-      htop
-      iotop
-      killall
-      dig
-      jq
-    ]
-    ++ optionals hasScreen [
-      wooting-udev-rules
-      wootility
-      google-chrome
-      adwaita-icon-theme
-      fluent-gtk-theme
-      fluent-icon-theme
-      mission-center
-      iosevka
-      nvtopPackages.full
-    ]
-    ++ optionals (!isWsl) [
-      podman-compose
-      sbctl
-    ];
+    environment.systemPackages =
+      with pkgs;
+      [
+        nix-tree
+        curl
+        wget
+        file
+        htop
+        iotop
+        killall
+        dig
+        jq
+      ]
+      ++ optionals hasScreen [
+        wooting-udev-rules
+        wootility
+        google-chrome
+        adwaita-icon-theme
+        fluent-gtk-theme
+        fluent-icon-theme
+        mission-center
+        iosevka
+        nvtopPackages.full
+      ]
+      ++ optionals (!isWsl) [
+        podman-compose
+        sbctl
+      ];
 
     fonts.enableDefaultPackages = hasScreen;
 
