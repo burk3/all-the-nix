@@ -23,9 +23,8 @@
     enable = true;
     neovim.enable = true;
     shell.enable = true;
-    shell.wsl = true;
     git.enable = true;
-    wslSSHAgent = true;
+    wsl.enable = true;
   };
 
   programs.git = {

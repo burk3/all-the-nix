@@ -92,7 +92,6 @@ with lib;
         rust = {
           format = "[$symbol($version )]($style)";
         };
-        git_status.windows_starship = mkIf cfg.wsl "${pkgs.t11s.starship-win}/bin/starship.exe";
       };
     };
   };
