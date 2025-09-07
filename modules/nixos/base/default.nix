@@ -315,6 +315,10 @@ with lib;
 
     programs.wireshark.enable = hasScreen;
 
+    vscode-remote-workaround = {
+      enable = true;
+      package = pkgs.nodejs_22;
+    };
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
     # programs.mtr.enable = true;

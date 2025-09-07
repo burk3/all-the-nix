@@ -40,6 +40,12 @@
     "/home/burke/.npm-global/bin"
   ];
 
+  # this seems to need to be sourced on this system for some reason.
+  # or at least was...
+  programs.zsh.profileExtra = ''
+    source /etc/profile.d/nix.sh
+  '';
+
   # this will make starship faster on wsl when in windows directories
   programs.starship.settings.git_status.windows_starship =
     "/mnt/c/Program Files/starship/bin/starship.exe";

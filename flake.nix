@@ -36,6 +36,10 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    vscode-remote-workaround = {
+      url = "github:K900/vscode-remote-workaround";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -62,6 +66,7 @@
         lanzaboote.nixosModules.lanzaboote
         niri.nixosModules.niri
         programsdb.nixosModules.programs-sqlite
+        vscode-remote-workaround.nixosModules.default
       ];
       systems.hosts.lofty305-wsl-nixos.modules = with inputs; [
         nixos-wsl.nixosModules.default
