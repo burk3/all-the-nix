@@ -20,16 +20,11 @@
 
   # stuff
   t11s = {
-    enable = true;
+    personal.enable = true;
     neovim.enable = true;
     shell.enable = true;
     git.enable = true;
     wsl.enable = true;
-  };
-
-  programs.git = {
-    userName = "Burke Cates";
-    userEmail = "burke.cates@gmail.com";
   };
 
   programs.neovim.plugins = with pkgs.vimPlugins; [

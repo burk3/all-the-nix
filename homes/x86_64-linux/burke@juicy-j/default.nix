@@ -21,7 +21,7 @@
 
   # the good stuff
   t11s = {
-    enable = true;
+    personal.enable = true;
     guiCommon.enable = true;
     hypr.enable = true;
     neovim.enable = true;
@@ -30,10 +30,6 @@
   };
 
   #services.home-manager.autoExpire
-  programs.git = {
-    userName = "Burke Cates";
-    userEmail = "burke.cates@gmail.com";
-  };
 
   dconf.settings = {
     "org/virt-manager/virt-manager/connections" = {

@@ -6,12 +6,12 @@
 }:
 # make this place feel just like home
 let
-  cfg = config.t11s;
+  cfg = config.t11s.personal;
 in
 with lib;
 {
-  options.t11s = with types; {
-    enable = mkEnableOption "Enable base configuration";
+  options.t11s.personal = with types; {
+    enable = mkEnableOption "Enable my personal configuration";
     catppuccinFlavor = mkOption {
       type = str;
       default = "frappe";
@@ -30,6 +30,11 @@ with lib;
       flavor = cfg.catppuccinFlavor;
     };
 
+    programs.git = {
+      userName = "Burke Cates";
+      userEmail = "burke.cates@gmail.com";
+    };
+
     programs.btop.enable = true;
     programs.bottom.enable = true;
     programs.bat.enable = true;
@@ -40,7 +45,6 @@ with lib;
       unzip
       nmap
       dig
-      nmap
     ];
 
     home.sessionPath = [ "$HOME/.local/bin" ];
