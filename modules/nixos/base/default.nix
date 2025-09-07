@@ -298,7 +298,7 @@ with lib;
       fluent-icon-theme
       mission-center
       iosevka
-      nvtopPackages.full
+      nvtopPackages.amd
     ]
     ++ optionals (!isWsl) [
       podman-compose
