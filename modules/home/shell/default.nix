@@ -12,9 +12,7 @@ in
     enable = lib.mkEnableOption "Enable standard shell configuration";
   };
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      zsh-completions
-    ];
+    home.packages = with pkgs; [ zsh-completions ];
 
     programs.direnv = {
       enable = true;

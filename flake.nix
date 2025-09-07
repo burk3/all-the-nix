@@ -51,9 +51,7 @@
         shells.default = "nix-dev";
       };
 
-      homes.modules = with inputs; [
-        catppuccin.homeModules.catppuccin
-      ];
+      homes.modules = with inputs; [ catppuccin.homeModules.catppuccin ];
       systems.modules.nixos = with inputs; [
         catppuccin.nixosModules.catppuccin
         determinate.nixosModules.default
@@ -61,6 +59,9 @@
         niri.nixosModules.niri
         programsdb.nixosModules.programs-sqlite
       ];
+
+      outputs-builder = channels: { formatter = channels.nixpkgs.nixfmt-tree; };
+
       channels-config = {
         # Allow unfree packages.
         allowUnfree = true;

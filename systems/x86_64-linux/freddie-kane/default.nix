@@ -1,4 +1,10 @@
-{ pkgs, lib, inputs, ... }: {
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
+{
   imports = [
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
     ./hardware-configuration.nix
@@ -90,8 +96,7 @@
     enable = true;
     acceleration = "rocm";
     environmentVariables = {
-      HCC_AMDGPU_TARGET =
-        "gfx1103"; # used to be necessary, but doesn't seem to anymore
+      HCC_AMDGPU_TARGET = "gfx1103"; # used to be necessary, but doesn't seem to anymore
     };
     rocmOverrideGfx = "11.0.3";
   };
@@ -99,4 +104,3 @@
   ### dont change this probably
   system.stateVersion = "24.11"; # Did you read the comment?
 }
-

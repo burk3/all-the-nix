@@ -1,7 +1,15 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 # make this place feel just like home
-let cfg = config.t11s;
-in with lib; {
+let
+  cfg = config.t11s;
+in
+with lib;
+{
   options.t11s = with types; {
     enable = mkEnableOption "Enable base configuration";
     catppuccinFlavor = mkOption {

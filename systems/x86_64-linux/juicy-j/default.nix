@@ -1,4 +1,9 @@
-{ pkgs, lib, inputs, ... }:
+{
+  pkgs,
+  lib,
+  inputs,
+  ...
+}:
 let
   ethIF = "enp191s0";
   wifiIF = "wlp192s0";
@@ -30,7 +35,10 @@ in
     initrd.systemd.tpm2.enable = true;
 
     # set max memory that can be used for GPU
-    kernelParams = [ "amdttm.pages_limit=27648000" "amdttm.page_pool_size=27648000" ];
+    kernelParams = [
+      "amdttm.pages_limit=27648000"
+      "amdttm.page_pool_size=27648000"
+    ];
   };
 
   ### Net
@@ -43,8 +51,11 @@ in
       networkConfig.DHCP = "yes";
       dhcpV4Config.UseDNS = false;
       dhcpV6Config.UseDNS = false;
-      dns = builtins.map ( addr: addr + "%${ethIF}#one.one.one.one" ) [
-        "1.1.1.1" "1.0.0.1" "[2606:4700:4700::1111]" "[2606:4700:4700::1001]"
+      dns = builtins.map (addr: addr + "%${ethIF}#one.one.one.one") [
+        "1.1.1.1"
+        "1.0.0.1"
+        "[2606:4700:4700::1111]"
+        "[2606:4700:4700::1001]"
       ];
     };
   };
@@ -53,7 +64,10 @@ in
   networking.firewall = {
     enable = true;
     allowPing = true;
-    allowedTCPPorts = [ 22 8080 ];
+    allowedTCPPorts = [
+      22
+      8080
+    ];
   };
 
   ### Software
@@ -71,5 +85,3 @@ in
   #  rocmOverrideGfx = "11.5.1";
   #};
 }
-
-

@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 let
   cfg = config.t11s.neovim;
 in
@@ -42,7 +47,7 @@ with lib;
         set smartindent
         set autoindent
         " show all that whitespace by default
-        set listchars=trail:·,precedes:«,extends:»,eol:↲,tab:⇥\ 
+        set listchars=trail:·,precedes:«,extends:»,eol:↲,tab:⇥\
         " set list
         " i mostly use marker folds
         set foldmethod=marker
