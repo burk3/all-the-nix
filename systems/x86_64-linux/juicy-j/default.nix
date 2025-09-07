@@ -18,6 +18,7 @@ in
   time.timeZone = "America/Los_Angeles";
 
   t11s.enable = true;
+  t11s.systemType = "workstation";
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.serveBuilds = true;
@@ -84,4 +85,12 @@ in
   #  };
   #  rocmOverrideGfx = "11.5.1";
   #};
+
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "24.11"; # Did you read the comment?
 }

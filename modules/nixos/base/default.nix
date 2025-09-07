@@ -9,6 +9,8 @@
 }:
 let
   cfg = config.t11s;
+  isWsl = cfg.systemType == "wsl";
+  hasScreen = (cfg.systemType == "workstation") || (cfg.systemType == "laptop");
 in
 with lib;
 {
@@ -23,6 +25,25 @@ with lib;
       default = "";
       description = "Description of the main user";
     };
+    resolved1111 = mkOption {
+      type = bool;
+      default = true;
+      description = "Enable resolvd and use 1.1.1.1 as fallback";
+    };
+    privateNet = mkOption {
+      type = bool;
+      default = true;
+      description = "Is the network this thing is connected to probably private?";
+    };
+    systemType = mkOption {
+      type = enum [
+        "laptop"
+        "workstation"
+        "wsl"
+        "server"
+      ];
+      description = "what kinda box is it?";
+    };
   };
   config = mkIf cfg.enable {
     nix.extraOptions = ''
@@ -30,7 +51,10 @@ with lib;
       builders-use-substitutes = true
       lazy-trees = true
     '';
+
+    # Allow unfree packages
     nix.settings.trusted-users = [ cfg.mainUser.name ];
+    nixpkgs.config.allowUnfree = true;
 
     # for nixbuild.net
     programs.ssh.extraConfig = ''
@@ -48,16 +72,18 @@ with lib;
     };
 
     # enable tpm2 and some features
-    security.tpm2.enable = true;
-    security.tpm2.pkcs11.enable = true;
-    security.tpm2.tctiEnvironment.enable = true;
+    security.tpm2 = mkIf (!isWsl) {
+      enable = true;
+      pkcs11.enable = true;
+      tctiEnvironment.enable = true;
+    };
 
     # vanity
     catppuccin.enable = true;
     catppuccin.accent = "teal";
 
     # Bootloader.
-    boot = {
+    boot = mkIf (!isWsl) {
       # Enable "Silent Boot"
       consoleLogLevel = 0;
       initrd.verbose = true;
@@ -68,7 +94,7 @@ with lib;
     };
 
     # lets try resolved for dns stuff?
-    services.resolved = {
+    services.resolved = mkIf ((!isWsl) || cfg.resolved1111) {
       enable = true;
       fallbackDns = [
         "1.1.1.1#one.one.one.one"
@@ -88,15 +114,15 @@ with lib;
 
     # for hyprlock
     # pam shouldn't use fprint since hyprlock will do fprint in parallel on its own
-    security.pam.services.hyprlock.fprintAuth = false;
-    services.fprintd.enable = true;
+    security.pam.services.hyprlock.fprintAuth = cfg.systemType == "laptop";
+    services.fprintd.enable = cfg.systemType == "laptop";
 
     # virty bois
     virtualisation.podman = {
-      enable = true;
+      enable = !isWsl;
       dockerCompat = true;
     };
-    virtualisation.containers = {
+    virtualisation.containers = mkIf (!isWsl) {
       enable = true;
       containersConf.settings = {
         engine.compose_warning_logs = false;
@@ -104,7 +130,7 @@ with lib;
     };
 
     # tailscale
-    services.tailscale.enable = true;
+    services.tailscale.enable = !isWsl;
 
     # Select internationalisation properties.
     i18n.defaultLocale = "en_US.UTF-8";
@@ -126,26 +152,21 @@ with lib;
     #programs.command-not-found.dbPath = "/etc/programs.sqlite";
 
     # Enable the X11 windowing system.
-    services.xserver.enable = true;
+    services.xserver.enable = hasScreen;
 
     # Enable the GNOME Desktop Environment.
-    services.xserver.displayManager.gdm.enable = true;
+    services.xserver.displayManager.gdm.enable = hasScreen;
 
     # lets add hyprland in there as well, why the fuck not
     programs.hyprland = {
-      enable = true;
+      enable = hasScreen;
       withUWSM = true;
     };
-    programs.uwsm.enable = true;
-    programs.iio-hyprland.enable = true;
+    programs.uwsm.enable = hasScreen;
+    programs.iio-hyprland.enable = hasScreen;
 
     # niri compositor
-    programs.niri.enable = true;
-    programs.uwsm.waylandCompositors.niri = {
-      prettyName = "niri";
-      comment = "Niri compositor";
-      binPath = "/run/current-system/sw/bin/niri";
-    };
+    programs.niri.enable = hasScreen;
 
     # Configure keymap in X11
     services.xserver.xkb = {
@@ -154,26 +175,26 @@ with lib;
     };
 
     # Enable CUPS to print documents.
-    services.printing.enable = true;
+    services.printing.enable = mkIf hasScreen true;
 
     # mdns for discovery!
-    services.avahi = {
+    services.avahi = mkIf ((!isWsl) && cfg.privateNet) {
       enable = true;
       nssmdns4 = true;
       openFirewall = true;
     };
 
-    hardware.bluetooth.enable = true; # enables support for Bluetooth
-    hardware.bluetooth.powerOnBoot = true; # powers up the default Bluetooth controller on boot
-    hardware.bluetooth.settings = {
-      General.Enable = "Source,Sink,Media,Socket";
+    hardware.bluetooth = mkIf hasScreen {
+      enable = true; # enables support for Bluetooth
+      powerOnBoot = true; # powers up the default Bluetooth controller on boot
+      settings.General.Enable = "Source,Sink,Media,Socket";
     };
-    services.blueman.enable = true;
+    services.blueman.enable = mkIf hasScreen true;
 
     # Enable sound with pipewire.
     services.pulseaudio.enable = false;
-    security.rtkit.enable = true;
-    services.pipewire = {
+    security.rtkit.enable = mkIf hasScreen true;
+    services.pipewire = mkIf hasScreen {
       enable = true;
       alsa.enable = true;
       alsa.support32Bit = true;
@@ -206,7 +227,7 @@ with lib;
     # Enable touchpad support (enabled default in most desktopManager).
     # services.xserver.libinput.enable = true;
 
-    services.fwupd.enable = true;
+    services.fwupd.enable = !isWsl;
 
     # so far needed for zsh.
     environment.pathsToLink = [ "/share/zsh" ];
@@ -235,7 +256,7 @@ with lib;
     programs.zsh.enable = true;
 
     # Install firefox.
-    programs.firefox.enable = true;
+    programs.firefox.enable = hasScreen;
 
     # The Editor
     programs.neovim = {
@@ -246,46 +267,45 @@ with lib;
 
     # more stuff for everyone
     programs.git.enable = true;
-    programs.steam.enable = true;
+    programs.steam.enable = hasScreen;
 
     # mullvad vpn?
-    services.mullvad-vpn = {
+    services.mullvad-vpn = mkIf hasScreen {
       enable = true;
       package = pkgs.mullvad-vpn;
     };
 
-    # Allow unfree packages
-    nixpkgs.config.allowUnfree = true;
 
     # List packages installed in system profile. To search, run:
     # $ nix search wget
     environment.systemPackages = with pkgs; [
       nix-tree
-      sbctl
       curl
       wget
       file
       htop
-      gtop
       iotop
       killall
-      neofetch
+      dig
+      jq
+    ]
+    ++ optionals hasScreen [
+      wooting-udev-rules
+      wootility
+      google-chrome
       adwaita-icon-theme
       fluent-gtk-theme
       fluent-icon-theme
-      iosevka
-      obsidian
-      jq
-      nixfmt-rfc-style
       mission-center
-      google-chrome
-      nvtopPackages.amd
+      iosevka
+      nvtopPackages.full
+    ]
+    ++ optionals (!isWsl) [
       podman-compose
-      wooting-udev-rules
-      wootility
+      sbctl
     ];
 
-    fonts.enableDefaultPackages = true;
+    fonts.enableDefaultPackages = hasScreen;
 
     # hint Electron apps to use Wayland:
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -293,7 +313,7 @@ with lib;
     # for some node stuff I guess
     programs.nix-ld.enable = true;
 
-    programs.wireshark.enable = true;
+    programs.wireshark.enable = hasScreen;
 
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
@@ -307,13 +327,5 @@ with lib;
 
     # Enable the OpenSSH daemon.
     # services.openssh.enable = true;
-
-    # This value determines the NixOS release from which the default
-    # settings for stateful data, like file locations and database versions
-    # on your system were taken. It‘s perfectly fine and recommended to leave
-    # this value at the release version of the first install of this system.
-    # Before changing this value read the documentation for this option
-    # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-    system.stateVersion = "24.11"; # Did you read the comment?
   };
 }

@@ -41,8 +41,6 @@ with lib;
       nmap
       dig
       nmap
-      fastfetch
-      neofetch
     ];
 
     home.sessionPath = [ "$HOME/.local/bin" ];

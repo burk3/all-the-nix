@@ -32,6 +32,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -58,6 +62,9 @@
         lanzaboote.nixosModules.lanzaboote
         niri.nixosModules.niri
         programsdb.nixosModules.programs-sqlite
+      ];
+      systems.hosts.lofty305-wsl-nixos.modules = with inputs; [
+        nixos-wsl.nixosModules.default
       ];
 
       outputs-builder = channels: { formatter = channels.nixpkgs.nixfmt-tree; };
