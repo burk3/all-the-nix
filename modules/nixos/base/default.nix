@@ -47,7 +47,8 @@ with lib;
   };
   config = mkIf cfg.enable {
     nix.extraOptions = ''
-      experimental-features = nix-command flakes
+      experimental-features = nix-command flakes parallel-eval pipe-operators
+      eval-cores = 0 # Evaluate across all cores
       builders-use-substitutes = true
       lazy-trees = true
     '';
