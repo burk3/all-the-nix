@@ -51,6 +51,7 @@ with lib;
       eval-cores = 0 # Evaluate across all cores
       builders-use-substitutes = true
       lazy-trees = true
+      download-buffer-size = 134217728
     '';
 
     # Allow unfree packages
