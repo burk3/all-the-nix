@@ -18,6 +18,7 @@ in
   time.timeZone = "America/Los_Angeles";
 
   t11s.enable = true;
+  t11s.caches.enable = true;
   t11s.systemType = "workstation";
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";

@@ -20,6 +20,7 @@
   wsl.defaultUser = "burke";
 
   t11s.enable = true;
+  t11s.caches.enable = true;
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
   t11s.resolved1111 = false;
