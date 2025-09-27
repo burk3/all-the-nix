@@ -1,5 +1,7 @@
 { config, lib, ... }:
-let cfg = config.t11s.caches; in
+let
+  cfg = config.t11s.caches;
+in
 with lib;
 {
   options.t11s.caches = {
