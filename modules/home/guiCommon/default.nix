@@ -5,9 +5,9 @@
   ...
 }:
 let
+  inherit (lib) mkEnableOption mkIf;
   cfg = config.t11s.guiCommon;
 in
-with lib;
 {
   options.t11s.guiCommon = {
     enable = mkEnableOption "enable common gui apps/configs";
@@ -41,7 +41,6 @@ with lib;
         window-decoration = false;
         cursor-style = "block";
         font-family = [
-          "Berkeley Mono"
           "Iosevka"
         ];
         font-size = 8;

@@ -27,8 +27,15 @@
     git.enable = true;
   };
 
+  services.wlsunset = {
+    enable = true;
+    latitude = 47.677;
+    longitude = -122.385;
+  };
+
   home.packages = with pkgs; [
     mcomix
+    kubectl
   ];
 
   dconf.settings = {
