@@ -21,6 +21,7 @@
     personal.enable = true;
     guiCommon.enable = true;
     hypr.enable = true;
+    niri.enable = true;
     neovim.enable = true;
     shell.enable = true;
     git.enable = true;

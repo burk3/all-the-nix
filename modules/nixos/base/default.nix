@@ -169,6 +169,8 @@ with lib;
 
     # niri compositor
     programs.niri.enable = hasScreen;
+    programs.niri.package = pkgs.niri-unstable;
+    niri-flake.cache.enable = hasScreen;
 
     # Configure keymap in X11
     services.xserver.xkb = {

@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     snowfall-lib = {
       url = "github:snowfallorg/lib";
@@ -51,11 +52,23 @@
 
       snowfall.namespace = "t11s";
 
+      overlays = with inputs; [
+        (final: _prev: {
+          unstable = import inputs.unstable {
+            system = final.system;
+            config.allowUnfree = true;
+          };
+        })
+        niri.overlays.niri
+      ];
       alias = {
         shells.default = "nix-dev";
       };
 
-      homes.modules = with inputs; [ catppuccin.homeModules.catppuccin ];
+      homes.modules = with inputs; [
+        catppuccin.homeModules.catppuccin
+        #niri.homeModules.config
+      ];
       systems.modules.nixos = with inputs; [
         catppuccin.nixosModules.catppuccin
         determinate.nixosModules.default
