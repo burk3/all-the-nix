@@ -127,6 +127,30 @@ let
         ;;
     esac
   '';
+  niri = config.programs.niri.package;
+  hyprland = config.wayland.windowManager.hyprland.package;
+  custom-dpms = pkgs.writers.writeBash "custom-dpms" (
+    ''
+      new_state=$1
+      case $XDG_CURRENT_DESKTOP in
+    '' + (
+      lib.optionalString config.t11s.niri.enable ''
+        niri)
+          ${niri}/bin/niri msg action power-''${new_state}-monitors
+          ;;
+      ''
+    ) +
+    (
+      lib.optionalString config.t11s.hypr.enable ''
+        hyprland)
+          ${hyprland}/bin/hyprctl dpms $new_state
+          ;;
+      ''
+    ) +
+    ''
+    esac
+    ''
+    );
 in
 with lib;
 {
@@ -442,8 +466,8 @@ with lib;
           }
           {
             timeout = 330;
-            on-timeout = "hyperctl dispatch dpms off";
-            on-resume = "hyperctl dispatch dpms on";
+            on-timeout = "${custom-dpms} off";
+            on-resume = "${custom-dpms} on";
           }
           {
             timeout = 1800;

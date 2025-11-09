@@ -31,6 +31,7 @@ in
         scroll-factor = 0.5;
         tap = false;
       };
+      gestures.hot-corners.enable = false;
       layout = {
         preset-column-widths = [
           { proportion = 1. / 3.; }
