@@ -93,6 +93,7 @@
   };
 
   ### Software
+  services.pipewire.jack.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
   services.ollama = {
     enable = true;

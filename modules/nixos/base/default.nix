@@ -253,7 +253,7 @@ with lib;
         "networkmanager"
         "wheel"
         "tss"
-      ];
+      ] ++ (lib.optionals hasScreen [ "audio" "video" ]);
     };
 
     # zsh
