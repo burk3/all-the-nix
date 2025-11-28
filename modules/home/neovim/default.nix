@@ -36,6 +36,7 @@ with lib;
             lua require'lspconfig'.nil_ls.setup{}
           '';
         }
+        vim-tidal
       ];
       extraConfig = ''
         " sane backspaces

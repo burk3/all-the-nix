@@ -37,6 +37,10 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    tidalcycles = {
+      url = "github:mitchmindtree/tidalcycles.nix";
+      inputs.nixpkgs.follows = "unstable";
+    };
   };
 
   outputs =
@@ -60,6 +64,7 @@
           };
         })
         niri.overlays.niri
+        tidalcycles.overlays.tidal
       ];
       alias = {
         shells.default = "nix-dev";

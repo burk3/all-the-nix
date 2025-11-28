@@ -92,8 +92,22 @@
     allowedTCPPorts = [ 8000 ];
   };
 
-  ### Software
+  ### music making stuff?
   services.pipewire.jack.enable = true;
+  services.pipewire.alsa.enable = true;
+  security.rtkit.enable = true; # for pipewire rt scheduling
+  # lower buffer sizes
+#  services.pipewire.extraConfig.pipewire = {
+#    "92-low-latency" = {
+#      "context.properties" = {
+#        "default.clock.rate" = 48000;
+#        "default.clock.quantum" = 64; # ~1.3ms latency
+#        "default.clock.min-quantum" = 64;
+#      };
+#    };
+#  };
+
+  ### Software
   services.xserver.desktopManager.gnome.enable = true;
   services.ollama = {
     enable = true;
