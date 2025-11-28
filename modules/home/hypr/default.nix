@@ -735,16 +735,6 @@ with lib;
         label = [
           {
             monitor = "";
-            text = "Layout: $LAYOUT";
-            color = "$text";
-            font_size = 25;
-            font_family = "$family";
-            position = "30, -30";
-            halign = "left";
-            valign = "top";
-          }
-          {
-            monitor = "";
             text = "$TIME";
             color = "$text";
             font_size = 90;
