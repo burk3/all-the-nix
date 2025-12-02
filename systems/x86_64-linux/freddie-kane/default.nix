@@ -118,6 +118,11 @@
     rocmOverrideGfx = "11.0.3";
   };
 
+  ### system76-scheduler
+  # seems like it prioritizes the foreground process which sounds kinda neat. and
+  # there's a home-manager module to make it work with niri!
+  services.system76-scheduler.enable = true;
+
   ### dont change this probably
   system.stateVersion = "24.11"; # Did you read the comment?
 }

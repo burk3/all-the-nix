@@ -680,6 +680,7 @@
         "nixpkgs": "nixpkgs_4",
         "programsdb": "programsdb",
         "snowfall-lib": "snowfall-lib",
+        "system76-scheduler-niri": "system76-scheduler-niri",
         "tidalcycles": "tidalcycles",
         "unstable": "unstable"
       }
@@ -740,6 +741,26 @@
       "original": {
         "owner": "musikinformatik",
         "repo": "superdirt",
+        "type": "github"
+      }
+    },
+    "system76-scheduler-niri": {
+      "inputs": {
+        "nixpkgs": [
+          "unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1754125228,
+        "narHash": "sha256-SjqVVvwbgDucVPOEssS4/kg4vrK5QKZkLhAUG0U611E=",
+        "owner": "Kirottu",
+        "repo": "system76-scheduler-niri",
+        "rev": "c950aacb8417e1e14f1988639ed7391e08919757",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Kirottu",
+        "repo": "system76-scheduler-niri",
         "type": "github"
       }
     },

@@ -33,6 +33,8 @@
     longitude = -122.385;
   };
 
+  services.system76-scheduler-niri.enable = true;
+
   home.packages = with pkgs; [
     mcomix
     kubectl

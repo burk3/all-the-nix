@@ -41,6 +41,10 @@
       url = "github:mitchmindtree/tidalcycles.nix";
       inputs.nixpkgs.follows = "unstable";
     };
+    system76-scheduler-niri = {
+      url = "github:Kirottu/system76-scheduler-niri";
+      inputs.nixpkgs.follows = "unstable";
+    };
   };
 
   outputs =
@@ -74,6 +78,10 @@
         catppuccin.homeModules.catppuccin
         #niri.homeModules.config
       ];
+      homes.users."burke@freddie-kane".modules = with inputs; [
+        system76-scheduler-niri.homeModules.default
+      ];
+
       systems.modules.nixos = with inputs; [
         catppuccin.nixosModules.catppuccin
         determinate.nixosModules.default
