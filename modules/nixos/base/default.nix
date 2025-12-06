@@ -152,12 +152,13 @@ with lib;
     # fix command-not-found dbpath for flakes
     #environment.etc."programs.sqlite".source = programsdb.packages.${pkgs.system}.programs-sqlite;
     #programs.command-not-found.dbPath = "/etc/programs.sqlite";
+    programs.command-not-found.enable = true;
 
     # Enable the X11 windowing system.
     services.xserver.enable = hasScreen;
 
     # Enable the GNOME Desktop Environment.
-    services.xserver.displayManager.gdm.enable = hasScreen;
+    services.displayManager.gdm.enable = hasScreen;
 
     # lets add hyprland in there as well, why the fuck not
     programs.hyprland = {

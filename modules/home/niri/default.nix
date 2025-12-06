@@ -119,5 +119,6 @@ in
       package = pkgs.unstable.fuzzel;
       settings.main.enable-mouse = "no";
     };
+    services.gnome-keyring.enable = true;
   };
 }
