@@ -13,7 +13,7 @@ with lib;
     enable = mkEnableOption "Enable neovim with the config";
   };
   config = mkIf cfg.enable {
-    home.packages = [ pkgs.nil ];
+    #home.packages = [ pkgs.nil ];
     programs.neovim = {
       enable = true;
       defaultEditor = true;
@@ -30,12 +30,12 @@ with lib;
         vim-markdown
         nvim-treesitter.withAllGrammars
         vim-nix
-        {
-          plugin = nvim-lspconfig;
-          config = ''
-            lua require'lspconfig'.nil_ls.setup{}
-          '';
-        }
+        # {
+        #   plugin = nvim-lspconfig;
+        #   config = ''
+        #     lua require'lspconfig'.nil_ls.setup{}
+        #   '';
+        # }
         vim-tidal
       ];
       extraConfig = ''
@@ -52,6 +52,15 @@ with lib;
         " set list
         " i mostly use marker folds
         set foldmethod=marker
+
+        lua << EOF
+          vim.lsp.config['nil'] = {
+            cmd = { '${pkgs.nil}/bin/nil' },
+            filetypes = { 'nix' },
+            root_markers = { 'flake.nix' },
+          }
+          vim.lsp.enable('nil')
+        EOF
       '';
     };
   };
