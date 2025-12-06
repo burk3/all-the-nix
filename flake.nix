@@ -63,8 +63,8 @@
       overlays = with inputs; [
         (final: _prev: {
           unstable = import inputs.unstable {
-            system = final.system;
-            config.allowUnfree = true;
+            inherit (final) config;
+            localSystem = final.stdenv.hostPlatform;
           };
         })
         niri.overlays.niri
