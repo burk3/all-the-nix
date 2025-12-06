@@ -13,16 +13,16 @@ in
   config = lib.mkIf cfg.enable {
     programs.git = {
       enable = true;
-      delta.enable = true;
       ignores = [
         ".envrc"
         ".direnv"
         ".venv"
       ];
-      extraConfig.init.defaultBranch = "master";
-      aliases.co = "checkout";
-      aliases.st = "status";
-      aliases.lg = "log --graph --decorate --oneline";
+      settings.init.defaultBranch = "master";
+      settings.alias.co = "checkout";
+      settings.alias.st = "status";
+      settings.alias.lg = "log --graph --decorate --oneline";
     };
+    programs.delta.enable = true;
   };
 }

@@ -30,9 +30,9 @@ with lib;
       flavor = cfg.catppuccinFlavor;
     };
 
-    programs.git = {
-      userName = "Burke Cates";
-      userEmail = "burke.cates@gmail.com";
+    programs.git.settings = {
+      user.name = "Burke Cates";
+      user.email = "burke.cates@gmail.com";
     };
 
     programs.btop.enable = true;
