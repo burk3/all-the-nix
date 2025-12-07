@@ -5,14 +5,22 @@
   ...
 }:
 let
-  inherit (lib) mkEnableOption mkIf;
-  cfg = config.t11s.niri;
+  inherit (lib) mkDefault mkEnableOption;
+  cfg = config.t11s.desktop.compositor.niri;
 in
 {
-  options.t11s.niri = {
-    enable = mkEnableOption "Enable niri configuration/systemd setup?";
-  };
-  config = mkIf cfg.enable {
+  options.t11s.desktop.compositor.niri.enable = mkEnableOption "enable niri compositor config";
+  config = lib.mkIf cfg.enable {
+    t11s.desktop.lockAndIdle.desktopSpecific.niri =
+      let
+        niri = lib.getExe config.programs.niri.package;
+      in
+      {
+        desktopString = "niri";
+        dpmsOff = mkDefault "${niri} msg action power-off-monitors";
+        dpmsOn = mkDefault "${niri} msg action power-on-monitors";
+        afterSleepScript = mkDefault "";
+      };
     home.packages = with pkgs; [
       brightnessctl
     ];
@@ -34,15 +42,24 @@ in
       gestures.hot-corners.enable = false;
       layout = {
         preset-column-widths = [
-          { proportion = 1. / 3.; }
-          { proportion = 1. / 2.; }
-          { proportion = 2. / 3.; }
+          { proportion = 1.0 / 3.0; }
+          { proportion = 1.0 / 2.0; }
+          { proportion = 2.0 / 3.0; }
         ];
         default-column-width = {
-          proportion = 1. / 3.;
+          proportion = 1.0 / 3.0;
         };
         gaps = 16;
         center-focused-column = "never";
+        focus-ring = {
+          enable = true;
+          width = 2;
+          active.gradient = {
+            from = "hsl(11deg, 59%, 67%)";
+            to = "hsl(0deg, 60%, 67%)";
+            angle = 45;
+          };
+        };
         border = {
           enable = false;
           width = 2;
@@ -64,7 +81,7 @@ in
         {
           matches = [ { app-id = "firefox$"; } ];
           default-column-width = {
-            proportion = 2. / 3.;
+            proportion = 2.0 / 3.0;
           };
         }
         {
@@ -86,7 +103,7 @@ in
         }
         {
           geometry-corner-radius = lib.genAttrs [ "top-left" "top-right" "bottom-left" "bottom-right" ] (
-            _: 8.
+            _: 8.0
           );
           clip-to-geometry = true;
         }
@@ -106,7 +123,7 @@ in
           baba-is-float = true;
         }
       ];
-      binds = import ./binds.nix { inherit config; };
+      binds = import ./binds.nix { inherit config lib; };
       switch-events = {
         lid-close.action.spawn = [
           "systemctl"
@@ -114,11 +131,5 @@ in
         ];
       };
     };
-    programs.fuzzel = {
-      enable = true;
-      package = pkgs.unstable.fuzzel;
-      settings.main.enable-mouse = "no";
-    };
-    services.gnome-keyring.enable = true;
   };
 }

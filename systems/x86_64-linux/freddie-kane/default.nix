@@ -1,5 +1,4 @@
 {
-  pkgs,
   lib,
   inputs,
   ...
@@ -13,6 +12,7 @@
   ### identity
   networking.hostName = "freddie-kane"; # Define your hostname.
   time.timeZone = "America/Los_Angeles";
+  #time.timeZone = "America/New_York";
 
   t11s.enable = true;
   t11s.caches.enable = true;
@@ -97,18 +97,18 @@
   services.pipewire.alsa.enable = true;
   security.rtkit.enable = true; # for pipewire rt scheduling
   # lower buffer sizes
-#  services.pipewire.extraConfig.pipewire = {
-#    "92-low-latency" = {
-#      "context.properties" = {
-#        "default.clock.rate" = 48000;
-#        "default.clock.quantum" = 64; # ~1.3ms latency
-#        "default.clock.min-quantum" = 64;
-#      };
-#    };
-#  };
+  #  services.pipewire.extraConfig.pipewire = {
+  #    "92-low-latency" = {
+  #      "context.properties" = {
+  #        "default.clock.rate" = 48000;
+  #        "default.clock.quantum" = 64; # ~1.3ms latency
+  #        "default.clock.min-quantum" = 64;
+  #      };
+  #    };
+  #  };
 
   ### Software
-  services.xserver.desktopManager.gnome.enable = true;
+  services.desktopManager.gnome.enable = true;
   services.ollama = {
     enable = true;
     acceleration = "rocm";

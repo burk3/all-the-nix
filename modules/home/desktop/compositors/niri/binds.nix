@@ -1,4 +1,4 @@
-{ config }:
+{ config, lib, ... }:
 with config.lib.niri.actions;
 {
   "Mod+Shift+Slash".action = show-hotkey-overlay;
@@ -8,12 +8,12 @@ with config.lib.niri.actions;
     action.spawn = [ "ghostty" ];
   };
   "Mod+R" = {
-    hotkey-overlay.title = "Run an Application: fuzzel";
-    action.spawn = [ "fuzzel" ];
+    hotkey-overlay.title = "Run an Application via a launcher";
+    action.spawn = lib.splitString " " config.t11s.desktop._launcherCmd;
   };
   "Super+Alt+L" = {
-    hotkey-overlay.title = "Lock the Screen: hyprlock";
-    action.spawn = [ "hyprlock" ];
+    hotkey-overlay.title = "Lock the Screen: loginctl lock-session";
+    action.spawn = [ "loginctl" "lock-session" ];
   };
 
   "XF86AudioRaiseVolume" = {

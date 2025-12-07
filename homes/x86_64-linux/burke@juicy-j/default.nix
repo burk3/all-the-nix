@@ -23,10 +23,16 @@
   t11s = {
     personal.enable = true;
     guiCommon.enable = true;
-    hypr.enable = true;
     neovim.enable = true;
     shell.enable = true;
     git.enable = true;
+    desktop = {
+      enable = true;
+      compositor.niri.enable = true;
+      bar = "waybar";
+      bluetoothSupport.enable = true;
+      services.gnome-keyring.enable = true;
+    };
   };
 
   #services.home-manager.autoExpire

@@ -1,5 +1,53 @@
 {
   "nodes": {
+    "caelestia-cli": {
+      "inputs": {
+        "caelestia-shell": [
+          "caelestia-niri"
+        ],
+        "nixpkgs": [
+          "caelestia-niri",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1764813773,
+        "narHash": "sha256-vpgjBAER+aoMjq6z9xuv/jvniXkRRgP/xfZMP2LbNlk=",
+        "owner": "caelestia-dots",
+        "repo": "cli",
+        "rev": "1eead8615108e1977ac09ed428e1329adbb80f00",
+        "type": "github"
+      },
+      "original": {
+        "owner": "caelestia-dots",
+        "repo": "cli",
+        "type": "github"
+      }
+    },
+    "caelestia-niri": {
+      "inputs": {
+        "caelestia-cli": "caelestia-cli",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "quickshell": [
+          "quickshell"
+        ]
+      },
+      "locked": {
+        "lastModified": 1765072407,
+        "narHash": "sha256-PIlc8hSW0ucRA5IQ+GsCSJz2caR1FOh8c2WZakPfAvc=",
+        "owner": "jutraim",
+        "repo": "niri-caelestia-shell",
+        "rev": "f39d6d0431ac341b9ec3dab75d3fb8f69dff0146",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jutraim",
+        "repo": "niri-caelestia-shell",
+        "type": "github"
+      }
+    },
     "catppuccin": {
       "inputs": {
         "nixpkgs": [
@@ -649,8 +697,29 @@
         "type": "github"
       }
     },
+    "quickshell": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1764663772,
+        "narHash": "sha256-sHqLmm0wAt3PC4vczJeBozI1/f4rv9yp3IjkClHDXDs=",
+        "ref": "refs/heads/master",
+        "rev": "26531fc46ef17e9365b03770edd3fb9206fcb460",
+        "revCount": 713,
+        "type": "git",
+        "url": "https://git.outfoxxed.me/quickshell/quickshell"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.outfoxxed.me/quickshell/quickshell"
+      }
+    },
     "root": {
       "inputs": {
+        "caelestia-niri": "caelestia-niri",
         "catppuccin": "catppuccin",
         "determinate": "determinate",
         "home-manager": "home-manager",
@@ -661,6 +730,7 @@
         "nixos-wsl": "nixos-wsl",
         "nixpkgs": "nixpkgs_4",
         "programsdb": "programsdb",
+        "quickshell": "quickshell",
         "snowfall-lib": "snowfall-lib",
         "system76-scheduler-niri": "system76-scheduler-niri",
         "tidalcycles": "tidalcycles",

@@ -8,6 +8,7 @@ mkShell {
     cachix
     lorri
     niv
+    nil
     nixfmt-rfc-style
     nixfmt-tree
     statix

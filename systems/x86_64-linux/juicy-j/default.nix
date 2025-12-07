@@ -6,7 +6,7 @@
 }:
 let
   ethIF = "enp191s0";
-  wifiIF = "wlp192s0";
+  _wifiIF = "wlp192s0";
 in
 {
   imports = [

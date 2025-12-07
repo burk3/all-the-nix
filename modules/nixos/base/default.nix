@@ -194,7 +194,6 @@ with lib;
       powerOnBoot = true; # powers up the default Bluetooth controller on boot
       settings.General.Enable = "Source,Sink,Media,Socket";
     };
-    services.blueman.enable = mkIf hasScreen true;
 
     # Enable sound with pipewire.
     services.pulseaudio.enable = false;
@@ -245,7 +244,7 @@ with lib;
     # Define a user account. Don't forget to set a password with ‘passwd’.
     users.users.${cfg.mainUser.name} = {
       isNormalUser = true;
-      description = cfg.mainUser.description;
+      inherit (cfg.mainUser) description;
       shell = pkgs.zsh;
       extraGroups = [
         "docker"
@@ -254,7 +253,11 @@ with lib;
         "networkmanager"
         "wheel"
         "tss"
-      ] ++ (lib.optionals hasScreen [ "audio" "video" ]);
+      ]
+      ++ (lib.optionals hasScreen [
+        "audio"
+        "video"
+      ]);
     };
 
     # zsh
@@ -333,5 +336,7 @@ with lib;
 
     # Enable the OpenSSH daemon.
     # services.openssh.enable = true;
+
+    services.gnome.gcr-ssh-agent.enable = true;
   };
 }

@@ -6,7 +6,7 @@
   ...
 }:
 let
-  cfg = config.t11s.hypr;
+  cfg = config.t11s.desktop.compositor.hyprland;
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
   jq = "${pkgs.jq}/bin/jq";
   # called when lid is closed
@@ -127,90 +127,28 @@ let
         ;;
     esac
   '';
-  niri = config.programs.niri.package;
-  hyprland = config.wayland.windowManager.hyprland.package;
-  custom-dpms = pkgs.writers.writeBash "custom-dpms" (
-    ''
-      new_state=$1
-      case $XDG_CURRENT_DESKTOP in
-    '' + (
-      lib.optionalString config.t11s.niri.enable ''
-        niri)
-          ${niri}/bin/niri msg action power-''${new_state}-monitors
-          ;;
-      ''
-    ) +
-    (
-      lib.optionalString config.t11s.hypr.enable ''
-        hyprland)
-          ${hyprland}/bin/hyprctl dpms $new_state
-          ;;
-      ''
-    ) +
-    ''
-    esac
-    ''
-    );
 in
 with lib;
 {
-  options.t11s.hypr = {
-    enable = mkEnableOption "enable hyprland config, including plugins, hyprlock, hypridle, and more";
-  };
+  options.t11s.desktop.compositor.hyprland.enable = mkEnableOption "enable hyprland config";
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      hyprsunset
-      hyprshot
-      brightnessctl
-      pavucontrol
-      networkmanagerapplet
-      posy-cursors
-      # fonts
-      iosevka
-      nerd-fonts.ubuntu
-      nerd-fonts.jetbrains-mono
-    ];
+    home.packages =
+      with pkgs;
+      [
+        hyprshot
+        brightnessctl
+        pavucontrol
+      ]
+      ++ (lib.optionals config.t11s.desktop.networkManager.enable [ networkmanagerapplet ]);
 
-    fonts.fontconfig = {
-      enable = true;
-      defaultFonts.monospace = [
-        "Berkeley Mono"
-        "Iosevka"
-      ];
-    };
-
-    services.dunst = {
-      enable = true;
-      settings = {
-        urgency_normal.timeout = 5;
-        urgency_low.timeout = 2;
-        urgency_critical.timeout = 10;
-      };
+    t11s.desktop.lockAndIdle.desktopSpecific.hyprland = {
+      desktopString = "hyprland";
+      afterSleepScript = mkDefault "${afterSleepScript}";
+      dpmsOn = mkDefault "${hyprctl} dpms on";
+      dpmsOff = mkDefault "${hyprctl} dpms off";
     };
 
     programs.fuzzel.enable = true;
-    services.blueman-applet.enable = true;
-    services.gnome-keyring = {
-      enable = true;
-      components = [
-        "pkcs11"
-        "secrets"
-        "ssh"
-      ];
-    };
-    # set ssh-agent to use the gnome-keyring socket
-    home.sessionVariables = {
-      SSH_AUTH_SOCK = "\${XDG_RUNTIME_DIR:-/run/user/$UID}/keyring/ssh";
-    };
-
-    home.pointerCursor = {
-      name = "Posy_Cursor_Black";
-      package = pkgs.posy-cursors;
-      x11.enable = true;
-      gtk.enable = true;
-      # one day
-      #    hyprcursor.enable = true;
-    };
 
     # {{{ hyprland
     wayland.windowManager.hyprland = {
@@ -227,13 +165,13 @@ with lib;
         let
           terminal = "ghostty";
           fileManager = "nautilus";
-          menu = "fuzzel";
+          menu = config.t11s.desktop._launcherCmd;
           lock = "loginctl lock-session";
         in
         {
           # {{{ hyprland.settings
+          inherit exec-once;
           monitor = ",preferred,auto,auto";
-          exec-once = [ "nm-applet &" ];
           env = [
             "XCURSOR_SIZE,32"
             "HYPRCURSOR_SIZE,32"
@@ -442,357 +380,5 @@ with lib;
         };
     };
     # }}} hyprland
-
-    # {{{ hypridle
-    services.hypridle = {
-      enable = true;
-      settings = {
-        general = {
-          lock_cmd = "hyprlock";
-          before_sleep_cmd = "loginctl lock-session";
-          after_sleep_cmd = "${afterSleepScript}";
-          ignore_dbus_inhibit = false;
-          ignore_systemd_inhibit = false;
-        };
-        listener = [
-          {
-            timeout = 150; # 2.5min.
-            on-timeout = "brightnessctl -s set 0"; # set monitor backlight to minimum
-            on-resume = "brightnessctl -r"; # monitor backlight restore.
-          }
-          {
-            timeout = 300;
-            on-timeout = "loginctl lock-session";
-          }
-          {
-            timeout = 330;
-            on-timeout = "${custom-dpms} off";
-            on-resume = "${custom-dpms} on";
-          }
-          {
-            timeout = 1800;
-            on-timeout = "systemcctl suspend-then-hibernate";
-          }
-        ];
-      };
-    };
-    # }}}
-
-    # {{{ waybar
-    programs.waybar = {
-      enable = true;
-      systemd = {
-        enable = true;
-        target = "hyprland-session.target";
-      };
-      # {{{ waybar.settings
-      settings = {
-        mainBar = {
-          layer = "top";
-          position = "top";
-          modules-left = [
-            "hyprland/workspaces"
-            "hyprland/submap"
-            "niri/workspaces"
-          ];
-          modules-right = [
-            "tray"
-            "idle_inhibitor"
-            "battery"
-            "pulseaudio"
-            "clock"
-          ];
-          modules-center = [
-            "hyprland/window"
-            "niri/window"
-          ];
-          clock = {
-            format = "  {:%H:%M   %e %b}";
-            today-format = "<b>{}</b>";
-            tooltip-format = ''
-              <big>{:%Y %B}</big>
-              <tt><small>{calendar}</small></tt>'';
-          };
-          "hyprland/submap" = {
-            format = ''<span style="italic">{}</span>'';
-          };
-          "hyprland/window" = {
-            format = "{}";
-            max-length = 80;
-            min-length = 80;
-            tooltip = false;
-          };
-          "niri/window" = {
-            format = "{}";
-            max-length = 80;
-            min-length = 80;
-            tooltip = false;
-          };
-          idle_inhibitor = {
-            format = "{icon}";
-            format-icons = {
-              activated = "";
-              deactivated = "";
-            };
-          };
-          cpu = {
-            interval = 1;
-            format = ''{max_frequency}GHz <span color="darkgray">| {usage}%</span>'';
-            max-length = 15;
-            min-length = 15;
-            on-click = "kitty -e htop --sort-key PERCENT_CPU";
-            tooltip = false;
-          };
-          network = {
-            format-disconnected = "";
-            format-ethernet = "{ifname} ";
-            format-wifi = "{essid} ({signalStrength}%) ";
-            max-length = 50;
-            #on-click = "kitty -e 'nmtui'";
-          };
-          battery = {
-            full-at = 90;
-            states = {
-              warning = 30;
-              critical = 15;
-            };
-          };
-          pulseaudio = {
-            format = "{volume}% {icon} ";
-            format-bluetooth = "{volume}% {icon} {format_source}";
-            format-bluetooth-muted = "🔇  {format_source}";
-            format-icons = {
-              car = "";
-              default = [
-                ""
-                ""
-                ""
-              ];
-              hands-free = "";
-              headphone = "";
-              headset = "";
-              phone = "";
-              portable = "";
-            };
-            format-muted = "🔇 ";
-            format-source = "{volume}% ";
-            format-source-muted = "";
-            on-click = "pavucontrol";
-          };
-          tray = {
-            icon-size = 15;
-            spacing = 10;
-          };
-        };
-      };
-      # }}} waybar.settings
-      # {{{ waybar.style
-      style = ''
-        * {
-          border: none;
-          font-family: Ubuntu Nerd Font, Roboto, Arial, sans-serif;
-          font-size: 13px;
-          border-radius: 1rem;
-        }
-
-        window#waybar > box {
-          margin: 3px;
-        }
-        window#waybar {
-            background: transparent;
-          color: @text;
-        }
-        /*-----module groups----*/
-        .modules-right {
-          background-color: @surface0;
-          margin: 2px 5px 0 0;
-          box-shadow: 0 0 2px #000;
-        }
-        .modules-center {
-          background-color: @surface0;
-          margin: 2px 0 0 0;
-          box-shadow: 0 0 2px #000;
-        }
-        .modules-left {
-          margin: 2px 0 0 5px;
-          background-color: @surface0;
-          box-shadow: 0 0 2px #000;
-        }
-        /*-----modules indv----*/
-        #workspaces button {
-          font-weight: bold;
-          color: @text;
-          padding: 1px 5px;
-        }
-        #workspaces button:hover {
-          background: none;
-          box-shadow: none;
-          text-shadow: none;
-          color: @sapphire;
-        }
-
-        #workspaces button.active {
-          color: @green;
-        }
-
-        #workspaces button.urgent {
-          color: @red;
-        }
-
-        #clock,
-        #battery,
-        #cpu,
-        #memory,
-        #temperature,
-        #network,
-        #pulseaudio,
-        #custom-media,
-        #tray,
-        #mode,
-        #submap,
-        #custom-power,
-        #custom-menu,
-        #idle_inhibitor {
-            padding: 0 10px;
-        }
-        #submap, #mode {
-            font-weight: bold;
-        }
-        /*-----Indicators----*/
-        #idle_inhibitor.activated {
-            color: @green;
-        }
-        #pulseaudio.muted {
-            color: #cc3436;
-        }
-        #battery {
-          color: @teal;
-        }
-        #battery.charging {
-            color: @green;
-        }
-        #battery.warning:not(.charging) {
-          color: @yellow;
-        }
-        #battery.critical:not(.charging) {
-            color: @red;
-        }
-        #temperature.critical {
-            color: @peach;
-        }
-      '';
-      # }}} waybar.style
-    };
-    # }}} waybar
-
-    # {{{ hyprpaper
-    services.hyprpaper = {
-      enable = true;
-      settings =
-        let
-          wallpapers = pkgs.fetchFromGitHub {
-            owner = "zhichaoh";
-            repo = "catppuccin-wallpapers";
-            rev = "1023077979591cdeca76aae94e0359da1707a60e";
-            sha256 = "0rd6hfd88bsprjg68saxxlgf2c2lv1ldyr6a8i7m4lgg6nahbrw7";
-          };
-          wallpaper = "${wallpapers}/landscapes/tropic_island_night.jpg";
-        in
-        {
-          preload = [ "${wallpaper}" ];
-          wallpaper = [ "eDP-1,${wallpaper}" ];
-          splash = true;
-        };
-    };
-    # }}} hyprpaper
-
-    # {{{ hyprlock
-    programs.hyprlock = {
-      enable = true;
-      settings = {
-        "$font" = "JetBrainsMono Nerd Font";
-        general = {
-          disable_loading_bar = true;
-          hide_cursor = true;
-        };
-        background = [
-          {
-            monitor = "";
-            path =
-              let
-                wallpapers = pkgs.fetchFromGitHub {
-                  owner = "zhichaoh";
-                  repo = "catppuccin-wallpapers";
-                  rev = "1023077979591cdeca76aae94e0359da1707a60e";
-                  sha256 = "0rd6hfd88bsprjg68saxxlgf2c2lv1ldyr6a8i7m4lgg6nahbrw7";
-                };
-              in
-              "${wallpapers}/patterns/line_icons.png";
-            blur_passes = 0;
-            color = "$base";
-          }
-        ];
-        label = [
-          {
-            monitor = "";
-            text = "$TIME";
-            color = "$text";
-            font_size = 90;
-            font_family = "$font";
-            position = "-30, 0";
-            halign = "right";
-            valign = "top";
-          }
-          {
-            monitor = "";
-            text = ''cmd[update:43200000] date +"%A, %d %B %Y"'';
-            color = "$text";
-            font_size = 25;
-            font_family = "$font";
-            position = "-30, -150";
-            halign = "right";
-            valign = "top";
-          }
-        ];
-        image = [
-          {
-            monitor = "";
-            path = "$HOME/.face";
-            size = 100;
-            border_color = "$accent";
-            position = "0, 75";
-            halign = "center";
-            valign = "center";
-          }
-        ];
-        input-field = [
-          {
-            monitor = "";
-            size = "300, 60";
-            outline_thickness = 4;
-            dots_size = "0.2";
-            dots_spacing = "0.2";
-            dots_center = true;
-            outer_color = "$overlay0";
-            inner_color = "$surface0";
-            font_color = "$text";
-            fade_on_empty = false;
-            placeholder_text = ''<span foreground="##$textAlpha"><i>󰌾 Logged in as </i><span foreground="##$accentAlpha">$USER</span></span>'';
-            hide_input = false;
-            check_color = "$accent";
-            fail_color = "$red";
-            fail_text = "<i>$FAIL <b>($ATTEMPTS)</b></i>";
-            capslock_color = "$yellow";
-            position = "0, -47";
-            halign = "center";
-            valign = "center";
-          }
-        ];
-        auth = {
-          "fingerprint:enabled" = true;
-        };
-      };
-    };
-    # }}} hyprlock
   };
 }

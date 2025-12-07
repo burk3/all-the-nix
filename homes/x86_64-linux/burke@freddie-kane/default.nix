@@ -20,17 +20,31 @@
   t11s = {
     personal.enable = true;
     guiCommon.enable = true;
-    hypr.enable = true;
-    niri.enable = true;
     neovim.enable = true;
     shell.enable = true;
     git.enable = true;
+    desktop = {
+      enable = true;
+      compositor.niri.enable = true;
+      bar = "caelestia";
+      launcher = "caelestia";
+      bluetoothSupport.enable = true;
+      networkManager.enable = true;
+      services.gnome-keyring.enable = true;
+    };
   };
 
+  # seeing if this gets bluetooth working again
+  services.blueman-applet.enable = true;
   services.wlsunset = {
     enable = true;
-    latitude = 47.677;
-    longitude = -122.385;
+    temperature.night = 2500;
+    ## ncc
+    # latitude = 39.3;
+    # longitude = -75.3;
+    ## sea
+    latitude = 47.6;
+    longitude = -122.3;
   };
 
   services.system76-scheduler-niri.enable = true;

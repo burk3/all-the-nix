@@ -1,11 +1,17 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
   cfg = config.t11s.remotebuild;
+  hostConfigs = {
+    "juicy-j.dab-ling.ts.net" = {
+      maxJobs = 4;
+      speedFactor = 4;
+      system = "x86_64-linux";
+    };
+  };
 in
 with lib;
 {
@@ -46,11 +52,11 @@ with lib;
       nix.settings.builders-use-substitutes = mkIfRemotes true;
 
       nix.buildMachines = mkIfRemotes (
-        map (hostname: {
-          hostName = hostname;
+        map (hostName: {
+          inherit hostName;
+          inherit (hostConfigs.${hostName}) maxJobs speedFactor system;
           sshUser = "remotebuild";
           sshKey = "/root/.ssh/remotebuild";
-          system = pkgs.stdenv.hostPlatform.system;
           supportedFeatures = [
             "nixos-test"
             "big-parallel"

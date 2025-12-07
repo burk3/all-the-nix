@@ -45,6 +45,15 @@
       url = "github:Kirottu/system76-scheduler-niri";
       inputs.nixpkgs.follows = "unstable";
     };
+    quickshell = {
+      url = "git+https://git.outfoxxed.me/quickshell/quickshell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    caelestia-niri = {
+      url = "github:jutraim/niri-caelestia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.quickshell.follows = "quickshell";
+    };
   };
 
   outputs =
@@ -76,6 +85,7 @@
 
       homes.modules = with inputs; [
         catppuccin.homeModules.catppuccin
+        caelestia-niri.homeManagerModules.default
         #niri.homeModules.config
       ];
       homes.users."burke@freddie-kane".modules = with inputs; [
