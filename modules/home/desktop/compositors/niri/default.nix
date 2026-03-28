@@ -123,7 +123,7 @@ in
           baba-is-float = true;
         }
       ];
-      binds = import ./binds.nix { inherit config lib; };
+      binds = import ./binds.nix { inherit config lib pkgs; };
       switch-events = {
         lid-close.action.spawn = [
           "systemctl"

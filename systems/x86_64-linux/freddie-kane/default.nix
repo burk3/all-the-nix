@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   inputs,
   ...
 }:
@@ -20,6 +21,13 @@
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
+
+  virtualisation.libvirtd.enable = true;
+  programs.virt-manager.enable = true;
+  users.users.burke.extraGroups = [ "libvirtd" ];
+  environment.systemPackages = with pkgs; [
+    dnsmasq
+  ];
 
   ### nix
   #  nix = {

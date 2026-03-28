@@ -45,13 +45,16 @@ in
       };
       launcher = mkOption {
         description = "program launcher to use";
-        type = types.enum [ "fuzzel" "caelestia" ];
+        type = types.enum [
+          "fuzzel"
+          "caelestia"
+        ];
         default = "fuzzel";
       };
       _launcherCmd = mkOption {
         type = types.str;
       };
-      wallpaper.enable =  mkEnableOption "use hyprpaper and one of the island wallpapers from catppuccin-wallpaper";
+      wallpaper.enable = mkEnableOption "use hyprpaper and one of the island wallpapers from catppuccin-wallpaper";
     };
   config = mkIf cfg.enable (
     lib.mkMerge [
