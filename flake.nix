@@ -54,6 +54,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.quickshell.follows = "quickshell";
     };
+    systemctl-toggle = {
+      url = "github:burk3/systemctl-toggle";
+      inputs.nixpkgs.follows = "unstable";
+    };
   };
 
   outputs =
@@ -76,6 +80,7 @@
             localSystem = final.stdenv.hostPlatform;
           };
         })
+        systemctl-toggle.overlays.default
         niri.overlays.niri
         tidalcycles.overlays.tidal
       ];

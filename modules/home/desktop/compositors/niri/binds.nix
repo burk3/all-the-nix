@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 with config.lib.niri.actions;
 {
   "Mod+Shift+Slash".action = show-hotkey-overlay;
@@ -231,4 +231,9 @@ with config.lib.niri.actions;
   "Ctrl+Alt+Delete".action = quit;
 
   "Mod+Shift+P".action = power-off-monitors;
+
+  "XF86AudioMedia" = {
+    allow-when-locked = true;
+    action.spawn = [ "${pkgs.systemctl-toggle}/bin/systemctl-toggle" "--user" "wlsunset.service" ];
+  };
 }

@@ -733,6 +733,7 @@
         "quickshell": "quickshell",
         "snowfall-lib": "snowfall-lib",
         "system76-scheduler-niri": "system76-scheduler-niri",
+        "systemctl-toggle": "systemctl-toggle",
         "tidalcycles": "tidalcycles",
         "unstable": "unstable"
       }
@@ -813,6 +814,26 @@
       "original": {
         "owner": "Kirottu",
         "repo": "system76-scheduler-niri",
+        "type": "github"
+      }
+    },
+    "systemctl-toggle": {
+      "inputs": {
+        "nixpkgs": [
+          "unstable"
+        ]
+      },
+      "locked": {
+        "lastModified": 1774676714,
+        "narHash": "sha256-n2AYOuyyBa59mzybDgY1Rb0bCmsq97vb96Piv0aMTWA=",
+        "owner": "burk3",
+        "repo": "systemctl-toggle",
+        "rev": "f010afc7e90ca3ba6234d6cf0725654e469597b7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "burk3",
+        "repo": "systemctl-toggle",
         "type": "github"
       }
     },
