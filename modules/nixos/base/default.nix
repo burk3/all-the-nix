@@ -187,6 +187,11 @@ with lib;
       enable = true;
       nssmdns4 = true;
       openFirewall = true;
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = hasScreen;
+      };
     };
 
     hardware.bluetooth = mkIf hasScreen {
@@ -252,6 +257,7 @@ with lib;
         "libvirtd"
         "networkmanager"
         "wheel"
+        "dialout"
         "tss"
       ]
       ++ (lib.optionals hasScreen [
@@ -297,6 +303,7 @@ with lib;
         killall
         dig
         jq
+        picocom
       ]
       ++ optionals hasScreen [
         wooting-udev-rules
@@ -307,7 +314,6 @@ with lib;
         fluent-icon-theme
         mission-center
         iosevka
-        nvtopPackages.full
       ]
       ++ optionals (!isWsl) [
         podman-compose
