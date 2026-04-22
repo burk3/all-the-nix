@@ -98,6 +98,9 @@ with lib;
     # lets try resolved for dns stuff?
     services.resolved = mkIf ((!isWsl) || cfg.resolved1111) {
       enable = true;
+      extraConfig = mkIf cfg.privateNet ''
+        MulticastDNS=no
+      '';
       fallbackDns = [
         "1.1.1.1#one.one.one.one"
         "1.0.0.1#one.one.one.one"

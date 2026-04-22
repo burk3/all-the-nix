@@ -2,8 +2,8 @@
   description = "A very basic flake";
 
   inputs = {
-    #nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    nixpkgs.url = "github:NixOS/nixpkgs/release-25.11";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    #nixpkgs.url = "github:NixOS/nixpkgs/release-25.11";
     unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     snowfall-lib = {

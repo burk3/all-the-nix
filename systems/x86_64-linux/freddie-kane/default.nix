@@ -21,6 +21,7 @@
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
+  t11s.internalCA.enable = true;
 
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
@@ -63,6 +64,7 @@
     lanzaboote = {
       enable = true;
       pkiBundle = "/var/lib/sbctl";
+      configurationLimit = 8;
     };
     kernelParams = [
       "quiet"
@@ -78,7 +80,12 @@
     loader.efi.canTouchEfiVariables = true;
     initrd.systemd.enable = true;
     initrd.systemd.tpm2.enable = true;
+    extraModprobeConfig = ''
+      options cfg80211 ieee80211_regdom="US"
+    '';
   };
+
+  hardware.wirelessRegulatoryDatabase = true;
 
   services.hardware.bolt.enable = true;
 

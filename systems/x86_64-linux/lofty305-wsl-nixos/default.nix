@@ -25,6 +25,7 @@
   t11s.mainUser.description = "Burke Cates";
   t11s.resolved1111 = false;
   t11s.systemType = "wsl";
+  t11s.internalCA.enable = true;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

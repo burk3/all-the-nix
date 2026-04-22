@@ -24,6 +24,7 @@ in
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.serveBuilds = true;
+  t11s.internalCA.enable = true;
 
   ### firmware/hardware/lowlevel
   boot = {
@@ -52,14 +53,8 @@ in
     networks."10-ether" = {
       matchConfig.Name = ethIF;
       networkConfig.DHCP = "yes";
-      dhcpV4Config.UseDNS = false;
-      dhcpV6Config.UseDNS = false;
-      dns = builtins.map (addr: addr + "%${ethIF}#one.one.one.one") [
-        "1.1.1.1"
-        "1.0.0.1"
-        "[2606:4700:4700::1111]"
-        "[2606:4700:4700::1001]"
-      ];
+      dhcpV4Config.UseDNS = true;
+      dhcpV6Config.UseDNS = true;
     };
   };
 
@@ -72,6 +67,9 @@ in
       8080
     ];
   };
+
+  ### Hardware services
+  services.hardware.bolt.enable = true;
 
   ### Software
   services.sshd.enable = true;
