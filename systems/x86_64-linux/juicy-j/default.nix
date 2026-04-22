@@ -7,6 +7,7 @@
 let
   ethIF = "enp191s0";
   _wifiIF = "wlp192s0";
+  sfpIF = "sfp0";
 in
 {
   imports = [
@@ -50,8 +51,15 @@ in
   networking.interfaces.${ethIF}.wakeOnLan.enable = true;
   systemd.network = {
     enable = true;
+    wait-online.enable = true;
     networks."10-ether" = {
       matchConfig.Name = ethIF;
+      networkConfig.DHCP = "yes";
+      dhcpV4Config.UseDNS = true;
+      dhcpV6Config.UseDNS = true;
+    };
+    networks."20-sfp" = {
+      matchConfig.Name = sfpIF;
       networkConfig.DHCP = "yes";
       dhcpV4Config.UseDNS = true;
       dhcpV6Config.UseDNS = true;
@@ -70,6 +78,10 @@ in
 
   ### Hardware services
   services.hardware.bolt.enable = true;
+  services.udev.extraRules = ''
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:1b:21:ba:b4:1b", NAME="sfp0"
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:1b:21:ba:b4:1c", NAME="sfp1"
+  '';
 
   ### Software
   services.sshd.enable = true;
