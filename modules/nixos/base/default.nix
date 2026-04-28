@@ -307,6 +307,10 @@ with lib;
         dig
         jq
         picocom
+        tcpdump
+        pciutils
+        ethtool
+        usbutils
       ]
       ++ optionals hasScreen [
         wooting-udev-rules

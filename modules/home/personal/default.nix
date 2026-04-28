@@ -45,6 +45,7 @@ with lib;
       unzip
       nmap
       dig
+      glow
     ];
 
     home.sessionPath = [ "$HOME/.local/bin" ];
