@@ -1,0 +1,5 @@
+{
+  "ca-url": "https://turing.lan",
+  "fingerprint": "ed3387828bcf92326b8d700fb516869582c38bf3f5af2b3aa720e9888d8f9fef",
+  "root": "/home/burke/.step/certs/root_ca.crt"
+}
