@@ -93,6 +93,7 @@ with lib;
       # It's still possible to open the bootloader list by pressing any key
       # It will just not appear on screen unless a key is pressed
       loader.timeout = mkDefault 2;
+      kernelModules = [ "ntsync" ]; # for wine/proton!
     };
 
     # lets try resolved for dns stuff?
@@ -285,6 +286,7 @@ with lib;
     # more stuff for everyone
     programs.git.enable = true;
     programs.steam.enable = hasScreen;
+
 
     # mullvad vpn?
     services.mullvad-vpn = mkIf hasScreen {
