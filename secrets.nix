@@ -6,5 +6,5 @@ let
   juicy-j = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOqCimSANQl9QYxDnkwiAnU+mJGYMdwwMDcpFUJFBatL root@juicy-j";
 in
 {
-  "secrets/mikrotik-exporter.env.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/mikrotik-exporter.password.age".publicKeys = burke ++ [ juicy-j ];
 }

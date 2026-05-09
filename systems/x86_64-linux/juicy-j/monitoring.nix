@@ -1,33 +1,23 @@
 { config, ... }:
+let
+  # Hardcoded because the exporter doesn't expand env vars or systemd
+  # specifiers inside its YAML config. The unit name is stable.
+  passwordFile = "/run/credentials/prometheus-mikrotik-exporter.service/mikrotik-exporter.password";
+in
 {
   ### node-exporter — local-only
   services.prometheus.exporters.node = {
     enable = true;
     listenAddress = "127.0.0.1";
     port = 9100;
-    # default enabled collectors are fine
   };
 
-  ### agenix-managed secret for mikrotik-exporter
-  age.secrets."mikrotik-exporter.env" = {
-    file = ../../../secrets/mikrotik-exporter.env.age;
-    owner = "mikrotik-exporter";
-    group = "mikrotik-exporter";
-    mode = "0400";
-  };
+  ### agenix-managed password for mikrotik-exporter
+  # systemd LoadCredential below reads this as root and republishes it into
+  # the unit's credentials dir, so no owner/group/mode tweaks are needed.
+  age.secrets."mikrotik-exporter.password".file = ../../../secrets/mikrotik-exporter.password.age;
 
-  # The exporter framework defaults to DynamicUser=true. Dynamic users don't
-  # exist in /etc/passwd outside of an active unit, so agenix's activation-
-  # time chown of the secret to `mikrotik-exporter` fails on the first
-  # rebuild. Pre-declare a static user/group and force DynamicUser=false so
-  # systemd uses our static user (which is in /etc/passwd before activation).
-  users.users.mikrotik-exporter = {
-    isSystemUser = true;
-    group = "mikrotik-exporter";
-  };
-  users.groups.mikrotik-exporter = { };
-
-  ### mikrotik-exporter — reads MIKROTIK_USER / MIKROTIK_PASSWORD from EnvironmentFile
+  ### mikrotik-exporter — per-device password_file via burk3 fork
   services.prometheus.exporters.mikrotik = {
     enable = true;
     listenAddress = "127.0.0.1";
@@ -37,14 +27,24 @@
         {
           name = "molly";
           address = "10.1.1.1";
+          user = "exporter";
+          password_file = passwordFile;
         }
         {
           name = "case";
           address = "10.1.1.3";
+          user = "exporter";
+          password_file = passwordFile;
         }
         {
           name = "wintermute";
           address = "10.1.1.5";
+          user = "exporter";
+          password_file = passwordFile;
+          features = {
+            dhcpl = true;
+            container = true;
+          };
         }
       ];
       features = {
@@ -52,14 +52,13 @@
         monitor = true;
         firmware = true;
         optics = true;
+        ethernet = true;
       };
     };
   };
 
-  systemd.services.prometheus-mikrotik-exporter.serviceConfig = {
-    DynamicUser = false;
-    EnvironmentFile = config.age.secrets."mikrotik-exporter.env".path;
-  };
+  systemd.services.prometheus-mikrotik-exporter.serviceConfig.LoadCredential =
+    "mikrotik-exporter.password:${config.age.secrets."mikrotik-exporter.password".path}";
 
   ### VictoriaMetrics — local-only TSDB
   services.victoriametrics = {

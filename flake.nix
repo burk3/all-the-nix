@@ -63,6 +63,10 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mikrotik-exporter = {
+      url = "github:burk3/mikrotik-exporter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
