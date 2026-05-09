@@ -59,6 +59,10 @@
       url = "github:burk3/systemctl-toggle";
       inputs.nixpkgs.follows = "unstable";
     };
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -104,6 +108,7 @@
         lanzaboote.nixosModules.lanzaboote
         niri.nixosModules.niri
         programsdb.nixosModules.programs-sqlite
+        agenix.nixosModules.default
       ];
       systems.hosts.lofty305-wsl-nixos.modules = with inputs; [
         nixos-wsl.nixosModules.default

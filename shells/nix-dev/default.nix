@@ -1,6 +1,7 @@
 {
   pkgs,
   mkShell,
+  inputs,
   ...
 }:
 mkShell {
@@ -14,5 +15,6 @@ mkShell {
     statix
     # vulnix
     haskellPackages.dhall-nix
+    inputs.agenix.packages.${pkgs.system}.default
   ];
 }

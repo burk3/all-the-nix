@@ -14,6 +14,7 @@ in
     inputs.nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
     ./hardware-configuration.nix
     ./rke2.nix
+    ./monitoring.nix
   ];
   ### identity
   networking.hostName = "juicy-j";
