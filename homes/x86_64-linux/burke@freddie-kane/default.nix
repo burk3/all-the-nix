@@ -32,6 +32,7 @@
       networkManager.enable = true;
       services.gnome-keyring.enable = true;
     };
+    helix.enable = true;
   };
 
   # seeing if this gets bluetooth working again
