@@ -41,6 +41,7 @@ in
         window-decoration = false;
         cursor-style = "block";
         font-family = [
+          "Victor Mono"
           "Iosevka"
         ];
         font-size = 8;
