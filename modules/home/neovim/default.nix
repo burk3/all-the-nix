@@ -13,9 +13,9 @@ with lib;
     enable = mkEnableOption "Enable neovim with the config";
   };
   config = mkIf cfg.enable {
-    #home.packages = [ pkgs.nil ];
     programs.neovim = {
       enable = true;
+      package = pkgs.unstable.neovim-unwrapped;
       defaultEditor = true;
       vimAlias = true;
       vimdiffAlias = true;
@@ -37,6 +37,7 @@ with lib;
         #   '';
         # }
         vim-tidal
+        pkgs.unstable.vimPlugins.haskell-tools-nvim
       ];
       extraConfig = ''
         " sane backspaces
@@ -54,12 +55,23 @@ with lib;
         set foldmethod=marker
 
         lua << EOF
+          vim.g.mapleader = ' '
+
           vim.lsp.config['nil'] = {
             cmd = { '${pkgs.nil}/bin/nil' },
             filetypes = { 'nix' },
             root_markers = { 'flake.nix' },
           }
           vim.lsp.enable('nil')
+
+          vim.keymap.set('n', '<leader>f', function()
+            vim.lsp.buf.format({ async = false })
+          end, { desc = 'Format buffer (LSP)' })
+
+          vim.api.nvim_create_autocmd('BufWritePre', {
+            pattern = { '*.hs', '*.lhs' },
+            callback = function() vim.lsp.buf.format({ async = false }) end,
+          })
         EOF
       '';
     };
