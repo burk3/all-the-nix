@@ -57,6 +57,8 @@ with lib;
         lua << EOF
           vim.g.mapleader = ' '
 
+          vim.diagnostic.config({ virtual_lines = { current_line = true } })
+
           vim.lsp.config['nil'] = {
             cmd = { '${pkgs.nil}/bin/nil' },
             filetypes = { 'nix' },
@@ -67,6 +69,14 @@ with lib;
           vim.keymap.set('n', '<leader>f', function()
             vim.lsp.buf.format({ async = false })
           end, { desc = 'Format buffer (LSP)' })
+
+          vim.keymap.set('n', '<leader>d', function()
+            if vim.diagnostic.config().virtual_lines then
+              vim.diagnostic.config({ virtual_lines = false })
+            else
+              vim.diagnostic.config({ virtual_lines = { current_line = true } })
+            end
+          end, { desc = 'Toggle diagnostic virtual_lines' })
 
           vim.api.nvim_create_autocmd('BufWritePre', {
             pattern = { '*.hs', '*.lhs' },
