@@ -3,6 +3,7 @@ let
   # Hardcoded because the exporter doesn't expand env vars or systemd
   # specifiers inside its YAML config. The unit name is stable.
   passwordFile = "/run/credentials/prometheus-mikrotik-exporter.service/mikrotik-exporter.password";
+  haBearerFile = "/run/credentials/victoriametrics.service/ha-bearer.token";
 in
 {
   ### node-exporter — local-only
@@ -16,6 +17,7 @@ in
   # systemd LoadCredential below reads this as root and republishes it into
   # the unit's credentials dir, so no owner/group/mode tweaks are needed.
   age.secrets."mikrotik-exporter.password".file = ../../../secrets/mikrotik-exporter.password.age;
+  age.secrets."ha-bearer.token".file = ../../../secrets/ha-bearer.token.age;
 
   ### mikrotik-exporter — per-device password_file via burk3 fork
   services.prometheus.exporters.mikrotik = {
@@ -77,9 +79,19 @@ in
           scrape_interval = "30s";
           static_configs = [ { targets = [ "127.0.0.1:9436" ]; } ];
         }
+        {
+          job_name = "homeassistant";
+          scrape_interval = "30s";
+          metrics_path = "/api/prometheus";
+          authorization.credentials_file = haBearerFile;
+          static_configs = [ { targets = [ "homeassistant.lan:8123" ]; } ];
+        }
       ];
     };
   };
+
+  systemd.services.victoriametrics.serviceConfig.LoadCredential =
+    "ha-bearer.token:${config.age.secrets."ha-bearer.token".path}";
 
   ### Grafana — bound 0.0.0.0:3000, firewalled to tailscale only
   services.grafana = {

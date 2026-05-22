@@ -7,4 +7,5 @@ let
 in
 {
   "secrets/mikrotik-exporter.password.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/ha-bearer.token.age".publicKeys = burke ++ [ juicy-j ];
 }
