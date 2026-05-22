@@ -53,6 +53,7 @@
   home.packages = with pkgs; [
     mcomix
     kubectl
+    winbox4
   ];
 
   dconf.settings = {
