@@ -30,32 +30,23 @@
     dnsmasq
   ];
 
-  ### nix
-  #  nix = {
-  #    settings = {
-  #      substituters = [ "ssh://eu.nixbuild.net" ];
-  #      trusted-public-keys = [ "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U=" ];
-  #    };
-  #    distributedBuilds = true;
-  #    buildMachines = [
-  #      {
-  #        hostName = "eu.nixbuild.net";
-  #        system = "x86_64-linux";
-  #        maxJobs = 100;
-  #        supportedFeatures = [ "benchmark" "big-parallel" ];
-  #        sshKey = "/root/.ssh/nixbuild-dot-net";
-  #      }
-  #    }
-  #      hostName = "lil-debbie.lan";
-  #      maxJobs = 48;
-  #      sshUser = "nixbuilder";
-  #      sshKey = "/root/.ssh/id_ed25519";
-  #      system = "x86_64-linux";
-  #      protocol = "ssh-ng";
-  #      supportedFeatures = [ "nixos-test" "big-parallel" "kvm" ];
-  #    }
-  #    ];
-  #  };
+  ### nixbuild.net
+  nix = {
+    settings = {
+      substituters = [ "ssh://eu.nixbuild.net" ];
+      trusted-public-keys = [ "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U=" ];
+    };
+    distributedBuilds = true;
+    buildMachines = [
+      {
+        hostName = "eu.nixbuild.net";
+        system = "aarch64-linux";
+        maxJobs = 100;
+        supportedFeatures = [ "benchmark" "big-parallel" ];
+        sshKey = "/root/.ssh/nixbuild-dot-net";
+      }
+    ];
+  };
 
   ### firmware/hardware/lowlevel
   boot = {
