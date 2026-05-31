@@ -90,16 +90,6 @@ in
   services.xserver.displayManager.gdm.autoSuspend = false;
   environment.systemPackages = with pkgs; [ via ];
 
-  # doesn't work for now. ollama just doesn't support :(
-  #services.ollama = {
-  #  enable = true;
-  #  acceleration = "rocm";
-  #  environmentVariables = {
-  #    HCC_AMDGPU_TARGET = "gfx1151";
-  #  };
-  #  rocmOverrideGfx = "11.5.1";
-  #};
-
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave
