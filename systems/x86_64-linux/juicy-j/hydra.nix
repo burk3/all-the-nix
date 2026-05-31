@@ -18,11 +18,17 @@
   # /root/.ssh/nixbuild-dot-net is provisioned out-of-band (same one used on
   # freddie-kane).
   nix.distributedBuilds = true;
-  nix.settings.substituters = [ "ssh://eu.nixbuild.net" ];
+  nix.settings.substituters = [ "ssh://eu.nixbuild.net?priority=100" ];
   nix.settings.trusted-public-keys = [
     "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U="
   ];
   nix.buildMachines = [
+    {
+      hostName = "localhost";
+      systems = [ "x86_64-linux" ];
+      supportedFeatures = [ "kvm" "big-parallel" "nixos-test" "benchmark" ];
+      maxJobs = 16;
+    }
     {
       hostName = "eu.nixbuild.net";
       system = "aarch64-linux";
