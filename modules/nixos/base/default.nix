@@ -155,8 +155,27 @@ with lib;
     # Enable the X11 windowing system.
     services.xserver.enable = hasScreen;
 
-    # Enable the GNOME Desktop Environment.
-    services.displayManager.gdm.enable = hasScreen;
+    # Display manager: greetd + tuigreet. A console greeter with no compositor of
+    # its own, so it sidesteps the Wayland-greeter breakage that both GDM (gnome-
+    # session PATH, nixpkgs#523332) and SDDM (qt5 lib / weston) hit on 26.05.
+    # Sessions come from the aggregated sessionData dir so niri, gnome, and
+    # hyprland (+uwsm) all appear in the picker (Ctrl-S / F3 to switch).
+    services.greetd = mkIf hasScreen {
+      enable = true;
+      useTextGreeter = true;
+      settings.default_session = {
+        user = "greeter";
+        command = concatStringsSep " " [
+          "${pkgs.tuigreet}/bin/tuigreet"
+          "--time"
+          "--remember"
+          "--remember-session"
+          "--asterisks"
+          "--sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions"
+          "--xsessions ${config.services.displayManager.sessionData.desktops}/share/xsessions"
+        ];
+      };
+    };
 
     # lets add hyprland in there as well, why the fuck not
     programs.hyprland = {
