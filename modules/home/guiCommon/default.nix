@@ -55,7 +55,7 @@ in
         # - rose-pine-dawn (bws)
         # - seoulbones_light (bws)
         #theme = "light:ayu_light,dark:nord";
-        theme = "catppuccin-frappe";
+        theme = "Rose Pine Moon";
       };
     };
   };
