@@ -19,7 +19,6 @@ in
       spotify
       playerctl
       pinta
-      inkscape
       remmina
       brogue-ce
       # fonts
