@@ -15,6 +15,7 @@ in
     ./hardware-configuration.nix
     ./rke2.nix
     ./monitoring.nix
+    ./hydra.nix
   ];
   ### identity
   networking.hostName = "juicy-j";
