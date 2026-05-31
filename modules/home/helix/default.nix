@@ -1,5 +1,13 @@
-{ config, lib, pkgs, namespace, ... }:
-let cfg = config.${namespace}.helix; in
+{
+  config,
+  lib,
+  pkgs,
+  namespace,
+  ...
+}:
+let
+  cfg = config.${namespace}.helix;
+in
 {
   options.${namespace}.helix.enable = lib.mkEnableOption "enable helix with some fun defaults";
   config = lib.mkIf cfg.enable {

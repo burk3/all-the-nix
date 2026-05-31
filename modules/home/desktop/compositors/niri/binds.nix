@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 with config.lib.niri.actions;
 {
   "Mod+Shift+Slash".action = show-hotkey-overlay;
@@ -13,7 +18,10 @@ with config.lib.niri.actions;
   };
   "Super+Alt+L" = {
     hotkey-overlay.title = "Lock the Screen: loginctl lock-session";
-    action.spawn = [ "loginctl" "lock-session" ];
+    action.spawn = [
+      "loginctl"
+      "lock-session"
+    ];
   };
 
   "XF86AudioRaiseVolume" = {
@@ -234,6 +242,10 @@ with config.lib.niri.actions;
 
   "XF86AudioMedia" = {
     allow-when-locked = true;
-    action.spawn = [ "${pkgs.systemctl-toggle}/bin/systemctl-toggle" "--user" "wlsunset.service" ];
+    action.spawn = [
+      "${pkgs.systemctl-toggle}/bin/systemctl-toggle"
+      "--user"
+      "wlsunset.service"
+    ];
   };
 }

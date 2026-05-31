@@ -18,10 +18,6 @@
       url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    catppuccin = {
-      url = "github:catppuccin/nix/release-25.11"; # TODO: switch to release-25.11
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     niri.url = "github:sodiboo/niri-flake";
     programsdb = {
       url = "github:wamserma/flake-programs-sqlite";
@@ -99,7 +95,6 @@
         };
 
         homes.modules = with inputs; [
-          catppuccin.homeModules.catppuccin
           caelestia-niri.homeManagerModules.default
           #niri.homeModules.config
         ];
@@ -108,7 +103,6 @@
         ];
 
         systems.modules.nixos = with inputs; [
-          catppuccin.nixosModules.catppuccin
           determinate.nixosModules.default
           lanzaboote.nixosModules.lanzaboote
           niri.nixosModules.niri

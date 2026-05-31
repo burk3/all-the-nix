@@ -80,10 +80,6 @@ with lib;
       tctiEnvironment.enable = true;
     };
 
-    # vanity
-    catppuccin.enable = true;
-    catppuccin.accent = "teal";
-
     # Bootloader.
     boot = mkIf (!isWsl) {
       # Enable "Silent Boot"
@@ -286,7 +282,6 @@ with lib;
     # more stuff for everyone
     programs.git.enable = true;
     programs.steam.enable = hasScreen;
-
 
     # mullvad vpn?
     services.mullvad-vpn = mkIf hasScreen {
