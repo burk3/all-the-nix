@@ -33,7 +33,7 @@
   ### nixbuild.net
   nix = {
     settings = {
-      substituters = [ "ssh://eu.nixbuild.net" ];
+      substituters = [ "ssh://eu.nixbuild.net?priority=100" ];
       trusted-public-keys = [ "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U=" ];
     };
     distributedBuilds = true;
