@@ -18,6 +18,7 @@ in
   # the unit's credentials dir, so no owner/group/mode tweaks are needed.
   age.secrets."mikrotik-exporter.password".file = ../../../secrets/mikrotik-exporter.password.age;
   age.secrets."ha-bearer.token".file = ../../../secrets/ha-bearer.token.age;
+  age.secrets."grafana-secret-key".file = ../../../secrets/grafana-secret-key.age;
 
   ### mikrotik-exporter — per-device password_file via burk3 fork
   services.prometheus.exporters.mikrotik = {
@@ -112,6 +113,9 @@ in
         disable_login_form = true;
       };
       analytics.reporting_enabled = false;
+      # secret_key has no default as of 26.05; fed via systemd credential so it
+      # never lands in the world-readable Nix store. Grafana expands $__file{}.
+      security.secret_key = "$__file{/run/credentials/grafana.service/secret_key}";
     };
     provision.datasources.settings.datasources = [
       {
@@ -123,6 +127,10 @@ in
       }
     ];
   };
+
+  systemd.services.grafana.serviceConfig.LoadCredential = "secret_key:${
+    config.age.secrets."grafana-secret-key".path
+  }";
 
   ### Firewall — open Grafana only on the tailscale interface
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 3000 ];
