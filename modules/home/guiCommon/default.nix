@@ -55,7 +55,7 @@ in
         # - rose-pine-dawn (bws)
         # - seoulbones_light (bws)
         #theme = "light:ayu_light,dark:nord";
-        theme = "catppuccin-${config.catppuccin.flavor}";
+        theme = "Rose Pine Moon";
       };
     };
   };

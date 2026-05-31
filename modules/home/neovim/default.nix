@@ -25,7 +25,11 @@ with lib;
         vim-surround
         {
           plugin = lightline-vim;
-          config = "let g:lightline = {'colorscheme': 'catppuccin'}";
+          config = "let g:lightline = {'colorscheme': 'rosepine_moon'}";
+        }
+        {
+          plugin = rose-pine;
+          config = "colorscheme rose-pine-moon";
         }
         vim-markdown
         nvim-treesitter.withAllGrammars

@@ -90,8 +90,9 @@ in
     };
   };
 
-  systemd.services.victoriametrics.serviceConfig.LoadCredential =
-    "ha-bearer.token:${config.age.secrets."ha-bearer.token".path}";
+  systemd.services.victoriametrics.serviceConfig.LoadCredential = "ha-bearer.token:${
+    config.age.secrets."ha-bearer.token".path
+  }";
 
   ### Grafana — bound 0.0.0.0:3000, firewalled to tailscale only
   services.grafana = {

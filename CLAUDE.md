@@ -64,4 +64,3 @@ nix build .#t11s-step
 - **Nix experimental features**: `nix-command flakes parallel-eval pipe-operators` + `lazy-trees = true` + `eval-cores = 0` — set system-wide by `modules/nixos/base`. Code may use pipe-operators syntax (`|>`); don't "fix" it.
 - **`lazy-trees = true` gotcha**: new files must be `git add`-ed (not necessarily committed) before `nix build` sees them.
 - **`allowUnfree = true`** globally.
-- **Catppuccin** is enabled across NixOS and home-manager; flavor/accent exposed via `t11s.personal.{catppuccinFlavor,catppuccinAccent}`.
