@@ -69,6 +69,17 @@ in
       enable = true;
       settings = {
         "$font" = "JetBrainsMono Nerd Font";
+        # Rosé Pine Moon palette, inlined (replacing the Catppuccin Frappé
+        # theme includes that used to be sourced by the dropped catppuccin module).
+        "$base" = "rgb(232136)";
+        "$surface" = "rgb(2a273f)";
+        "$muted" = "rgb(6e6a86)";
+        "$text" = "rgb(e0def4)";
+        "$love" = "rgb(eb6f92)";
+        "$gold" = "rgb(f6c177)";
+        "$foam" = "rgb(9ccfd8)"; # accent
+        "$textAlpha" = "e0def4";
+        "$foamAlpha" = "9ccfd8"; # accentAlpha
         general = {
           disable_loading_bar = true;
           hide_cursor = true;
@@ -78,14 +89,12 @@ in
             monitor = "";
             path =
               let
-                wallpapers = pkgs.fetchFromGitHub {
-                  owner = "zhichaoh";
-                  repo = "catppuccin-wallpapers";
-                  rev = "1023077979591cdeca76aae94e0359da1707a60e";
-                  sha256 = "0rd6hfd88bsprjg68saxxlgf2c2lv1ldyr6a8i7m4lgg6nahbrw7";
+                wallpaper = pkgs.fetchurl {
+                  url = "https://raw.githubusercontent.com/rose-pine/wallpapers/refs/heads/main/generative/shape.png";
+                  hash = "sha256-0e7VEkYxQ943dVJvsPPJYYPQCcVOtZhqLhVoGJa7l9Y=";
                 };
               in
-              "${wallpapers}/patterns/line_icons.png";
+              "${wallpaper}";
             blur_passes = 0;
             color = "$base";
           }
@@ -117,7 +126,7 @@ in
             monitor = "";
             path = "$HOME/.face";
             size = 100;
-            border_color = "$accent";
+            border_color = "$foam";
             position = "0, 75";
             halign = "center";
             valign = "center";
@@ -131,16 +140,16 @@ in
             dots_size = "0.2";
             dots_spacing = "0.2";
             dots_center = true;
-            outer_color = "$overlay0";
-            inner_color = "$surface0";
+            outer_color = "$muted";
+            inner_color = "$surface";
             font_color = "$text";
             fade_on_empty = false;
-            placeholder_text = ''<span foreground="##$textAlpha"><i>󰌾 Logged in as </i><span foreground="##$accentAlpha">$USER</span></span>'';
+            placeholder_text = ''<span foreground="##$textAlpha"><i>󰌾 Logged in as </i><span foreground="##$foamAlpha">$USER</span></span>'';
             hide_input = false;
-            check_color = "$accent";
-            fail_color = "$red";
+            check_color = "$foam";
+            fail_color = "$love";
             fail_text = "<i>$FAIL <b>($ATTEMPTS)</b></i>";
-            capslock_color = "$yellow";
+            capslock_color = "$gold";
             position = "0, -47";
             halign = "center";
             valign = "center";
