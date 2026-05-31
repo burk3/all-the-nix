@@ -20,7 +20,7 @@ lib.mkIf (cfg.enable && (cfg.bar == "waybar")) {
     enable = true;
     systemd = {
       enable = true;
-      target = "graphical-session.target";
+      targets = [ "graphical-session.target" ];
     };
     # {{{ waybar.settings
     settings = {

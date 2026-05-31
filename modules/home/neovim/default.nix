@@ -16,6 +16,8 @@ with lib;
     programs.neovim = {
       enable = true;
       package = pkgs.unstable.neovim-unwrapped;
+      withPython3 = false;
+      withRuby = false;
       defaultEditor = true;
       vimAlias = true;
       vimdiffAlias = true;
@@ -24,10 +26,12 @@ with lib;
         nerdtree
         vim-surround
         {
+          type = "viml";
           plugin = lightline-vim;
           config = "let g:lightline = {'colorscheme': 'rosepine_moon'}";
         }
         {
+          type = "viml";
           plugin = rose-pine;
           config = "colorscheme rose-pine-moon";
         }

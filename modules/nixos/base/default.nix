@@ -96,7 +96,7 @@ with lib;
     services.resolved = mkIf ((!isWsl) || cfg.resolved1111) {
       enable = true;
       settings.Resolve.MulticastDNS = mkIf cfg.privateNet "no";
-      fallbackDns = [
+      settings.Resolve.FallbackDns = [
         "1.1.1.1#one.one.one.one"
         "1.0.0.1#one.one.one.one"
       ];

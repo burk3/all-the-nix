@@ -87,7 +87,7 @@ in
 
   ### Software
   services.sshd.enable = true;
-  services.xserver.displayManager.gdm.autoSuspend = false;
+  services.displayManager.gdm.autoSuspend = false;
   environment.systemPackages = with pkgs; [ via ];
 
   # This value determines the NixOS release from which the default
