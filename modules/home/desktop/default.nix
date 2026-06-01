@@ -13,6 +13,7 @@ in
     ./lock-idle.nix
     ./bars/waybar.nix
     ./bars/caelestia.nix
+    ./bars/noctalia.nix
     ./wallpaper.nix
     #./bars/quickshell.nix
   ];
@@ -41,6 +42,7 @@ in
         type = types.enum [
           "waybar"
           "caelestia"
+          "noctalia"
         ];
       };
       launcher = mkOption {
@@ -48,6 +50,7 @@ in
         type = types.enum [
           "fuzzel"
           "caelestia"
+          "noctalia"
         ];
         default = "fuzzel";
       };

@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -55,17 +56,17 @@ in
           enable = true;
           width = 2;
           active.gradient = {
-            from = "hsl(11deg, 59%, 67%)";
-            to = "hsl(0deg, 60%, 67%)";
+            from = "#ea9a97"; # rose
+            to = "#eb6f92"; # love
             angle = 45;
           };
         };
         border = {
           enable = false;
           width = 2;
-          active.color = "#ffc87f";
-          inactive.color = "#505050";
-          urgent.color = "#9b0000";
+          active.color = "#f6c177"; # gold
+          inactive.color = "#56526e"; # highlight high
+          urgent.color = "#eb6f92"; # love
         };
         shadow = {
           enable = true;
@@ -78,6 +79,15 @@ in
       };
       screenshot-path = "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png";
       window-rules = [
+        ## not supported in the module yet. see end of file
+        # {
+        #   # from noctilia-shell docs
+        #   # apps: blur them all without xray for a better look
+        #   background-effect = {
+        #     blur = true;
+        #     xray = false;
+        #   };
+        # }
         {
           matches = [ { app-id = "firefox$"; } ];
           default-column-width = {
@@ -122,6 +132,19 @@ in
           matches = [ { namespace = "^launcher$"; } ];
           baba-is-float = true;
         }
+        {
+          matches = [ { namespace = "^noctilia-overview*"; } ];
+          place-within-backdrop = true;
+        }
+        ## not supported in module yet. see end of file.
+        # {
+        #   # from noctilia-shell docs
+        #   # Noctilia: blur everywhere without xray for a better look
+        #   matches = [ { namespace = "^noctalia-(background|launcher-overlay|dock)-.*$"; } ];
+        #   background-effect = {
+        #     xray = false;
+        #   };
+        # }
       ];
       binds = import ./binds.nix { inherit config lib pkgs; };
       switch-events = {
@@ -131,5 +154,33 @@ in
         ];
       };
     };
+    ## dirty hack!
+    # the following uses a niri flake internal api to write some configs that
+    # are unsupported by the module as of now. i expect these will go away at
+    # some point.
+    xdg.configFile.niri-config.source =
+      let
+        inherit (inputs.niri.lib.internal) validated-config-for;
+        inherit (config.programs.niri) finalConfig package;
+      in
+      lib.mkForce (
+        validated-config-for pkgs package ''
+          ${finalConfig}
+
+          window-rule {
+            background-effect {
+              blur true
+              xray false
+            }
+          }
+
+          layer-rule {
+            match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+            background-effect {
+              xray false
+            }
+          }
+        ''
+      );
   };
 }

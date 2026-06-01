@@ -51,6 +51,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.quickshell.follows = "quickshell";
     };
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     systemctl-toggle = {
       url = "github:burk3/systemctl-toggle";
       inputs.nixpkgs.follows = "unstable";
@@ -95,6 +99,7 @@
 
         homes.modules = with inputs; [
           caelestia-niri.homeManagerModules.default
+          noctalia.homeModules.default
         ];
         homes.users."burke@freddie-kane".modules = with inputs; [
           system76-scheduler-niri.homeModules.default
@@ -103,7 +108,12 @@
         systems.modules.nixos = with inputs; [
           determinate.nixosModules.default
           stylix.nixosModules.stylix
-          ({lib, ...}:{config.stylix.autoEnable = lib.mkDefault false;})
+          (
+            { lib, ... }:
+            {
+              config.stylix.autoEnable = lib.mkDefault false;
+            }
+          )
           lanzaboote.nixosModules.lanzaboote
           niri.nixosModules.niri
           programsdb.nixosModules.programs-sqlite
