@@ -23,6 +23,11 @@
   t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
   t11s.internalCA.enable = true;
 
+  stylix.enable = true;
+  stylix.autoEnable = false;
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
+  stylix.targets.console.enable = true;
+
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
   users.users.burke.extraGroups = [ "libvirtd" ];

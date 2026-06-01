@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    #nixpkgs.url = "github:NixOS/nixpkgs/release-25.11";
+    #nixpkgs.url = "github:NixOS/nixpkgs/release-26.05";
     unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     snowfall-lib = {
@@ -30,13 +30,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    stylix = {
+      url = "github:nix-community/stylix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
-    };
-    tidalcycles = {
-      url = "github:mitchmindtree/tidalcycles.nix";
-      inputs.nixpkgs.follows = "unstable";
     };
     system76-scheduler-niri = {
       url = "github:Kirottu/system76-scheduler-niri";
@@ -88,7 +88,6 @@
           })
           systemctl-toggle.overlays.default
           niri.overlays.niri
-          tidalcycles.overlays.tidal
         ];
         alias = {
           shells.default = "nix-dev";
@@ -96,7 +95,6 @@
 
         homes.modules = with inputs; [
           caelestia-niri.homeManagerModules.default
-          #niri.homeModules.config
         ];
         homes.users."burke@freddie-kane".modules = with inputs; [
           system76-scheduler-niri.homeModules.default
@@ -104,6 +102,8 @@
 
         systems.modules.nixos = with inputs; [
           determinate.nixosModules.default
+          stylix.nixosModules.stylix
+          ({lib, ...}:{config.stylix.autoEnable = lib.mkDefault false;})
           lanzaboote.nixosModules.lanzaboote
           niri.nixosModules.niri
           programsdb.nixosModules.programs-sqlite
