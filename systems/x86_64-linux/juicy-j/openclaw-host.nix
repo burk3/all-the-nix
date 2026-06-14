@@ -28,8 +28,10 @@
   # in openclaw-vm/network.xml).
   networking.firewall.trustedInterfaces = [ "virbr-ocnat" ];
 
-  # Host-side directory the guest mounts over virtiofs:
-  #   - workspace: read/write agent working files, visible on the host
+  # Host-side directories the guest mounts over virtiofs:
+  #   - workspace: the bot's identity/state repo (read/write, visible on the host)
+  #   - projects:  code repos cloned host-side with your ssh keys; the bot edits
+  #               them in-VM. Kept separate so clones don't nest in the bot's repo.
   # Secrets are NOT host-managed: OpenClaw's creds live in an env file on the
   # guest's persistent data disk (see openclaw-vm), so there's no decrypted-secret
   # share on the host. Revisit agenix here only if a host-authoritative secret is
@@ -37,6 +39,7 @@
   systemd.tmpfiles.rules = [
     "d /srv/openclaw 0755 root root - -"
     "d /srv/openclaw/workspace 0775 burke libvirtd - -"
+    "d /srv/openclaw/projects 0775 burke libvirtd - -"
   ];
 
   environment.systemPackages = [ pkgs.virtiofsd ];
