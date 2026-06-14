@@ -240,12 +240,4 @@ with config.lib.niri.actions;
 
   "Mod+Shift+P".action = power-off-monitors;
 
-  "XF86AudioMedia" = {
-    allow-when-locked = true;
-    action.spawn = [
-      "${pkgs.systemctl-toggle}/bin/systemctl-toggle"
-      "--user"
-      "wlsunset.service"
-    ];
-  };
 }

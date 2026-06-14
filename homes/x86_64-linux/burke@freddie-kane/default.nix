@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, config, ... }:
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -68,19 +68,19 @@
     nightTemp = "3000";
     dayTemp = "6500";
   };
+  programs.niri.settings.binds."XF86AudioMedia" = {
+    allow-when-locked = true;
+    action.spawn = [
+      "${lib.getExe config.programs.noctalia-shell.package}"
+      "ipc"
+      "call"
+      "nightLight"
+      "toggle"
+    ];
+  };
 
   # seeing if this gets bluetooth working again
   services.blueman-applet.enable = true;
-  services.wlsunset = {
-    enable = true;
-    temperature.night = 2500;
-    ## ncc
-    # latitude = 39.3;
-    # longitude = -75.3;
-    ## sea
-    latitude = 47.6;
-    longitude = -122.3;
-  };
 
   services.system76-scheduler-niri.enable = true;
 
