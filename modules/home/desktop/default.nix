@@ -12,7 +12,6 @@ in
   imports = [
     ./lock-idle.nix
     ./bars/waybar.nix
-    ./bars/caelestia.nix
     ./bars/noctalia.nix
     ./wallpaper.nix
     #./bars/quickshell.nix
@@ -41,7 +40,6 @@ in
         description = "which bar/shell thing to use";
         type = types.enum [
           "waybar"
-          "caelestia"
           "noctalia"
         ];
       };
@@ -49,7 +47,6 @@ in
         description = "program launcher to use";
         type = types.enum [
           "fuzzel"
-          "caelestia"
           "noctalia"
         ];
         default = "fuzzel";

@@ -91,54 +91,6 @@
         "type": "github"
       }
     },
-    "caelestia-cli": {
-      "inputs": {
-        "caelestia-shell": [
-          "caelestia-niri"
-        ],
-        "nixpkgs": [
-          "caelestia-niri",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772764582,
-        "narHash": "sha256-hSwjmpXHFqzSXrndVekA0IheKrbC7wi0IbfZTYwlmXw=",
-        "owner": "caelestia-dots",
-        "repo": "cli",
-        "rev": "4bcd42f482d038b98145b0b03388244b68b7d35d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "caelestia-dots",
-        "repo": "cli",
-        "type": "github"
-      }
-    },
-    "caelestia-niri": {
-      "inputs": {
-        "caelestia-cli": "caelestia-cli",
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "quickshell": [
-          "quickshell"
-        ]
-      },
-      "locked": {
-        "lastModified": 1772936055,
-        "narHash": "sha256-Q9Q3lUwa5Vs/Ge61nKKT8j+RQhNrIpIKWEKNkyhs7nU=",
-        "owner": "jutraim",
-        "repo": "niri-caelestia-shell",
-        "rev": "24f5bd42bf6d416326d69ad592fa89d2aceff1b2",
-        "type": "github"
-      },
-      "original": {
-        "owner": "jutraim",
-        "repo": "niri-caelestia-shell",
-        "type": "github"
-      }
-    },
     "crane": {
       "locked": {
         "lastModified": 1765145449,
@@ -986,7 +938,6 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
-        "caelestia-niri": "caelestia-niri",
         "determinate": "determinate",
         "home-manager": "home-manager_2",
         "lanzaboote": "lanzaboote",

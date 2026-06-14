@@ -46,11 +46,6 @@
       url = "git+https://git.outfoxxed.me/quickshell/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    caelestia-niri = {
-      url = "github:jutraim/niri-caelestia-shell";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.quickshell.follows = "quickshell";
-    };
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -98,7 +93,6 @@
         };
 
         homes.modules = with inputs; [
-          caelestia-niri.homeManagerModules.default
           noctalia.homeModules.default
         ];
         homes.users."burke@freddie-kane".modules = with inputs; [
