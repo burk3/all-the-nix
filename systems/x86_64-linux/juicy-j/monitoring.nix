@@ -19,6 +19,8 @@ in
   age.secrets."mikrotik-exporter.password".file = ../../../secrets/mikrotik-exporter.password.age;
   age.secrets."ha-bearer.token".file = ../../../secrets/ha-bearer.token.age;
   age.secrets."grafana-secret-key".file = ../../../secrets/grafana-secret-key.age;
+  age.secrets."pushover-user-key".file = ../../../secrets/pushover-user-key.age;
+  age.secrets."pushover-api-token".file = ../../../secrets/pushover-api-token.age;
 
   ### mikrotik-exporter — per-device password_file via burk3 fork
   services.prometheus.exporters.mikrotik = {
@@ -126,11 +128,36 @@ in
         isDefault = true;
       }
     ];
+
+    # Pushover contact point, provisioned declaratively. Secrets are read at
+    # runtime via $__file{} from systemd credentials (see LoadCredential
+    # below), so they never land in the world-readable Nix store.
+    provision.alerting.contactPoints.settings = {
+      apiVersion = 1;
+      contactPoints = [
+        {
+          name = "pushover-plants";
+          receivers = [
+            {
+              uid = "pushover_plants";
+              type = "pushover";
+              settings = {
+                userKey = "$__file{/run/credentials/grafana.service/pushover_user_key}";
+                apiToken = "$__file{/run/credentials/grafana.service/pushover_api_token}";
+                priority = "0";
+              };
+            }
+          ];
+        }
+      ];
+    };
   };
 
-  systemd.services.grafana.serviceConfig.LoadCredential = "secret_key:${
-    config.age.secrets."grafana-secret-key".path
-  }";
+  systemd.services.grafana.serviceConfig.LoadCredential = [
+    "secret_key:${config.age.secrets."grafana-secret-key".path}"
+    "pushover_user_key:${config.age.secrets."pushover-user-key".path}"
+    "pushover_api_token:${config.age.secrets."pushover-api-token".path}"
+  ];
 
   ### Firewall — open Grafana only on the tailscale interface
   networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 3000 ];

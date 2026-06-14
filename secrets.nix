@@ -9,4 +9,6 @@ in
   "secrets/mikrotik-exporter.password.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/ha-bearer.token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/grafana-secret-key.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/pushover-user-key.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/pushover-api-token.age".publicKeys = burke ++ [ juicy-j ];
 }
