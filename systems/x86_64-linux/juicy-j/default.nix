@@ -61,6 +61,8 @@ in
   systemd.network = {
     enable = true;
     wait-online.enable = true;
+    # satisfied as soon as ANY link is online — sfp0 primary, ether DHCP backup
+    wait-online.anyInterface = true;
     networks."10-ether" = {
       matchConfig.Name = ethIF;
       networkConfig.DHCP = "yes";
