@@ -4,6 +4,9 @@ let
   # specifiers inside its YAML config. The unit name is stable.
   passwordFile = "/run/credentials/prometheus-mikrotik-exporter.service/mikrotik-exporter.password";
   haBearerFile = "/run/credentials/victoriametrics.service/ha-bearer.token";
+  # OpenClaw gateway operator token, used as the scrape bearer for the agent VM's
+  # diagnostics-prometheus endpoint (authed route; no public /metrics).
+  ocTokenFile = "/run/credentials/victoriametrics.service/openclaw-gateway.token";
 in
 {
   ### node-exporter — local-only
@@ -21,6 +24,7 @@ in
   age.secrets."grafana-secret-key".file = ../../../secrets/grafana-secret-key.age;
   age.secrets."pushover-user-key".file = ../../../secrets/pushover-user-key.age;
   age.secrets."pushover-api-token".file = ../../../secrets/pushover-api-token.age;
+  age.secrets."openclaw-gateway-token".file = ../../../secrets/openclaw-gateway-token.age;
 
   ### mikrotik-exporter — per-device password_file via burk3 fork
   services.prometheus.exporters.mikrotik = {
@@ -89,13 +93,23 @@ in
           authorization.credentials_file = haBearerFile;
           static_configs = [ { targets = [ "homeassistant.lan:8123" ]; } ];
         }
+        {
+          # OpenClaw agent VM, scraped over the tailnet (gateway bound "tailnet").
+          # Route is operator-authed; the bearer is the gateway token credential.
+          job_name = "openclaw";
+          scrape_interval = "30s";
+          metrics_path = "/api/diagnostics/prometheus";
+          authorization.credentials_file = ocTokenFile;
+          static_configs = [ { targets = [ "openclaw.dab-ling.ts.net:18789" ]; } ];
+        }
       ];
     };
   };
 
-  systemd.services.victoriametrics.serviceConfig.LoadCredential = "ha-bearer.token:${
-    config.age.secrets."ha-bearer.token".path
-  }";
+  systemd.services.victoriametrics.serviceConfig.LoadCredential = [
+    "ha-bearer.token:${config.age.secrets."ha-bearer.token".path}"
+    "openclaw-gateway.token:${config.age.secrets."openclaw-gateway-token".path}"
+  ];
 
   ### Grafana — bound 0.0.0.0:3000, firewalled to tailscale only
   services.grafana = {

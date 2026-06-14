@@ -11,4 +11,5 @@ in
   "secrets/grafana-secret-key.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/pushover-user-key.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/pushover-api-token.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/openclaw-gateway-token.age".publicKeys = burke ++ [ juicy-j ];
 }
