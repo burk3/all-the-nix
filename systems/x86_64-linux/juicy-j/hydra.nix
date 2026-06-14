@@ -25,6 +25,13 @@
   nix.buildMachines = [
     {
       hostName = "localhost";
+      # Build locally without SSH. With the default protocol = "ssh", the module
+      # renders this as `ssh://localhost` in /etc/nix/machines, which Hydra
+      # tolerates but breaks interactive `nix build` (the CLI shares this file
+      # via builders=@/etc/nix/machines and tries to SSH into itself). A bare
+      # `localhost` entry (protocol = null) builds on the local machine — the
+      # form nixpkgs documents as "used by hydra".
+      protocol = null;
       systems = [ "x86_64-linux" ];
       supportedFeatures = [
         "kvm"
