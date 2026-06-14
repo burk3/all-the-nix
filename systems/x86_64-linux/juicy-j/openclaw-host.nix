@@ -6,6 +6,13 @@
 
   virtualisation.libvirtd = {
     enable = true;
+    # On host shutdown, gracefully power the guest off instead of suspending it to
+    # a managed-save image. All OpenClaw state lives on the data disk, so a cold
+    # boot loses nothing — and it avoids the fragile save/restore path (a stale
+    # save image failed to restore with SIGPIPE after a host reboot). Combined
+    # with `virsh autostart openclaw`, a host reboot cold-boots the guest cleanly.
+    onShutdown = "shutdown";
+    onBoot = "start";
     qemu = {
       runAsRoot = false;
       # Provide virtiofsd so domains can use <filesystem driver type="virtiofs">.
