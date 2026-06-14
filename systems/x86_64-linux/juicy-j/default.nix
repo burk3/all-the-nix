@@ -17,6 +17,7 @@ in
     ./monitoring.nix
     ./hydra.nix
     ./openclaw-host.nix
+    ./ai.nix
   ];
   ### identity
   networking.hostName = "juicy-j";
