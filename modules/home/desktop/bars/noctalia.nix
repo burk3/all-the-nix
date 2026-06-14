@@ -8,8 +8,32 @@
 let
   inherit (lib) mkIf;
   cfg = config.t11s.desktop;
+  noctaliaCfg = cfg.noctalia;
 in
 {
+  options.t11s.desktop.noctalia = {
+    barPosition = lib.mkOption {
+      type = lib.types.enum [
+        "top"
+        "left"
+        "bottom"
+        "right"
+      ];
+      default = "top";
+      description = "where to stick the noctalia bar";
+    };
+    pinnedApps = lib.mkOption {
+      description = "apps to be pinned";
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+    };
+    location = lib.mkOption {
+      description = "location for weather and stuff";
+      type = lib.types.str;
+      default = "Seattle";
+    };
+  };
+
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
       (mkIf (cfg.bar == "noctalia") {
@@ -26,19 +50,13 @@ in
           settings = {
             bar = {
               density = "compact";
-              position = "top";
+              position = cfg.noctalia.barPosition;
               showCapsule = false;
               widgets = {
                 left = [
                   {
                     id = "ControlCenter";
                     useDistroLogo = true;
-                  }
-                  {
-                    id = "Network";
-                  }
-                  {
-                    id = "Bluetooth";
                   }
                 ];
                 center = [
@@ -49,6 +67,32 @@ in
                   }
                 ];
                 right = [
+                  {
+                    defaultSettings = {
+                      compactMode = false;
+                      defaultPeerAction = "copy-ip";
+                      hideDisconnected = false;
+                      hideMullvadExitNodes = true;
+                      loginServer = "";
+                      pingCount = 5;
+                      refreshInterval = 5000;
+                      showIpAddress = true;
+                      showPeerCount = true;
+                      showSearchBar = false;
+                      sshUsername = "";
+                      taildropDownloadDir = "~/Downloads";
+                      taildropEnabled = true;
+                      taildropReceiveMode = "operator";
+                      terminalCommand = "";
+                    };
+                    id = "plugin:tailscale";
+                  }
+                  {
+                    id = "Network";
+                  }
+                  {
+                    id = "Bluetooth";
+                  }
                   {
                     alwaysShowPercentage = false;
                     id = "Battery";
@@ -66,12 +110,13 @@ in
             };
             colorSchemes.predefinedScheme = "Tokyo-Night";
             general = {
-              avatarImage = "/home/burke/.face";
+              avatarImage = "/home/${config.home.username}/.face";
               radiusRatio = 0.2;
             };
             location = {
-              name = "Seattle";
+              name = noctaliaCfg.location;
             };
+            appLauncher.pinnedApps = noctaliaCfg.pinnedApps;
           };
         };
       })

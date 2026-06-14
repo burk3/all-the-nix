@@ -31,6 +31,7 @@
       bluetoothSupport.enable = true;
       networkManager.enable = true;
       services.gnome-keyring.enable = true;
+      noctalia.pinnedApps = [ "firefox" ];
     };
     helix.enable = true;
   };

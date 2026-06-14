@@ -30,6 +30,11 @@ in
   t11s.remotebuild.serveBuilds = true;
   t11s.internalCA.enable = true;
 
+  stylix.enable = true;
+  stylix.autoEnable = false;
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
+  stylix.targets.console.enable = true;
+
   ### firmware/hardware/lowlevel
   boot = {
     lanzaboote = {
@@ -76,14 +81,14 @@ in
     allowedTCPPorts = [
       22
       8080
+      5201
     ];
   };
 
   ### Hardware services
   services.hardware.bolt.enable = true;
   services.udev.extraRules = ''
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:1b:21:ba:b4:1b", NAME="sfp0"
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="00:1b:21:ba:b4:1c", NAME="sfp1"
+    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="24:5e:be:94:19:42", NAME="sfp0"
   '';
 
   ### Software

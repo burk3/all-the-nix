@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [ ./ai.nix ];
 
@@ -29,9 +29,34 @@
     desktop = {
       enable = true;
       compositor.niri.enable = true;
-      bar = "waybar";
+      bar = "noctalia";
+      noctalia.barPosition = "left";
       bluetoothSupport.enable = true;
       services.gnome-keyring.enable = true;
+    };
+  };
+  stylix.enable = true;
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
+  stylix.image = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/rose-pine/wallpapers/refs/heads/main/generative/contour-line.png";
+    hash = "sha256-8OQCXMy27IImp1Oc/X4i14/8k9XjuuU+6clh0rRcAQY=";
+  };
+  stylix.fonts = {
+    sansSerif = {
+      package = pkgs.inter;
+      name = "Inter";
+    };
+    serif = {
+      package = pkgs.ibm-plex;
+      name = "IBM Plex Serif";
+    };
+    monospace = {
+      package = pkgs.iosevka;
+      name = "Iosevka";
+    };
+    emoji = {
+      package = pkgs.noto-fonts-emoji-blob-bin;
+      name = "Blobmoji";
     };
   };
 
