@@ -16,6 +16,7 @@ in
     ./rke2.nix
     ./monitoring.nix
     ./hydra.nix
+    ./openclaw-host.nix
   ];
   ### identity
   networking.hostName = "juicy-j";
