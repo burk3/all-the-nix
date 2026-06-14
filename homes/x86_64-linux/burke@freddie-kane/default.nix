@@ -62,6 +62,13 @@
   };
   stylix.targets.noctalia-shell.enable = true;
 
+  programs.noctalia-shell.settings.nightLight = {
+    enabled = true;
+    autoSchedule = true;
+    nightTemp = "3000";
+    dayTemp = "6500";
+  };
+
   # seeing if this gets bluetooth working again
   services.blueman-applet.enable = true;
   services.wlsunset = {

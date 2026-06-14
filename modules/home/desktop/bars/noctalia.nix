@@ -116,7 +116,10 @@ in
             location = {
               name = noctaliaCfg.location;
             };
-            appLauncher.pinnedApps = noctaliaCfg.pinnedApps;
+            appLauncher = {
+              pinnedApps = noctaliaCfg.pinnedApps;
+              terminalCommand = "ghostty -e";
+            };
           };
         };
       })
