@@ -25,53 +25,8 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-uuid/fb44854e-1c8a-4a68-83de-b54946dee32d";
-    fsType = "ext4";
-  };
-
-  boot.initrd.systemd.extraBin = {
-    jq = lib.getExe pkgs.jq;
-  };
-  systemIdentity = {
-    enable = true;
-    # this doesn't change when I change key enrollment. ez.
-    # get the value with `systemd-analyze pcrs 15`.
-    # if i get sent to the emergency shell, i need to remember to run
-    # systemctl disable check-pcrs
-    # systemctl default
-    pcr15 = "58d9a719ee13b935115c4353262bbc077c63e01d672412048052ba921883954b";
-  };
-
-  # /
-  boot.initrd.luks.devices."luks-b44eb4e5-4c34-4613-9016-4c1a97f8c82b" = {
-    device = "/dev/disk/by-uuid/b44eb4e5-4c34-4613-9016-4c1a97f8c82b";
-    bypassWorkqueues = true;
-  };
-  # swap
-  boot.initrd.luks.devices."luks-f0573a71-ddd8-4dec-ba92-7b845cb3ba9f" = {
-    device = "/dev/disk/by-uuid/f0573a71-ddd8-4dec-ba92-7b845cb3ba9f";
-    allowDiscards = true;
-    bypassWorkqueues = true;
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/4669-C03A";
-    fsType = "vfat";
-    options = [
-      "fmask=0077"
-      "dmask=0077"
-    ];
-  };
-
-  boot.loader.grub = {
-    font = "${pkgs.hack-font}/share/fonts/hack/Hack-Regular.ttf";
-    fontSize = 36;
-  };
-
-  swapDevices = [
-    { device = "/dev/disk/by-uuid/2016de98-56bd-44ea-bc02-3fb6b17bf2bd"; }
-  ];
+  # fileSystems.*, swapDevices (incl. resume), and boot.initrd.luks.devices.*
+  # are generated declaratively from ./disko.nix.
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's

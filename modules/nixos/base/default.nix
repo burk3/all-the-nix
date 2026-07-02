@@ -223,7 +223,6 @@ with lib;
     services.pipewire = mkIf hasScreen {
       enable = true;
       alsa.enable = true;
-      alsa.support32Bit = true;
       pulse.enable = true;
       # If you want to use JACK applications, uncomment this
       #jack.enable = true;
@@ -298,7 +297,9 @@ with lib;
 
     # more stuff for everyone
     programs.git.enable = true;
-    programs.steam.enable = hasScreen;
+    # mkDefault so non-gaming workstations (e.g. juicy-j) can opt out with a
+    # plain `programs.steam.enable = false;`. Steam pulls the full 32-bit stack.
+    programs.steam.enable = mkDefault hasScreen;
 
     # mullvad vpn?
     services.mullvad-vpn = mkIf hasScreen {

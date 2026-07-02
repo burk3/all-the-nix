@@ -15,7 +15,7 @@ in
     ./hardware-configuration.nix
     ./rke2.nix
     ./monitoring.nix
-    ./hydra.nix
+    # ./hydra.nix  # disabled: localhost remote builder kept breaking interactive nix build
     ./openclaw-host.nix
     ./ai.nix
   ];
@@ -30,6 +30,10 @@ in
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.serveBuilds = true;
   t11s.internalCA.enable = true;
+
+  # Not a gaming box: skip Steam (and with it the whole 32-bit/i686 userspace,
+  # which is uncached and currently fails to build at i686 numpy).
+  programs.steam.enable = false;
 
   stylix.enable = true;
   stylix.autoEnable = false;

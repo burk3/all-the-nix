@@ -4,12 +4,27 @@
   inputs,
   ...
 }:
+let
+  # Secure Boot + Measured Boot are turned on *after* the initial install.
+  # A fresh install boots with systemd-boot and a LUKS passphrase only, because
+  # lanzaboote can't sign the boot chain before its sbctl keys exist. Once the
+  # system is up and the sbctl keys are generated + enrolled in firmware, flip
+  # this to true and `nixos-rebuild boot`, then enroll the TPM2+PIN keyslot.
+  # Full sequence in ./CLAUDE.md.
+  secureBoot = true;
+in
 {
   imports = [
     inputs.nixos-hardware.nixosModules.framework-13-7040-amd
+    inputs.disko.nixosModules.disko
     ./hardware-configuration.nix
+    ./disko.nix
     ./power.nix
   ];
+
+  ###### TEMP
+  services.pipewire.alsa.support32Bit = lib.mkForce false;
+
   ### identity
   networking.hostName = "freddie-kane"; # Define your hostname.
   time.timeZone = "America/Los_Angeles";
@@ -22,6 +37,8 @@
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
   t11s.internalCA.enable = true;
+  # offline reinstall ISO: nix build .#nixosConfigurations.freddie-kane.config.system.build.for-real-installer-iso
+  t11s.forRealInstaller.enable = true;
 
   stylix.enable = true;
   stylix.autoEnable = false;
@@ -59,11 +76,26 @@
   ### firmware/hardware/lowlevel
   boot = {
     plymouth.enable = true;
-    resumeDevice = "/dev/disk/by-label/swap";
-    lanzaboote = {
+    # boot.resumeDevice is set by disko's cryptswap (resumeDevice = true).
+    lanzaboote = lib.mkIf secureBoot {
       enable = true;
       pkiBundle = "/var/lib/sbctl";
       configurationLimit = 8;
+      # Measured Boot: lanzaboote builds a systemd-pcrlock TPM2 policy over
+      # these PCRs and re-seals it on every nixos-rebuild, so generation/kernel
+      # updates don't lock you out. PCR 4 covers the bootloader + stub (and thus
+      # transitively initrd/kernel/cmdline), 7 = Secure Boot state, 0 = firmware.
+      # Replaces the old systemIdentity/ensure-pcr PCR-15 check. Enroll the LUKS
+      # TPM2+PIN keyslot against /var/lib/systemd/pcrlock.json post-install --
+      # see ./CLAUDE.md.
+      measuredBoot = {
+        enable = true;
+        pcrs = [
+          0
+          4
+          7
+        ];
+      };
     };
     kernelParams = [
       "quiet"
@@ -74,8 +106,8 @@
       "rd.udev.log_level=3"
       "udev.log_priority=3"
     ];
-    # loader.systemd-boot.enable = true;
-    loader.systemd-boot.enable = lib.mkForce false;
+    # systemd-boot for the plain install; lanzaboote replaces it once secureBoot.
+    loader.systemd-boot.enable = lib.mkForce (!secureBoot);
     loader.efi.canTouchEfiVariables = true;
     initrd.systemd.enable = true;
     initrd.systemd.tpm2.enable = true;
