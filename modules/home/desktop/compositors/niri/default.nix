@@ -153,6 +153,18 @@ in
           "suspend"
         ];
       };
+      # For the uwsm-managed session: export WAYLAND_DISPLAY/DISPLAY into the
+      # systemd user manager and mark the compositor unit started, so
+      # graphical-session.target is reached. Harmless (exits 0 with a warning)
+      # when niri is launched outside uwsm via the plain niri.desktop session.
+      spawn-at-startup = [
+        {
+          command = [
+            "${pkgs.uwsm}/bin/uwsm"
+            "finalize"
+          ];
+        }
+      ];
     };
     ## dirty hack!
     # the following uses a niri flake internal api to write some configs that

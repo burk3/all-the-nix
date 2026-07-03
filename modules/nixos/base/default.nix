@@ -190,6 +190,35 @@ with lib;
     programs.niri.package = pkgs.niri-unstable;
     niri-flake.cache.enable = hasScreen;
 
+    # niri-flake only ships a plain `niri.desktop` (Exec=niri-session), which
+    # runs the compositor as a bare process. That path calls
+    # `systemctl --user import-environment` with no arg list -> the
+    # "Calling import-environment without a list of variable names is
+    # deprecated" warning shown on the console at login. Add a uwsm-managed
+    # session (the same treatment Hyprland gets via withUWSM) so niri boots
+    # inside proper systemd user units. uwsm exports WAYLAND_DISPLAY et al., and
+    # niri's `spawn-at-startup uwsm finalize` (niri home module) signals unit
+    # readiness. Pick "Niri (uwsm-managed)" in tuigreet; --remember-session keeps it.
+    services.displayManager.sessionPackages = mkIf hasScreen [
+      (pkgs.runCommandLocal "niri-uwsm-session"
+        {
+          passthru.providedSessions = [ "niri-uwsm" ];
+          sessionFile = ''
+            [Desktop Entry]
+            Name=Niri (uwsm-managed)
+            Comment=A scrollable-tiling Wayland compositor
+            Exec=${pkgs.uwsm}/bin/uwsm start -N Niri -D niri -- ${config.programs.niri.package}/bin/niri
+            Type=Application
+            DesktopNames=niri
+          '';
+          passAsFile = [ "sessionFile" ];
+        }
+        ''
+          install -Dm0644 "$sessionFilePath" $out/share/wayland-sessions/niri-uwsm.desktop
+        ''
+      )
+    ];
+
     # Configure keymap in X11
     services.xserver.xkb = {
       layout = "us";
