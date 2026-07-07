@@ -113,6 +113,7 @@
 
         homes.modules = with inputs; [
           noctalia.homeModules.default
+          agenix.homeManagerModules.default
         ];
         homes.users."burke@freddie-kane".modules = with inputs; [
           system76-scheduler-niri.homeModules.default

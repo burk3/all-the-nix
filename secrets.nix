@@ -2,6 +2,7 @@ let
   burke = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINB1Sw6DgkSfZhsFcNig7dY3IcFbyCYCvIp4gvr9gDeY burke@juicy-j"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFssPVej1nLwAQwHSCUbA3h5Cqz2kj1lSKPmdl+6SIAn burke@freddie-kane"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBDGWM9bzGjqsyW+m5J39lbK0nhSyJ+ImBQqPrsJZmiw burke@freddie-kane" # back from the dead
   ];
   juicy-j = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOqCimSANQl9QYxDnkwiAnU+mJGYMdwwMDcpFUJFBatL root@juicy-j";
 in
@@ -12,4 +13,5 @@ in
   "secrets/pushover-user-key.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/pushover-api-token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/openclaw-gateway-token.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/private-nix.conf.age".publicKeys = burke;
 }

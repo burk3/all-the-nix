@@ -32,6 +32,13 @@ with lib;
       glow
     ];
 
+    age.secrets."private-nix.conf" = {
+      file = ../../../secrets/private-nix.conf.age;
+      path = "/home/${config.home.username}/.config/nix/private-nix.conf";
+    };
+    nix.extraOptions = ''
+      !include ${config.age.secrets."private-nix.conf".path}
+    '';
     home.sessionPath = [ "$HOME/.local/bin" ];
   };
 }
