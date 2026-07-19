@@ -96,4 +96,6 @@
       uris = [ "qemu:///system" ];
     };
   };
+
+  age.identityPaths = [ "/home/burke/.ssh/id_ed25519_age" ];
 }
