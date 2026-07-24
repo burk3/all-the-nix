@@ -23,6 +23,10 @@ with lib;
     programs.bottom.enable = true;
     programs.bat.enable = true;
     programs.nh.enable = true;
+    programs.tmux = {
+      enable = true;
+      mouse = true;
+    };
 
     home.packages = with pkgs; [
       cachix

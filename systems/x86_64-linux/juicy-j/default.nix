@@ -87,6 +87,7 @@ in
     allowPing = true;
     allowedTCPPorts = [
       22
+      2022 # eternal-terminal (services.eternal-terminal); module does not open this itself
       8080
       5201
     ];
@@ -100,6 +101,7 @@ in
 
   ### Software
   services.sshd.enable = true;
+  services.eternal-terminal.enable = true;
   environment.systemPackages = with pkgs; [ via ];
 
   # This value determines the NixOS release from which the default

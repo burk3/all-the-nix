@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
@@ -23,6 +28,7 @@
     neovim.enable = true;
     shell.enable = true;
     git.enable = true;
+    eternal-terminal.enable = true;
     desktop = {
       enable = true;
       compositor.niri.enable = true;
