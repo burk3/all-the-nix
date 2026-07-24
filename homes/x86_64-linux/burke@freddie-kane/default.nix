@@ -40,6 +40,16 @@
       noctalia.pinnedApps = [ "firefox" ];
     };
     helix.enable = true;
+    et-ghostty = {
+      enable = true;
+      desktopEntries.enable = true;
+      profiles = {
+        juicy-j.host = "juicy-j.dab-ling.ts.net";
+        juicy-j.settings.theme = "Birds Of Paradise";
+        bronson.host = "bronson.dab-ling.ts.net";
+        bronson.settings.theme = "Tomorrow Night Eighties";
+      };
+    };
   };
 
   stylix.enable = true;
