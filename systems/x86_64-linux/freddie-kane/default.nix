@@ -47,7 +47,10 @@ in
 
   virtualisation.libvirtd.enable = true;
   programs.virt-manager.enable = true;
-  users.users.burke.extraGroups = [ "libvirtd" "plugdev" ];
+  users.users.burke.extraGroups = [
+    "libvirtd"
+    "plugdev"
+  ];
   environment.systemPackages = with pkgs; [
     dnsmasq
   ];

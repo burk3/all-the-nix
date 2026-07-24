@@ -22,8 +22,7 @@ let
 in
 with lib;
 {
-  options.t11s.forRealInstaller.enable =
-    mkEnableOption "an offline `system.build.for-real-installer-iso` for this host (requires disko)";
+  options.t11s.forRealInstaller.enable = mkEnableOption "an offline `system.build.for-real-installer-iso` for this host (requires disko)";
 
   config = mkIf cfg.enable {
     system.build.for-real-installer-iso =
