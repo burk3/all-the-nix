@@ -81,6 +81,26 @@ in
     };
   };
 
+  # The Aquantia/Marvell AQtion 10G NIC (atlantic driver) silently corrupts or
+  # drops packets when the kernel hands it UDP segmentation offload work, which
+  # is exactly what WireGuard/tailscale does (it sends via UDP_SEGMENT). Plain
+  # UDP and TCP are unaffected, so this only shows up as ~13% loss on tailscale
+  # traffic *sent* from this host, collapsing throughput to ~350 kB/s. That in
+  # turn made remote builds served from here appear to hang: the build itself
+  # was fast, but copying outputs back to the client crawled.
+  # Measured over tailscale, juicy-j -> freddie-kane: 360 kB/s -> 60.8 MB/s.
+  systemd.services.disable-sfp0-udp-gso = {
+    description = "Disable broken UDP segmentation offload on ${sfpIF} (atlantic)";
+    bindsTo = [ "sys-subsystem-net-devices-${sfpIF}.device" ];
+    after = [ "sys-subsystem-net-devices-${sfpIF}.device" ];
+    wantedBy = [ "sys-subsystem-net-devices-${sfpIF}.device" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.ethtool}/bin/ethtool -K ${sfpIF} tx-udp-segmentation off";
+    };
+  };
+
   networking.nftables.enable = true;
   networking.firewall = {
     enable = true;
