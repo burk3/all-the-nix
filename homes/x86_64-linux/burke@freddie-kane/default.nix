@@ -76,22 +76,18 @@
       name = "Blobmoji";
     };
   };
-  stylix.targets.noctalia-shell.enable = true;
-
-  programs.noctalia-shell.settings.nightLight = {
+  # noctalia schedules day/night off `[location]`, which the desktop module sets
+  programs.noctalia.settings.nightlight = {
     enabled = true;
-    autoSchedule = true;
-    nightTemp = "3000";
-    dayTemp = "6500";
+    temperature_night = 3000;
+    temperature_day = 6500;
   };
   programs.niri.settings.binds."XF86AudioMedia" = {
     allow-when-locked = true;
     action.spawn = [
-      "${lib.getExe config.programs.noctalia-shell.package}"
-      "ipc"
-      "call"
-      "nightLight"
-      "toggle"
+      "${lib.getExe config.programs.noctalia.package}"
+      "msg"
+      "nightlight-toggle"
     ];
   };
 

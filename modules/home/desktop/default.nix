@@ -13,7 +13,6 @@ in
     ./lock-idle.nix
     ./bars/waybar.nix
     ./bars/noctalia.nix
-    ./wallpaper.nix
     #./bars/quickshell.nix
   ];
   options.t11s.desktop =
@@ -54,13 +53,11 @@ in
       _launcherCmd = mkOption {
         type = types.str;
       };
-      wallpaper.enable = mkEnableOption "use hyprpaper and one of the island wallpapers from catppuccin-wallpaper";
     };
   config = mkIf cfg.enable (
     lib.mkMerge [
       {
         t11s.desktop.lockAndIdle.enable = lib.mkDefault true;
-        t11s.desktop.wallpaper.enable = lib.mkDefault true;
         home.packages = with pkgs; [
           brightnessctl
           pavucontrol

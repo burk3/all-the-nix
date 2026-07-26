@@ -126,6 +126,13 @@ in
           ];
           open-floating = true;
         }
+        # from noctalia docs: give its settings window a sane floating size
+        {
+          matches = [ { app-id = "^dev\\.noctalia\\.Noctalia$"; } ];
+          open-floating = true;
+          default-column-width.fixed = 1080;
+          default-window-height.fixed = 920;
+        }
       ];
       layer-rules = [
         {
@@ -133,19 +140,21 @@ in
           baba-is-float = true;
         }
         {
-          matches = [ { namespace = "^noctilia-overview*"; } ];
+          matches = [ { namespace = "^noctalia-backdrop"; } ];
           place-within-backdrop = true;
         }
         ## not supported in module yet. see end of file.
         # {
-        #   # from noctilia-shell docs
-        #   # Noctilia: blur everywhere without xray for a better look
-        #   matches = [ { namespace = "^noctalia-(background|launcher-overlay|dock)-.*$"; } ];
+        #   # from noctalia docs
+        #   # Noctalia: blur everywhere without xray for a better look
+        #   matches = [ { namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd)$"; } ];
         #   background-effect = {
         #     xray = false;
         #   };
         # }
       ];
+      # noctalia asks for this so its notifications and window activation work
+      debug.honor-xdg-activation-with-invalid-serial = [ ];
       binds = import ./binds.nix { inherit config lib pkgs; };
       switch-events = {
         lid-close.action.spawn = [
@@ -187,7 +196,7 @@ in
           }
 
           layer-rule {
-            match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+            match namespace="^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd)$"
             background-effect {
               xray false
             }
