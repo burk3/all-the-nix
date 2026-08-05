@@ -66,8 +66,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-amd-ai = {
-      #url = "github:noamsto/nix-amd-ai";
-      url = "github:burk3/nix-amd-ai/fix/sdcpp-rocm-libatomic";
+      url = "github:noamsto/nix-amd-ai";
       inputs.nixpkgs.follows = "unstable";
     };
   };

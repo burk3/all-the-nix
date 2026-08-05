@@ -15,6 +15,9 @@
     # Bind on all interfaces, but the firewall below only opens the API port on
     # tailscale0 + the libvirt NAT bridge — default zone stays closed.
     lemonade.host = "0.0.0.0";
+    lemonade.allowedOrigins = [
+      "http://juicy-j.dab-ling.ts.net:13305"
+    ];
   };
   # BIOS already dedicates 64 GiB as GPU VRAM, so the OS sees ~64 GiB of system
   # RAM. ttm is the GTT pool the GPU borrows *on top of* that carveout, sized
@@ -24,6 +27,11 @@
   hardware.amd-npu.gpuMemory = {
     ttmSizeGiB = 32; # GTT spill ceiling → ttm pages_limit
     pagePoolSizeGiB = 16; # pre-cached pool   → ttm page_pool_size
+  };
+
+  hardware.amd-npu.lemonade.settings = {
+    max_loaded_models = -1;   # unlimited, instead of 1-per-kind taking turns
+    auto_evict = false;       # idle/VRAM-pressure eviction, off by default
   };
 
   users.users.burke.extraGroups = [
