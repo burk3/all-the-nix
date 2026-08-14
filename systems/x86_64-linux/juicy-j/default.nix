@@ -18,6 +18,7 @@ in
     # ./hydra.nix  # disabled: localhost remote builder kept breaking interactive nix build
     ./openclaw-host.nix
     ./ai.nix
+    ./jane.nix
   ];
   ### identity
   networking.hostName = "juicy-j";
