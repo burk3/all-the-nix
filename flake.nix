@@ -1,9 +1,13 @@
 {
   description = "A very basic flake";
   nixConfig = {
-    extra-substituters = [ "https://noctalia.cachix.org" ];
+    extra-substituters = [
+      "https://noctalia.cachix.org"
+      "https://nix-amd-ai.cachix.org"
+    ];
     extra-trusted-public-keys = [
       "noctalia.cachix.org-1:pCOR47nnMEo5thcxNDtzWpOxNFQsBRglJzxWPp3dkU4="
+      "nix-amd-ai.cachix.org-1:F4OU4vw/lV2oiG6SBHZ+nqjl4EFJuqI4X9A7pvaBmhQ="
     ];
   };
 
@@ -65,10 +69,7 @@
       url = "github:burk3/mikrotik-exporter";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-amd-ai = {
-      url = "github:noamsto/nix-amd-ai";
-      inputs.nixpkgs.follows = "unstable";
-    };
+    nix-amd-ai.url = "github:noamsto/nix-amd-ai";
   };
 
   outputs =

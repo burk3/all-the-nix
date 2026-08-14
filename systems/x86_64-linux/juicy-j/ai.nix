@@ -30,8 +30,8 @@
   };
 
   hardware.amd-npu.lemonade.settings = {
-    max_loaded_models = -1;   # unlimited, instead of 1-per-kind taking turns
-    auto_evict = false;       # idle/VRAM-pressure eviction, off by default
+    max_loaded_models = -1; # unlimited, instead of 1-per-kind taking turns
+    auto_evict = false; # idle/VRAM-pressure eviction, off by default
   };
 
   users.users.burke.extraGroups = [
