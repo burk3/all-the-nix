@@ -66,3 +66,33 @@ just copies store paths locally; no flake, no network, no cache.
    Keep the passphrase slot as recovery. From here, lanzaboote re-seals the policy on every `nixos-rebuild`, so kernel/generation updates don't lock you out.
 
 > If a TPM/pcrlock change ever drops you to an emergency shell, the passphrase keyslot still unlocks both volumes.
+
+## After a firmware / BIOS update
+
+A firmware update changes **PCR 0** (and, if it resets Secure Boot to setup mode,
+**PCR 7**). The pcrlock policy seals against 0/4/7, so the TPM refuses to release
+the key and you fall back to the **passphrase**. This is expected, not a failure —
+re-seal the policy against the new firmware state and re-enroll:
+
+```sh
+# (optional) see what drifted — predicted vs current PCRs:
+sudo systemd-pcrlock
+
+# if Secure Boot got knocked into setup mode, re-enroll sbctl keys first:
+sbctl status   # -> if not "Secure Boot: enabled", redo step 4's enroll-keys
+
+# 1. regenerate /var/lib/systemd/pcrlock.json for the new firmware PCR 0:
+sudo nixos-rebuild boot --flake .#freddie-kane
+ls -l /var/lib/systemd/pcrlock.json          # confirm just-rewritten
+
+# 2. wipe the stale TPM2 slot and re-enroll both devices against the new policy:
+for m in cryptroot cryptswap; do
+  dev=$(cryptsetup status "$m" | awk '$1=="device:"{print $2}')
+  sudo systemd-cryptenroll --wipe-slot=tpm2 "$dev"
+  sudo systemd-cryptenroll --tpm2-device=auto --tpm2-with-pin=true \
+    --tpm2-pcrlock=/var/lib/systemd/pcrlock.json "$dev"
+done
+```
+
+The passphrase slot is untouched, so it's always the recovery path if a re-enroll
+goes sideways.
