@@ -52,14 +52,7 @@
       url = "github:Kirottu/system76-scheduler-niri";
       inputs.nixpkgs.follows = "unstable";
     };
-    quickshell = {
-      url = "git+https://git.outfoxxed.me/quickshell/quickshell";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    noctalia = {
-      url = "github:noctalia-dev/noctalia";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    noctalia.url = "github:noctalia-dev/noctalia/cachix";
     systemctl-toggle = {
       url = "github:burk3/systemctl-toggle";
       inputs.nixpkgs.follows = "unstable";
