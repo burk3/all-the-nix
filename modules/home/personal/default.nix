@@ -14,6 +14,10 @@ with lib;
     enable = mkEnableOption "Enable my personal configuration";
   };
   config = lib.mkIf cfg.enable {
+    # The home-manager manual builds an options.json whose declaration sites
+    # leak nixpkgs store paths without context, warning on every eval.
+    manual.manpages.enable = false;
+
     programs.git.settings = {
       user.name = "Burke Cates";
       user.email = "burke.cates@gmail.com";
