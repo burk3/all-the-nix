@@ -16,6 +16,7 @@
     #nixpkgs.url = "github:NixOS/nixpkgs/release-26.05";
     unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
+    # upstream is unmaintained (README call for maintainers); github:anntnzrb/snowfall-lib is the active fork
     snowfall-lib = {
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
