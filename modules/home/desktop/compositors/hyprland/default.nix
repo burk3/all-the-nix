@@ -144,6 +144,9 @@ with lib;
     # {{{ hyprland
     wayland.windowManager.hyprland = {
       enable = true;
+      # lua configType breaks hy3: HM 26.05 loads plugins after the config parses,
+      # so hl.plugin.hy3.* is nil. Fixed on HM master (PR #9517), not backported.
+      configType = "hyprlang";
       # uwsm owns the session targets; this would fight it with an exec-once
       # that restarts hyprland-session.target. Only the uwsm session works now.
       systemd.enable = false;
