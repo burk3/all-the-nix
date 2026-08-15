@@ -19,6 +19,7 @@ in
     ./openclaw-host.nix
     ./ai.nix
     ./jane.nix
+    ./rescue-terminal.nix
   ];
   ### identity
   networking.hostName = "juicy-j";
