@@ -27,6 +27,11 @@
   t11s.systemType = "wsl";
   t11s.internalCA.enable = true;
 
+  # niri-flake injects its stylix target into home-manager whenever the stylix
+  # option exists, so stylix has to be on here too or home eval breaks.
+  stylix.enable = true;
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/atlas.yaml";
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It's perfectly fine and recommended to leave
