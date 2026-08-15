@@ -8,6 +8,7 @@
 let
   inherit (lib) mkEnableOption;
   cfg = config.t11s.desktop.compositor.niri;
+  c = config.lib.stylix.colors.withHashtag;
 in
 {
   options.t11s.desktop.compositor.niri.enable = mkEnableOption "enable niri compositor config";
@@ -47,17 +48,17 @@ in
           enable = true;
           width = 2;
           active.gradient = {
-            from = "#ea9a97"; # rose
-            to = "#eb6f92"; # love
+            from = c.base0A; # rose
+            to = c.base08; # love
             angle = 45;
           };
         };
         border = {
           enable = false;
           width = 2;
-          active.color = "#f6c177"; # gold
-          inactive.color = "#56526e"; # highlight high
-          urgent.color = "#eb6f92"; # love
+          active.color = c.base09; # gold
+          inactive.color = c.base07; # highlight high
+          urgent.color = c.base08; # love
         };
         shadow = {
           enable = true;

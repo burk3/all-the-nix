@@ -163,6 +163,7 @@ with lib;
           lock = "loginctl lock-session";
           # via noctalia IPC rather than wpctl/brightnessctl directly, for the OSD
           noctaliaMsg = "${lib.getExe config.programs.noctalia.package} msg";
+          c = config.lib.stylix.colors;
         in
         {
           # {{{ hyprland.settings
@@ -180,8 +181,8 @@ with lib;
             border_size = 2;
             # Rosé Pine Moon, matching niri. Was $blueAlpha/etc from the
             # long-gone catppuccin module, which hyprlang could not resolve.
-            "col.active_border" = "rgba(ea9a97ee) rgba(eb6f92ee) 45deg"; # rose -> love
-            "col.inactive_border" = "rgba(56526eaa)"; # highlight high
+            "col.active_border" = "rgba(${c.base0A}ee) rgba(${c.base08}ee) 45deg"; # rose -> love
+            "col.inactive_border" = "rgba(${c.base07}aa)"; # highlight high
             resize_on_border = false;
             allow_tearing = false;
             #layout = "dwindle";
@@ -218,8 +219,8 @@ with lib;
             };
             tabs = {
               text_font = "Ubuntu Nerd Font";
-              "col.focused" = "rgba(9ccfd8ee)"; # foam
-              "col.urgent" = "rgba(eb6f92ee)"; # love
+              "col.focused" = "rgba(${c.base0C}ee)"; # foam
+              "col.urgent" = "rgba(${c.base08}ee)"; # love
             };
           };
           master = {
