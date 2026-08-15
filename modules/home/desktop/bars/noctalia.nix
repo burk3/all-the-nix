@@ -40,7 +40,7 @@ in
 
   config = lib.mkIf cfg.enable (
     lib.mkMerge [
-      (mkIf (cfg.bar == "noctalia") {
+      {
         programs.noctalia = {
           enable = true;
           # started by graphical-session.target rather than niri's
@@ -65,7 +65,9 @@ in
               center = [ "workspaces" ];
               end = [
                 "network"
-                "bluetooth"
+              ]
+              ++ lib.optional cfg.bluetoothSupport.enable "bluetooth"
+              ++ [
                 "battery"
                 "clock"
               ];
@@ -77,7 +79,7 @@ in
                 custom_image_colorize = false;
               };
               workspaces = {
-                display = "none";
+                show_labels = false;
                 hide_when_empty = false;
               };
               battery.show_label = false;
@@ -89,12 +91,12 @@ in
             location.address = noctaliaCfg.location;
           };
         };
-      })
+      }
       # stylix ships a noctalia v5 target, but only on master -- release-26.05
       # still has the v4-only one, which silently no-ops against
       # `programs.noctalia`. Do it ourselves until the next stylix release; then
       # this block becomes `stylix.targets.noctalia.enable = true;`.
-      (mkIf (cfg.bar == "noctalia" && config.stylix.enable) {
+      (mkIf config.stylix.enable {
         programs.noctalia = {
           settings = {
             theme = {
@@ -161,13 +163,9 @@ in
           };
         };
       })
-      (mkIf (cfg.launcher == "noctalia") (
-        lib.mkAssert (config.t11s.desktop.bar == "noctalia")
-          ''need to have `t11s.desktop.bar = "noctalia";` in order to use the noctalia launcher''
-          {
-            t11s.desktop._launcherCmd = "${lib.getExe noctalia} msg panel-toggle launcher";
-          }
-      ))
+      (mkIf (cfg.launcher == "noctalia") {
+        t11s.desktop._launcherCmd = "${lib.getExe noctalia} msg panel-toggle launcher";
+      })
     ]
   );
 }

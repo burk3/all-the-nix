@@ -11,6 +11,15 @@ let
   cfg = config.t11s;
   isWsl = cfg.systemType == "wsl";
   hasScreen = (cfg.systemType == "workstation") || (cfg.systemType == "laptop");
+
+  # Sessions that never reach graphical-session.target, so noctalia would not
+  # start under them. Filtering tuigreet's dir is cheaper than a package override.
+  hiddenWaylandSessions = [ "hyprland.desktop" ]; # plain Hyprland: no systemd wiring
+  waylandSessions = pkgs.runCommandLocal "wayland-sessions-filtered" { } ''
+    mkdir -p $out
+    cp ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions/*.desktop $out/
+    rm -f ${lib.concatMapStringsSep " " (s: "$out/${s}") hiddenWaylandSessions}
+  '';
 in
 with lib;
 {
@@ -112,9 +121,9 @@ with lib;
     ];
     # default is timesyncd which is probably fine
 
-    # for hyprlock
-    # pam shouldn't use fprint since hyprlock will do fprint in parallel on its own
-    security.pam.services.hyprlock.fprintAuth = cfg.systemType == "laptop";
+    # noctalia locks via the "login" PAM stack and drives fprintd itself over
+    # D-Bus; pam_fprintd cannot share the sensor. Costs fingerprint at the TTY.
+    security.pam.services.login.fprintAuth = false;
     services.fprintd.enable = cfg.systemType == "laptop";
 
     # virty bois
@@ -171,7 +180,8 @@ with lib;
           "--remember"
           "--remember-session"
           "--asterisks"
-          "--sessions ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions"
+          # filtered, not sessionData directly -- see hiddenWaylandSessions above
+          "--sessions ${waylandSessions}"
           "--xsessions ${config.services.displayManager.sessionData.desktops}/share/xsessions"
         ];
       };
@@ -190,34 +200,17 @@ with lib;
     programs.niri.package = pkgs.niri-unstable;
     niri-flake.cache.enable = hasScreen;
 
-    # niri-flake only ships a plain `niri.desktop` (Exec=niri-session), which
-    # runs the compositor as a bare process. That path calls
-    # `systemctl --user import-environment` with no arg list -> the
-    # "Calling import-environment without a list of variable names is
-    # deprecated" warning shown on the console at login. Add a uwsm-managed
-    # session (the same treatment Hyprland gets via withUWSM) so niri boots
-    # inside proper systemd user units. uwsm exports WAYLAND_DISPLAY et al., and
-    # niri's `spawn-at-startup uwsm finalize` (niri home module) signals unit
-    # readiness. Pick "Niri (uwsm-managed)" in tuigreet; --remember-session keeps it.
-    services.displayManager.sessionPackages = mkIf hasScreen [
-      (pkgs.runCommandLocal "niri-uwsm-session"
-        {
-          passthru.providedSessions = [ "niri-uwsm" ];
-          sessionFile = ''
-            [Desktop Entry]
-            Name=Niri (uwsm-managed)
-            Comment=A scrollable-tiling Wayland compositor
-            Exec=${pkgs.uwsm}/bin/uwsm start -N Niri -D niri -- ${config.programs.niri.package}/bin/niri
-            Type=Application
-            DesktopNames=niri
-          '';
-          passAsFile = [ "sessionFile" ];
-        }
-        ''
-          install -Dm0644 "$sessionFilePath" $out/share/wayland-sessions/niri-uwsm.desktop
-        ''
-      )
-    ];
+    # niri-flake only ships a bare `niri.desktop`, whose niri-session emits an
+    # import-environment deprecation warning at login. uwsm session instead --
+    # but its niri plugin does not wait on NIRI_SOCKET, hence `uwsm finalize`
+    # in the niri home module.
+    programs.uwsm.waylandCompositors = mkIf hasScreen {
+      niri = {
+        prettyName = "Niri";
+        comment = "A scrollable-tiling Wayland compositor";
+        binPath = "${config.programs.niri.package}/bin/niri";
+      };
+    };
 
     # Configure keymap in X11
     services.xserver.xkb = {

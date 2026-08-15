@@ -9,11 +9,11 @@ let
   cfg = config.t11s.desktop;
 in
 {
+  # noctalia is the whole shell (bar, launcher, lock, idle, notifications, OSD).
+  # No bar selection on purpose: enabling this module means using noctalia.
   imports = [
     ./lock-idle.nix
-    ./bars/waybar.nix
     ./bars/noctalia.nix
-    #./bars/quickshell.nix
   ];
   options.t11s.desktop =
     let
@@ -21,11 +21,6 @@ in
     in
     {
       enable = mkEnableOption "standard desktop configs";
-      notifications = mkOption {
-        description = "notifications service";
-        type = types.nullOr types.enum [ "dunst" ];
-        default = "dunst";
-      };
       networkManager.enable = mkEnableOption "using NetworkManager";
       bluetoothSupport.enable = mkEnableOption "bluetooth stuff";
       services = {
@@ -34,13 +29,6 @@ in
           type = types.bool;
           default = true;
         };
-      };
-      bar = mkOption {
-        description = "which bar/shell thing to use";
-        type = types.enum [
-          "waybar"
-          "noctalia"
-        ];
       };
       launcher = mkOption {
         description = "program launcher to use";

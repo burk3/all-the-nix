@@ -6,22 +6,13 @@
   ...
 }:
 let
-  inherit (lib) mkDefault mkEnableOption;
+  inherit (lib) mkEnableOption;
   cfg = config.t11s.desktop.compositor.niri;
 in
 {
   options.t11s.desktop.compositor.niri.enable = mkEnableOption "enable niri compositor config";
   config = lib.mkIf cfg.enable {
-    t11s.desktop.lockAndIdle.desktopSpecific.niri =
-      let
-        niri = lib.getExe config.programs.niri.package;
-      in
-      {
-        desktopString = "niri";
-        dpmsOff = mkDefault "${niri} msg action power-off-monitors";
-        dpmsOn = mkDefault "${niri} msg action power-on-monitors";
-        afterSleepScript = mkDefault "";
-      };
+    # dpms used to be wired by hand here; noctalia screen_off drives niri IPC now
     home.packages = with pkgs; [
       brightnessctl
     ];

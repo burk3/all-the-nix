@@ -29,7 +29,6 @@
     desktop = {
       enable = true;
       compositor.niri.enable = true;
-      bar = "noctalia";
       noctalia.barPosition = "left";
       bluetoothSupport.enable = true;
       services.gnome-keyring.enable = true;

@@ -32,7 +32,9 @@
     desktop = {
       enable = true;
       compositor.niri.enable = true;
-      bar = "noctalia";
+      # pick the session in tuigreet (Ctrl-S / F3); the system side is already
+      # enabled in modules/nixos/base
+      compositor.hyprland.enable = true;
       launcher = "noctalia";
       bluetoothSupport.enable = true;
       networkManager.enable = true;

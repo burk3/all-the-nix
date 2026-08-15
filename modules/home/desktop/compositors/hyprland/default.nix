@@ -57,6 +57,7 @@ let
       ${hyprctl} keyword monitor "eDP-1,preferred,auto,auto"
     fi
   '';
+  # UNWIRED: was hypridle's after_sleep_cmd; noctalia has no resume hook.
   afterSleepScript = pkgs.writers.writeBash "after-sleep" ''
     # handles waking up from sleep for various lid/monitor states
     # lid open,   intMon off, any number of extMons -> enable intMon
@@ -132,33 +133,23 @@ with lib;
 {
   options.t11s.desktop.compositor.hyprland.enable = mkEnableOption "enable hyprland config";
   config = mkIf cfg.enable {
-    home.packages =
-      with pkgs;
-      [
-        hyprshot
-        brightnessctl
-        pavucontrol
-      ]
-      ++ (lib.optionals config.t11s.desktop.networkManager.enable [ networkmanagerapplet ]);
-
-    t11s.desktop.lockAndIdle.desktopSpecific.hyprland = {
-      desktopString = "hyprland";
-      afterSleepScript = mkDefault "${afterSleepScript}";
-      dpmsOn = mkDefault "${hyprctl} dpms on";
-      dpmsOff = mkDefault "${hyprctl} dpms off";
-    };
+    home.packages = with pkgs; [
+      brightnessctl
+      # hy3's tab bars render with this; nothing else here needs a nerd font
+      nerd-fonts.ubuntu
+    ];
 
     programs.fuzzel.enable = true;
 
     # {{{ hyprland
     wayland.windowManager.hyprland = {
       enable = true;
-      systemd = {
-        enable = true;
-        enableXdgAutostart = true;
-      };
+      # uwsm owns the session targets; this would fight it with an exec-once
+      # that restarts hyprland-session.target. Only the uwsm session works now.
+      systemd.enable = false;
+      # hyprexpo is gone from nixpkgs; it was gesture-only here anyway.
+      # hyprspace/hycov are the packaged overview alternatives.
       plugins = with pkgs.hyprlandPlugins; [
-        hyprexpo
         hy3
       ];
       settings =
@@ -167,10 +158,12 @@ with lib;
           fileManager = "nautilus";
           menu = config.t11s.desktop._launcherCmd;
           lock = "loginctl lock-session";
+          # via noctalia IPC rather than wpctl/brightnessctl directly, for the OSD
+          noctaliaMsg = "${lib.getExe config.programs.noctalia.package} msg";
         in
         {
           # {{{ hyprland.settings
-          inherit exec-once;
+          # (dropped exec-once nm-applet; noctalia has a network widget)
           monitor = ",preferred,auto,auto";
           env = [
             "XCURSOR_SIZE,32"
@@ -182,10 +175,10 @@ with lib;
             gaps_in = 5;
             gaps_out = "11,15,15,15";
             border_size = 2;
-            #"col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
-            #"col.inactive_border" = "rgba(595959aa)";
-            "col.active_border" = "rgba($blueAlphaee) rgba($greenAlphaee) 45deg";
-            "col.inactive_border" = "rgba($surface2Alphaaa)";
+            # Rosé Pine Moon, matching niri. Was $blueAlpha/etc from the
+            # long-gone catppuccin module, which hyprlang could not resolve.
+            "col.active_border" = "rgba(ea9a97ee) rgba(eb6f92ee) 45deg"; # rose -> love
+            "col.inactive_border" = "rgba(56526eaa)"; # highlight high
             resize_on_border = false;
             allow_tearing = false;
             #layout = "dwindle";
@@ -208,20 +201,10 @@ with lib;
               vibrancy = "0.1696";
             };
           };
+          # inert under layout = hy3; kept for switching back. pseudotile was
+          # dropped upstream with no replacement.
           dwindle = {
-            pseudotile = true;
             preserve_split = true;
-          };
-          plugin.hyprexpo = {
-            enable_gesture = true;
-            columns = 3;
-            gaps = 5;
-            #bg_col = "rgb(111111)";
-            bg_col = "$crust";
-            workspace_method = "center current";
-            gesture_fingers = 3; # 3 or 4
-            gesture_distance = 300; # how far is the "max"
-            gesture_positive = true; # positive = swipe down. Negative = swipe up.
           };
           plugin.hy3 = {
             node_collapse_policy = 0;
@@ -232,8 +215,8 @@ with lib;
             };
             tabs = {
               text_font = "Ubuntu Nerd Font";
-              "col.focused" = "rgba($accentAlphaee)";
-              "col.urgent" = "rgba($redAlphaee)";
+              "col.focused" = "rgba(9ccfd8ee)"; # foam
+              "col.urgent" = "rgba(eb6f92ee)"; # love
             };
           };
           master = {
@@ -256,17 +239,19 @@ with lib;
               scroll_factor = "0.5"; # sloooow down
             };
           };
-          gestures = {
-            workspace_swipe = true; # bless up, fam
-          };
-          windowrulev2 = [
+          # replaces gestures.workspace_swipe: <fingers>, <direction>, <action>.
+          # 3-finger horizontal was the old default. bless up, fam
+          gesture = [ "3, horizontal, workspace" ];
+          # windowrulev2 -> windowrule: snake_case `<prop> = <val>` pairs with
+          # matchers behind `match:`. Note match:float and match:pin, not -ing/-ned.
+          windowrule = [
             # Ignore maximize requests from apps. You'll probably like this.
-            "suppressevent maximize, class:.*"
+            "suppress_event = maximize, match:class = .*"
             # Fix some dragging issues with XWayland
-            "nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0"
+            "no_focus = true, match:class = ^$, match:title = ^$, match:xwayland = true, match:float = true, match:fullscreen = false, match:pin = false"
             # mpv should just float i guess
-            "float,class:mpv"
-            "float,class:mame"
+            "float = true, match:class = mpv"
+            "float = true, match:class = mame"
           ];
           "$mainMod" = "SUPER";
           bind = [
@@ -277,13 +262,15 @@ with lib;
             "$mainMod, V, togglefloating,"
             "$mainMod, R, exec, ${menu}"
             "$mainMod, P, pseudo," # dwindle
-            "$mainMod, S, togglesplit," # dwindle
+            # togglesplit moved behind layoutmsg; inert under hy3 regardless
+            "$mainMod, S, layoutmsg, togglesplit"
             "$mainMod SHIFT, Z, exec, ${lock}"
             "$mainMod, F, fullscreen"
             "$mainMod SHIFT, F, togglefloating"
-            "$mainMod SHIFT, S, exec, hyprshot -m region"
-            "$mainMod CONTROL, S, exec, hyprshot -m window"
-            "$mainMod ALT , S, exec, hyprshot -m output"
+            "$mainMod SHIFT, S, exec, ${noctaliaMsg} screenshot-region"
+            # noctalia has no per-window capture, so hyprshot stays for this one
+            "$mainMod CONTROL, S, exec, ${lib.getExe pkgs.hyprshot} -m window"
+            "$mainMod ALT , S, exec, ${noctaliaMsg} screenshot-fullscreen"
             # Move focus with mainMod + vi move keys
             "$mainMod, H, hy3:movefocus, l"
             "$mainMod, L, hy3:movefocus, r"
@@ -358,19 +345,18 @@ with lib;
           ];
           bindel = [
             # Laptop multimedia keys for volume and LCD brightness
-            ",XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
-            ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
-            ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-            ",XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
-            ",XF86MonBrightnessUp, exec, brightnessctl s 10%+"
-            ",XF86MonBrightnessDown, exec, brightnessctl s 10%-"
+            ",XF86AudioRaiseVolume, exec, ${noctaliaMsg} volume-up"
+            ",XF86AudioLowerVolume, exec, ${noctaliaMsg} volume-down"
+            ",XF86AudioMute, exec, ${noctaliaMsg} volume-mute"
+            ",XF86AudioMicMute, exec, ${noctaliaMsg} mic-mute"
+            ",XF86MonBrightnessUp, exec, ${noctaliaMsg} brightness-up"
+            ",XF86MonBrightnessDown, exec, ${noctaliaMsg} brightness-down"
           ];
           bindl = [
-            # Requires playerctl
-            ", XF86AudioNext, exec, playerctl next"
-            ", XF86AudioPause, exec, playerctl play-pause"
-            ", XF86AudioPlay, exec, playerctl play-pause"
-            ", XF86AudioPrev, exec, playerctl previous"
+            ", XF86AudioNext, exec, ${noctaliaMsg} media next"
+            ", XF86AudioPause, exec, ${noctaliaMsg} media toggle"
+            ", XF86AudioPlay, exec, ${noctaliaMsg} media toggle"
+            ", XF86AudioPrev, exec, ${noctaliaMsg} media previous"
             # go to sleep when shut
             #", switch:on:Lid Switch, exec, systemctl suspend-then-hibernate"
             ", switch:on:Lid Switch, exec, ${lidSwitchOnScript}"
