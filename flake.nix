@@ -21,10 +21,6 @@
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # nixos-generators = {
-    #   url = "github:nix-community/nixos-generators";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -76,6 +72,18 @@
   outputs =
     inputs:
     let
+      # niri and stylix inject their home modules from the NixOS side only, so
+      # standalone homeConfigurations (snowfall `format` "home") import them here.
+      onlyOnHome =
+        modules:
+        {
+          format ? "home",
+          lib,
+          ...
+        }:
+        {
+          imports = lib.optionals (format == "home") modules;
+        };
       flake = inputs.snowfall-lib.mkFlake {
         # You must provide our flake inputs to Snowfall Lib.
         inherit inputs;
@@ -88,12 +96,7 @@
         snowfall.namespace = "t11s";
 
         overlays = with inputs; [
-          # Pass the system *string* (`system = …`), not the elaborated platform
-          # attrset (`localSystem = prev.stdenv.hostPlatform`). The attrset
-          # carries lazy fields bound to the outer pkgs fixpoint, which the
-          # nested `import nixpkgs` forces mid-stage-build and re-enters this
-          # same fixpoint -> infinite recursion under newer nixpkgs. A bare
-          # string is re-elaborated fresh inside unstable, fully decoupled.
+          # bare system string: the elaborated platform attrset re-enters the pkgs fixpoint
           (_final: prev: {
             unstable = import inputs.unstable {
               inherit (prev.stdenv.hostPlatform) system;
@@ -110,6 +113,11 @@
         homes.modules = with inputs; [
           noctalia.homeModules.default
           agenix.homeManagerModules.default
+          (onlyOnHome [
+            niri.homeModules.config
+            niri.homeModules.stylix
+            stylix.homeModules.stylix
+          ])
         ];
         homes.users."burke@freddie-kane".modules = with inputs; [
           system76-scheduler-niri.homeModules.default
