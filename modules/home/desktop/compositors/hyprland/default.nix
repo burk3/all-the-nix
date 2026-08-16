@@ -150,6 +150,10 @@ with lib;
       # uwsm owns the session targets; this would fight it with an exec-once
       # that restarts hyprland-session.target. Only the uwsm session works now.
       systemd.enable = false;
+      # null so HM leaves xdg.portal alone: it would point
+      # NIX_XDG_DESKTOP_PORTAL_DIR at the home profile, hiding the system's
+      # gtk/gnome backends from every session. The NixOS module installs this.
+      portalPackage = null;
       # hyprexpo is gone from nixpkgs; it was gesture-only here anyway.
       # hyprspace/hycov are the packaged overview alternatives.
       plugins = with pkgs.hyprlandPlugins; [
