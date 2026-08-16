@@ -16,5 +16,10 @@ in
     stylix.enable = lib.mkDefault true;
     stylix.autoEnable = lib.mkDefault false;
     stylix.base16Scheme = lib.mkDefault "${pkgs.base16-schemes}/share/themes/tender.yaml";
+    stylix.polarity = lib.mkDefault "dark";
+    # autoEnable would turn on ~100 targets and fight the hand-written hyprland
+    # colors; these two are what the portal reads for app dark mode.
+    stylix.targets.gnome.enable = true;
+    stylix.targets.gtk.enable = true;
   };
 }
