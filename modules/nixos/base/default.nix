@@ -224,6 +224,12 @@ with lib;
       };
     };
 
+    # nixpkgs' ibus autostart entry is NotShowIn=GNOME;KDE; -- both start ibus
+    # themselves. Niri is not on that list, so it autostarts and warns.
+    systemd.user.units = mkIf (config.i18n.inputMethod.type == "ibus") {
+      "app-ibus\\x2ddaemon@autostart.service".enable = false;
+    };
+
     # Configure keymap in X11
     services.xserver.xkb = {
       layout = "us";
