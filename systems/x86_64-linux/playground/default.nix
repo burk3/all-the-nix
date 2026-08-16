@@ -1,19 +1,25 @@
-# Interactive throwaway VM: brings up a window and boots verbosely to a VT.
+# Interactive throwaway VM: brings up a window and boots to tuigreet.
 #   nixos-rebuild build-vm --flake .#playground
 #   ./result/bin/run-playground-vm          # burke / test, or ssh -p 2222
-{ lib, pkgs, ... }:
-{
+_: {
   networking.hostName = "playground";
   time.timeZone = "America/Los_Angeles";
 
   t11s.enable = true;
-  # server: no greetd, no desktop -- boot ends on a plain kernel VT
+  # server: no desktop, so the picker is empty -- F2 and type a command to log in
   t11s.systemType = "server";
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
 
-  # base boots silently; the whole point here is watching it boot
-  boot.consoleLogLevel = lib.mkForce 7;
+  # server hosts get no greeter from base; this one is here to be looked at
+  t11s.tuigreet = {
+    enable = true;
+    settings = {
+      display.show_time = true;
+      background.kind = "matrix";
+    };
+  };
+
   # console big enough to tell fonts apart
   boot.kernelParams = [ "video=1920x1080" ];
 

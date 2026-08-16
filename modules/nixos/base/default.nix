@@ -12,15 +12,6 @@ let
   isWsl = cfg.systemType == "wsl";
   hasScreen = (cfg.systemType == "workstation") || (cfg.systemType == "laptop");
 
-  # Sessions that never reach graphical-session.target, so noctalia would not
-  # start under them. Filtering tuigreet's dir is cheaper than a package override.
-  hiddenWaylandSessions = [ "hyprland.desktop" ]; # plain Hyprland: no systemd wiring
-  waylandSessions = pkgs.runCommandLocal "wayland-sessions-filtered" { } ''
-    mkdir -p $out
-    cp ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions/*.desktop $out/
-    rm -f ${lib.concatMapStringsSep " " (s: "$out/${s}") hiddenWaylandSessions}
-  '';
-
   homeStylix = config.home-manager.users.${cfg.mainUser.name}.stylix;
   # mirrors stylix's own copyModules list, in the opposite direction
   stylixFollowsHome = map (lib.splitString ".") [
@@ -193,21 +184,18 @@ with lib;
     # session PATH, nixpkgs#523332) and SDDM (qt5 lib / weston) hit on 26.05.
     # Sessions come from the aggregated sessionData dir so niri, gnome, and
     # hyprland (+uwsm) all appear in the picker (Ctrl-S / F3 to switch).
-    services.greetd = mkIf hasScreen {
+    t11s.tuigreet = mkIf hasScreen {
       enable = true;
-      useTextGreeter = true;
-      settings.default_session = {
-        user = "greeter";
-        command = concatStringsSep " " [
-          "${pkgs.tuigreet}/bin/tuigreet"
-          "--time"
-          "--remember"
-          "--remember-session"
-          "--asterisks"
-          # filtered, not sessionData directly -- see hiddenWaylandSessions above
-          "--sessions ${waylandSessions}"
-          "--xsessions ${config.services.displayManager.sessionData.desktops}/share/xsessions"
-        ];
+      # plain Hyprland never reaches graphical-session.target, so noctalia would
+      # not start under it. Its uwsm entry stays.
+      hiddenSessions = [ "hyprland.desktop" ];
+      settings = {
+        display.show_time = true;
+        remember = {
+          username = true;
+          session = true;
+        };
+        secret.mode = "characters";
       };
     };
 

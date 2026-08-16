@@ -39,6 +39,7 @@ in
   t11s.internalCA.enable = true;
   # offline reinstall ISO: nix build .#nixosConfigurations.freddie-kane.config.system.build.for-real-installer-iso
   t11s.forRealInstaller.enable = true;
+  t11s.tuigreet.settings.background.kind = "matrix";
 
   stylix.targets.console.enable = true;
 

@@ -67,6 +67,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-amd-ai.url = "github:noamsto/nix-amd-ai";
+    tuigreet = {
+      url = "github:tuigreet/tuigreet";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -97,12 +101,20 @@
 
         overlays = with inputs; [
           # bare system string: the elaborated platform attrset re-enters the pkgs fixpoint
-          (_final: prev: {
-            unstable = import inputs.unstable {
+          (
+            _final: prev:
+            let
               inherit (prev.stdenv.hostPlatform) system;
-              config.allowUnfree = true;
-            };
-          })
+            in
+            {
+              unstable = import inputs.unstable {
+                inherit system;
+                config.allowUnfree = true;
+              };
+              # nixpkgs still tracks apognu/tuigreet; upstream moved to the tuigreet org
+              inherit (inputs.tuigreet.packages.${system}) tuigreet;
+            }
+          )
           systemctl-toggle.overlays.default
           niri.overlays.niri
         ];
