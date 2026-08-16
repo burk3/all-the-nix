@@ -20,6 +20,30 @@ let
     cp ${config.services.displayManager.sessionData.desktops}/share/wayland-sessions/*.desktop $out/
     rm -f ${lib.concatMapStringsSep " " (s: "$out/${s}") hiddenWaylandSessions}
   '';
+
+  homeStylix = config.home-manager.users.${cfg.mainUser.name}.stylix;
+  # mirrors stylix's own copyModules list, in the opposite direction
+  stylixFollowsHome = map (lib.splitString ".") [
+    "base16Scheme"
+    "cursor"
+    "fonts.emoji"
+    "fonts.monospace"
+    "fonts.sansSerif"
+    "fonts.serif"
+    "fonts.sizes.applications"
+    "fonts.sizes.desktop"
+    "fonts.sizes.popups"
+    "fonts.sizes.terminal"
+    "icons"
+    "image"
+    "imageScalingMode"
+    "opacity.applications"
+    "opacity.desktop"
+    "opacity.popups"
+    "opacity.terminal"
+    "override"
+    "polarity"
+  ];
 in
 with lib;
 {
@@ -388,5 +412,21 @@ with lib;
     # services.openssh.enable = true;
 
     services.gnome.gcr-ssh-agent.enable = true;
+
+    # stylix is configured per-home so standalone homeConfigurations get themed
+    # too; the system follows the main user instead of the usual other way round.
+    stylix = mkMerge (
+      [
+        {
+          enable = mkDefault true;
+          # not derived from home: it gates stylix.overlays, and pulling it from
+          # the home config would cycle through nixpkgs.overlays -> pkgs
+          autoEnable = mkDefault false;
+          # the system-to-home copy would close a cycle with the lines below
+          homeManagerIntegration.followSystem = false;
+        }
+      ]
+      ++ map (path: setAttrByPath path (mkDefault (getAttrFromPath path homeStylix))) stylixFollowsHome
+    );
   };
 }

@@ -40,9 +40,6 @@ in
   # offline reinstall ISO: nix build .#nixosConfigurations.freddie-kane.config.system.build.for-real-installer-iso
   t11s.forRealInstaller.enable = true;
 
-  stylix.enable = true;
-  stylix.autoEnable = false;
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
   stylix.targets.console.enable = true;
 
   virtualisation.libvirtd.enable = true;

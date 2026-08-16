@@ -21,6 +21,7 @@
 
   # the good stuff
   t11s = {
+    enable = true;
     personal.enable = true;
     guiCommon.enable = true;
     neovim.enable = true;
@@ -34,7 +35,6 @@
       services.gnome-keyring.enable = true;
     };
   };
-  stylix.enable = true;
   stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
   stylix.image = pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/rose-pine/wallpapers/refs/heads/main/generative/contour-line.png";

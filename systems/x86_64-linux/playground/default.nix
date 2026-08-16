@@ -17,9 +17,6 @@
   # console big enough to tell fonts apart
   boot.kernelParams = [ "video=1920x1080" ];
 
-  stylix.enable = true;
-  stylix.autoEnable = false;
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/equilibrium-light.yaml";
   stylix.targets.console.enable = true;
 
   # build-vm substitutes its own root device; this only satisfies evaluation

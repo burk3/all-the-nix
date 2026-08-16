@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [ ./ai.nix ];
   # Home Manager needs a bit of information about you and the paths it should
@@ -18,8 +18,11 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/atlas.yaml";
+
   # stuff
   t11s = {
+    enable = true;
     personal.enable = true;
     neovim.enable = true;
     shell.enable = true;

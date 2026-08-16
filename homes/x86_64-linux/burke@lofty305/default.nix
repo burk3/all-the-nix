@@ -20,6 +20,7 @@
 
   # stuff
   t11s = {
+    enable = true;
     personal.enable = true;
     neovim.enable = true;
     shell.enable = true;

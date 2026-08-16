@@ -126,12 +126,6 @@
         systems.modules.nixos = with inputs; [
           determinate.nixosModules.default
           stylix.nixosModules.stylix
-          (
-            { lib, ... }:
-            {
-              config.stylix.autoEnable = lib.mkDefault false;
-            }
-          )
           lanzaboote.nixosModules.lanzaboote
           niri.nixosModules.niri
           programsdb.nixosModules.programs-sqlite

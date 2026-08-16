@@ -37,9 +37,6 @@ in
   # which is uncached and currently fails to build at i686 numpy).
   programs.steam.enable = false;
 
-  stylix.enable = true;
-  stylix.autoEnable = false;
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
   stylix.targets.console.enable = true;
 
   ### firmware/hardware/lowlevel
