@@ -86,6 +86,7 @@ in
               clock.format = "{:%H:%M}";
               clock.color = "primary";
             };
+            weather.unit = "imperial";
             battery.warning_threshold = 30;
             dock.pinned = noctaliaCfg.pinnedApps;
             location.address = noctaliaCfg.location;
