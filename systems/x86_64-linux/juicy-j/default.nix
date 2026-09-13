@@ -114,8 +114,11 @@ in
 
   ### Hardware services
   services.hardware.bolt.enable = true;
+  # Match the Aquantia (atlantic) NIC by driver rather than MAC: the adapter is
+  # USB4/Thunderbolt-attached, so its PCIe bus address is enumerated at hotplug
+  # and isn't stable, while the driver name is. sfp0 is the only atlantic NIC.
   services.udev.extraRules = ''
-    SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="24:5e:be:94:19:42", NAME="sfp0"
+    SUBSYSTEM=="net", ACTION=="add", DRIVERS=="atlantic", NAME="sfp0"
   '';
 
   ### Software
