@@ -38,6 +38,7 @@ with lib;
       nmap
       dig
       glow
+      gh
     ];
 
     age.secrets."private-nix.conf" = {

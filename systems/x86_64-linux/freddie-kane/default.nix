@@ -78,6 +78,7 @@ in
   ### firmware/hardware/lowlevel
   boot = {
     plymouth.enable = true;
+    plymouth.logo = ./dynamic-solutions.png;
     # boot.resumeDevice is set by disko's cryptswap (resumeDevice = true).
     lanzaboote = lib.mkIf secureBoot {
       enable = true;
