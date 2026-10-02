@@ -13,5 +13,7 @@ in
   "secrets/pushover-user-key.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/pushover-api-token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/openclaw-gateway-token.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/flake-update-bot-gh-token.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/claude-oauth-token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/private-nix.conf.age".publicKeys = burke;
 }
