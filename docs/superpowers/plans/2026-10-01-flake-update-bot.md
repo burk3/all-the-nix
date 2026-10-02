@@ -108,6 +108,8 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 
 ### Task 1: Add Determinate's `nix-eval-jobs` as a flake input
 
+> **Outcome (2026-10-01):** done, with one change. `determinate` updated to 3.23.0 while the fork is at 3.22.5, and the fork does not evaluate against nix-src 3.23.0 (`attribute 'bdwgc' missing`). The `inputs.nix.follows` line was removed, so the evaluator uses its own pinned nix-src 3.22.5. It builds (two small derivations; the Nix libraries are substituted). The steps below are kept as originally written.
+
 **Files:**
 - Modify: `flake.nix` (the `inputs` block, directly after the `determinate.url` line)
 - Modify: `flake.lock` (generated)
@@ -1635,7 +1637,7 @@ Append to `systems/x86_64-linux/juicy-j/CLAUDE.md`:
 **Runs Hydra** (`hydra.nix`) at `https://hydra.ts.t11s.net`, building `hydraJobs.nixos.<host>` for the `master` and `flake-update` branches of this repo. Three things there are deliberate:
 
 - The localhost builder is in a machines file only Hydra reads (`services.hydra.buildMachinesFiles`). Do not move it into `nix.buildMachines`: that writes `/etc/nix/machines` and makes interactive `nix build` SSH into this machine.
-- Hydra evaluates with Determinate's `nix-eval-jobs` (flake input `nix-eval-jobs`, following `determinate/nix`). This keeps Hydra's derivations identical to what `nh os switch` computes on other hosts, which is what lets them substitute from here. If Hydra's `drvPath` for a host ever differs from `nix eval .#nixosConfigurations.<host>.config.system.build.toplevel.drvPath`, clients go back to building.
+- Hydra evaluates with Determinate's `nix-eval-jobs` (flake input `nix-eval-jobs`, which deliberately does not follow `determinate/nix`: the fork lags Determinate releases and will not evaluate against a newer nix-src). This keeps Hydra's derivations identical to what `nh os switch` computes on other hosts, which is what lets them substitute from here. If Hydra's `drvPath` for a host ever differs from `nix eval .#nixosConfigurations.<host>.config.system.build.toplevel.drvPath`, clients go back to building.
 - The project and jobsets are declared in `hydra.nix` and applied by `hydra-provision` on every switch. Changes made in the web UI are overwritten.
 
 **Runs the weekly flake update** (`t11s.flakeUpdateBot`, Saturday 04:00). See `modules/nixos/flake-update-bot/CLAUDE.md`. Store GC runs Sunday 02:30 to 05:00; keep the two apart.

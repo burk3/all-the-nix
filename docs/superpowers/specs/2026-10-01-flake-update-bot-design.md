@@ -51,9 +51,11 @@ File: `systems/x86_64-linux/juicy-j/hydra.nix`, re-imported from `default.nix`.
   `/root/.ssh` is unreadable by `hydra-queue-runner`, and the substituter would
   affect every interactive build on juicy-j.
 - **Determinate evaluator.** New flake input
-  `nix-eval-jobs` = `DeterminateSystems/nix-eval-jobs` from FlakeHub, with
-  `inputs.nix.follows = "determinate/nix"` so the evaluator libraries are the
-  same version as the daemon. Hydra is overridden:
+  `nix-eval-jobs` = `DeterminateSystems/nix-eval-jobs` from FlakeHub. It keeps
+  its own pinned nix-src and does not follow `determinate/nix`: the fork is
+  released a little behind Determinate Nix and does not evaluate against a newer
+  nix-src, so the evaluator can be one release behind the daemon. Hydra is
+  overridden:
   `services.hydra.package = pkgs.hydra.override { nix-eval-jobs = <fork>; }`.
   Hydra calls `nix-eval-jobs` as an external binary, and every flag it passes is
   accepted by the fork. Fallback if this does not build or evaluate: drop the
@@ -242,9 +244,11 @@ Each one is verified before the next starts.
 
 To be settled in milestone 1 unless noted.
 
-- The Determinate `nix-eval-jobs` fork builds with `nix` following
-  `determinate/nix`, Hydra's test suite passes with it, and its JSON output is
-  what Hydra's evaluator script expects.
+- Hydra's test suite passes with the Determinate `nix-eval-jobs` fork, and the
+  fork's JSON output is what Hydra's evaluator script expects. (The fork itself
+  builds: checked 2026-10-01.)
+- An evaluator one Determinate release behind the daemon still produces the
+  same derivations. Covered by the parity check.
 - The fork honours `lazy-trees` and `eval-cores` from `/etc/nix/nix.conf`.
 - Hydra and Determinate Nix produce identical derivations for this flake when
   one fetches `git+https:` and the other evaluates a local checkout.

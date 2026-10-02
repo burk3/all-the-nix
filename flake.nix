@@ -42,12 +42,10 @@
     };
     determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     # Hydra's evaluator, built against Determinate Nix so Hydra evaluates the
-    # way the CLI does (lazy trees included). Follows determinate's nix so the
-    # evaluator and the daemon are the same version.
-    nix-eval-jobs = {
-      url = "https://flakehub.com/f/DeterminateSystems/nix-eval-jobs/*";
-      inputs.nix.follows = "determinate/nix";
-    };
+    # way the CLI does (lazy trees included). Deliberately not following
+    # determinate's nix: the fork is released a little behind Determinate Nix
+    # and does not evaluate against a newer nix-src.
+    nix-eval-jobs.url = "https://flakehub.com/f/DeterminateSystems/nix-eval-jobs/*";
     stylix = {
       url = "github:nix-community/stylix/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
