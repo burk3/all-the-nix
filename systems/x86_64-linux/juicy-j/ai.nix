@@ -2,6 +2,13 @@
 {
   imports = [ inputs.nix-amd-ai.nixosModules.default ];
 
+  # System-wide, not just the flake's nixConfig: Hydra and the daemon ignore
+  # flake-level substituters.
+  nix.settings.substituters = [ "https://nix-amd-ai.cachix.org" ];
+  nix.settings.trusted-public-keys = [
+    "nix-amd-ai.cachix.org-1:F4OU4vw/lV2oiG6SBHZ+nqjl4EFJuqI4X9A7pvaBmhQ="
+  ];
+
   hardware.amd-npu = {
     enable = true;
     enableNPU = true; # default; set false for GPU-only hosts (see "Other hardware")
