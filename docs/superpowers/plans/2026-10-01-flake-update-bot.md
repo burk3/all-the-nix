@@ -777,6 +777,8 @@ Expected: no evaluation phase, paths to fetch only.
 
 ### Task 6: The orchestrator package
 
+> **Outcome (2026-10-01):** done, then revised after an independent review. The files in `packages/flake-update-bot/` are authoritative; the listings below are the original versions. Changes: Hydra being unreachable or timing out is reported as "no result" and does not start the fix loop; credentials are redacted from PR comments and a commit containing one is not pushed; the push goes to an explicit github.com URL with a host-scoped credential helper; Pushover keys are no longer passed as process arguments; the build timeout is 4 hours; shellcheck rule SC2016 is excluded in `default.nix`.
+
 The Hydra-facing logic (`find_eval`, `gating_summary`, `wait_for_eval`, `success_report`) is tested with Hydra's API stubbed. The git, GitHub and Claude steps are exercised end to end in Tasks 8 and 9.
 
 **Files:**

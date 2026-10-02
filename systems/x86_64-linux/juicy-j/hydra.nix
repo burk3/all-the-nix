@@ -80,8 +80,8 @@ in
 
   # The project and jobsets are declared above, not clicked together in the
   # web UI. This unit re-applies them on every switch through Hydra's REST
-  # API, logging in as an admin user whose password is regenerated on each run
-  # and never stored.
+  # API, logging in as an admin user whose password is generated for the run
+  # and disabled again when the unit exits. It is never stored.
   systemd.services.hydra-provision = {
     description = "Declare the ${project} Hydra project and jobsets";
     wantedBy = [ "multi-user.target" ];
@@ -108,6 +108,10 @@ in
     script = ''
       url=http://127.0.0.1:${toString config.services.hydra.port}
       password=$(head -c 24 /dev/urandom | base64)
+      # hydra-create-user only takes a plaintext password as an argument, where
+      # other local users could see it, so the account is locked again on exit:
+      # "!" is the hash Hydra itself gives accounts that cannot log in.
+      trap 'hydra-create-user provision --password-hash "!"' EXIT
       hydra-create-user provision --role admin --password "$password"
 
       cd "$(mktemp -d)"
@@ -115,7 +119,8 @@ in
         curl -fsS --referer "$url" \
           -H 'Accept: application/json' -H 'Content-Type: application/json' "$@"
       }
-      jq -n --arg p "$password" '{username: "provision", password: $p}' |
+      # printf is a shell builtin, so the password stays out of process arguments
+      printf '{"username": "provision", "password": "%s"}' "$password" |
         api --retry 30 --retry-connrefused --retry-delay 2 \
           -X POST -d @- -c cookie "$url/login" >/dev/null
       api -b cookie -X PUT -d @${projectJson} "$url/project/${project}" >/dev/null

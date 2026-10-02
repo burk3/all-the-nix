@@ -77,8 +77,38 @@ check "an evaluation error after the push fails fast" "1 error: attribute missin
 
 JOBSET='{"lastcheckedtime":50,"errortime":50,"errormsg":"stale error","fetcherrormsg":null}'
 wait_for_eval "$REV" 100 && rc=0 || rc=$?
-check "an error from before the push is ignored until timeout" 1 "$rc"
+check "an error from before the push is ignored; the timeout is rc 2, not a build failure" 2 "$rc"
 check "the timeout says so" "Timed out" "${EVAL_ERROR:0:9}"
+
+# --- Hydra unreachable is not a build failure ---------------------------------
+hydra_get() { return 22; }
+FUB_EVAL_TIMEOUT=2
+wait_for_eval "$REV" 100 && rc=0 || rc=$?
+check "Hydra unreachable during the eval wait is rc 2" 2 "$rc"
+
+EVAL_JSON='{"id":7,"builds":[70,71]}'
+FUB_BUILD_TIMEOUT=2
+wait_for_builds
+check "Hydra unreachable during the build wait is a timeout, not a failure" timeout "$(jq -r .state <<<"$SUMMARY")"
+
+hydra_get() {
+  case $1 in
+    /build/70) echo "$ok_j" ;;
+    /build/71) echo "$ok_f" ;;
+  esac
+}
+wait_for_builds
+check "wait_for_builds reports success once builds are readable" success "$(jq -r .state <<<"$SUMMARY")"
+
+# --- redact ----------------------------------------------------------------
+CREDENTIALS_DIRECTORY=$(mktemp -d)
+export CREDENTIALS_DIRECTORY
+printf 'ghp_SECRETVALUE\n' >"$CREDENTIALS_DIRECTORY/gh-token"
+check "redact removes a credential from text" "token is [redacted] ok" \
+  "$(echo "token is ghp_SECRETVALUE ok" | redact)"
+check "redact leaves other text alone" "nothing secret" "$(echo "nothing secret" | redact)"
+rm -rf "$CREDENTIALS_DIRECTORY"
+unset CREDENTIALS_DIRECTORY
 
 # Hydra has checked twice since the push without producing a new evaluation:
 # the jobs are unchanged, so the latest listed evaluation is the result.

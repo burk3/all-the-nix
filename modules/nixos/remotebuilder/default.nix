@@ -61,8 +61,17 @@ with lib;
       );
       # Nix shells out to OpenSSH for builders and ssh-ng substituters. Without
       # a connect timeout an unreachable builder (laptop off the tailnet)
-      # stalls every build.
-      systemd.services.nix-daemon.environment.NIX_SSHOPTS = mkIfRemotes "-o ConnectTimeout=5";
+      # stalls every build. Set in ssh_config so it covers the daemon and root
+      # alike; mkAfter keeps these Host blocks at the end of the file so no
+      # other module's global options land inside them.
+      programs.ssh.extraConfig = mkIfRemotes (
+        mkAfter (
+          concatMapStrings (hostName: ''
+            Host ${hostName}
+              ConnectTimeout 5
+          '') cfg.hosts
+        )
+      );
 
       nix.buildMachines = mkIfRemotes (
         map (hostName: {

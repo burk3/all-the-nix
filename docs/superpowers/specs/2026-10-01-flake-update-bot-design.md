@@ -163,7 +163,7 @@ Timer: Saturday 04:00, `Persistent=true`. Clear of the Sunday GC window.
    `flake-update` over HTTPS, open a new PR against `master`.
 5. Poll Hydra until an evaluation for the pushed commit exists (45 minute
    timeout), then until the gating jobs (`nixos.<host>` for each configured
-   host) finish (6 hour timeout). Hydra picks the push up by polling the branch.
+   host) finish (4 hour timeout). Hydra picks the push up by polling the branch.
 6. All gating jobs succeeded: comment with links to the Hydra builds and the
    output paths. Send a Pushover notification. Done.
 7. Otherwise: comment with each failing job, its Hydra link and a log tail (or
@@ -280,7 +280,7 @@ To be settled in milestone 1 unless noted.
 - The substituter is wired into `modules/nixos/remotebuilder` for every
   `t11s.remotebuild.hosts` entry, not set on freddie-kane alone.
 - Fixed branch `flake-update` with a new PR each week, older PR closed.
-- Saturday 04:00 schedule, 3 fix attempts, 60 minute Claude timeout, 6 hour
+- Saturday 04:00 schedule, 3 fix attempts, 60 minute Claude timeout, 4 hour
   build timeout.
 - 30 day GC retention.
 - `t11s-cached-system` included in the first version.
