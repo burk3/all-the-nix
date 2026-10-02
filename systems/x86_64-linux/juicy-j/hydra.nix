@@ -1,4 +1,17 @@
-{ pkgs, ... }:
+{
+  pkgs,
+  inputs,
+  ...
+}:
+let
+  # Hydra reads only this file. Keeping the localhost builder out of
+  # nix.buildMachines means /etc/nix/machines is never written, so interactive
+  # `nix build` does not try to SSH into this machine. i686-linux is listed
+  # because Steam on other hosts pulls in 32-bit derivations.
+  machines = pkgs.writeText "hydra-machines" ''
+    localhost x86_64-linux,i686-linux - 16 1 kvm,big-parallel,nixos-test,benchmark - -
+  '';
+in
 {
   services.postgresql = {
     enable = true;
@@ -12,46 +25,21 @@
     hydraURL = "https://hydra.ts.t11s.net";
     notificationSender = "hydra@juicy-j.lan";
     useSubstitutes = true;
+    buildMachinesFiles = [ "${machines}" ];
+    # nixpkgs' Hydra links upstream Nix, but it runs nix-eval-jobs as a
+    # separate program. Swapping that for Determinate's build makes Hydra
+    # produce the same derivations as `nh os switch` on the other hosts, which
+    # is what lets them substitute Hydra's builds.
+    package = pkgs.hydra.override {
+      nix-eval-jobs = inputs.nix-eval-jobs.packages.${pkgs.stdenv.hostPlatform.system}.default;
+    };
+    extraConfig = ''
+      evaluator_workers = 4
+      evaluator_max_memory_size = 8192
+      # stylix reads its colour scheme out of a derivation
+      allow_import_from_derivation = true
+    '';
   };
-
-  # nixbuild.net offload for aarch64 builds. The SSH key at
-  # /root/.ssh/nixbuild-dot-net is provisioned out-of-band (same one used on
-  # freddie-kane).
-  nix.distributedBuilds = true;
-  nix.settings.substituters = [ "ssh://eu.nixbuild.net?priority=100" ];
-  nix.settings.trusted-public-keys = [
-    "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U="
-  ];
-  nix.buildMachines = [
-    {
-      hostName = "localhost";
-      # Build locally without SSH. With the default protocol = "ssh", the module
-      # renders this as `ssh://localhost` in /etc/nix/machines, which Hydra
-      # tolerates but breaks interactive `nix build` (the CLI shares this file
-      # via builders=@/etc/nix/machines and tries to SSH into itself). A bare
-      # `localhost` entry (protocol = null) builds on the local machine — the
-      # form nixpkgs documents as "used by hydra".
-      protocol = null;
-      systems = [ "x86_64-linux" ];
-      supportedFeatures = [
-        "kvm"
-        "big-parallel"
-        "nixos-test"
-        "benchmark"
-      ];
-      maxJobs = 16;
-    }
-    {
-      hostName = "eu.nixbuild.net";
-      system = "aarch64-linux";
-      maxJobs = 100;
-      supportedFeatures = [
-        "benchmark"
-        "big-parallel"
-      ];
-      sshKey = "/root/.ssh/nixbuild-dot-net";
-    }
-  ];
 
   services.caddy = {
     enable = true;

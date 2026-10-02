@@ -15,7 +15,7 @@ in
     ./hardware-configuration.nix
     ./rke2.nix
     ./monitoring.nix
-    # ./hydra.nix  # disabled: localhost remote builder kept breaking interactive nix build
+    ./hydra.nix
     ./openclaw-host.nix
     ./ai.nix
     ./jane.nix
