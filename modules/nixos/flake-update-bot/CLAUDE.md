@@ -8,3 +8,4 @@
 - It runs as the main user in the same unit as the secrets, so the allowlist is a guardrail, not a sandbox: Claude could read the credential files if it went looking. Real isolation would need a separate user.
 - Manual run: `sudo systemctl start flake-update-bot`, then `journalctl -fu flake-update-bot`.
 - To test against an existing `flake-update` branch without updating the lock, set `FUB_SKIP_UPDATE=1` through a runtime drop-in.
+- The `flake-update` branch must keep existing on GitHub. When it is missing, Hydra's fetch for that jobset hangs for its full ten-minute timeout on every poll and holds the lock on the shared clone, which delays `master` evaluations behind it (seen 2026-10-01; root cause inside Hydra's environment not identified). Do not delete the branch after merging a PR; the bot recreates it on its next run if it is gone.
