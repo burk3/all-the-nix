@@ -205,6 +205,14 @@ with lib;
       withUWSM = true;
     };
     programs.uwsm.enable = hasScreen;
+    # s-t-c stops changed user units; stopping these ends the running session.
+    # Force env empty so the drop-in doesn't clobber the compositor's PATH.
+    systemd.user.services = mkIf hasScreen (
+      genAttrs [ "wayland-session-bindpid@" "wayland-wm@" "wayland-wm-env@" ] (_: {
+        restartIfChanged = false;
+        environment = mkForce { };
+      })
+    );
     programs.iio-hyprland.enable = hasScreen;
 
     # niri compositor
