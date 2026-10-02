@@ -50,6 +50,7 @@ nix flake lock --update-input <name>        # bump one input
 # Build/switch a host (run on that host, or with --target-host)
 sudo nixos-rebuild switch --flake .#<hostname>
 nh os switch .                              # nh wrapper, installed by personal home module
+nh os switch "$(t11s-cached-system)"        # switch to the closure Hydra built for HEAD; no evaluation
 
 # Home-manager only
 home-manager switch --flake .#<user@host>
