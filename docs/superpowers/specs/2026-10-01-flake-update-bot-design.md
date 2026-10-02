@@ -204,7 +204,9 @@ chosen trade-off (run as burke, subscription token) over a dedicated user.
 ## After merge
 
 The `master` jobset notices the merge within 5 minutes and builds it. If master
-did not move during the week, this is entirely cache hits from the PR build.
+did not move during the week, this is nearly all cache hits from the PR build:
+only a handful of tiny derivations rebuild, because the system's Nix registry
+pins this flake by commit hash.
 Hydra's GC roots (3 evaluations per jobset) keep the closure alive through the
 weekly GC.
 
