@@ -51,6 +51,19 @@ with lib;
       nix.distributedBuilds = mkIfRemotes true;
       nix.settings.builders-use-substitutes = mkIfRemotes true;
 
+      # Also substitute from the builders, with the same user and key. Their
+      # stores are unsigned, so `trusted=true` is what lets the daemon accept
+      # paths from them; it is scoped to these stores only.
+      nix.settings.substituters = mkIfRemotes (
+        map (
+          hostName: "ssh-ng://remotebuild@${hostName}?ssh-key=/root/.ssh/remotebuild&trusted=true"
+        ) cfg.hosts
+      );
+      # Nix shells out to OpenSSH for builders and ssh-ng substituters. Without
+      # a connect timeout an unreachable builder (laptop off the tailnet)
+      # stalls every build.
+      systemd.services.nix-daemon.environment.NIX_SSHOPTS = mkIfRemotes "-o ConnectTimeout=5";
+
       nix.buildMachines = mkIfRemotes (
         map (hostName: {
           inherit hostName;
