@@ -32,6 +32,14 @@ in
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.serveBuilds = true;
   t11s.internalCA.enable = true;
+  t11s.flakeUpdateBot = {
+    enable = true;
+    repo = "burk3/all-the-nix";
+    hosts = [
+      "juicy-j"
+      "freddie-kane"
+    ];
+  };
 
   # Not a gaming box: skip Steam (and with it the whole 32-bit/i686 userspace,
   # which is uncached and currently fails to build at i686 numpy).
