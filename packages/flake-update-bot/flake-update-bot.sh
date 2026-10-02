@@ -169,6 +169,7 @@ failure_report() {
 # evaluate or build, 2 when Hydra gave no result (nothing to fix).
 gate() {
   local rev=$1 since=$2 out=$3 rc=0
+  SUMMARY=""
   log "waiting for Hydra to evaluate $rev"
   wait_for_eval "$rev" "$since" || rc=$?
   if ((rc != 0)); then
@@ -255,46 +256,49 @@ stop_without_result() {
   exit 1
 }
 
+# The gating hosts that failed in SUMMARY, or all of them when the flake did
+# not evaluate at all.
+failed_hosts() {
+  local failed=""
+  if [[ -n $SUMMARY ]]; then
+    failed=$(jq -r '[.failed[].job, .missing[]] | map(ltrimstr("nixos.")) | join(" ")' <<<"$SUMMARY")
+  fi
+  echo "${failed:-$FUB_HOSTS}"
+}
+
 # Let Claude Code attempt a fix. $1: failure report, $2: file for its summary.
 # Returns 0 only if it committed something.
+#
+# Claude runs with the profile shipped in this package: claude-settings.json
+# puts its shell in a sandbox (no network, no Nix daemon, home hidden) and
+# claude-instructions.md tells it to use `fub`, the one command excluded from
+# the sandbox, for builds and commits. Project and local settings are ignored
+# so nothing in the repo can widen that.
 run_claude() {
-  local report=$1 summary=$2 before prompt
+  local report=$1 summary=$2 before prompt failed
   before=$(git rev-parse HEAD)
+  failed=$(failed_hosts)
   prompt=$(
     cat <<EOF
 You are running unattended in a clone of the $FUB_REPO flake, on branch
-$FUB_BRANCH. The last commits updated flake.lock, and Hydra failed to build the
-NixOS system closures for: $FUB_HOSTS. The failure report follows.
+$FUB_BRANCH. The last commits updated flake.lock, and Hydra then failed for:
+$failed. (All gating hosts: $FUB_HOSTS.) The failure report follows.
 
 $(cat "$report")
 
-Fix it so that this builds for every host listed above:
-
-  nix build --no-link .#nixosConfigurations.<host>.config.system.build.toplevel
-
-Rules:
-- Make the smallest change that fixes the build. Do not refactor.
-- Do not remove features, hosts or packages to get a green build, unless the
-  package was removed upstream; say so if that is the case.
-- Pinning a single input back to its previous revision is acceptable if a real
-  fix is not practical. Explain why.
-- Run the nix build above for each failing host and confirm it succeeds.
-- New files must be git-added before nix can see them.
-- Commit your fix on the current branch. Do not push.
-- Your final message is posted on the pull request: say what was wrong, what
-  you changed, and how you verified it, in under 200 words.
+Fix it so that \`fub build $failed\` succeeds, then commit with \`fub commit\`.
 EOF
   )
-  log "running claude"
+  log "running claude for: $failed"
   CLAUDE_CODE_OAUTH_TOKEN=$(cred claude-token) \
     CLAUDE_CONFIG_DIR="$FUB_STATE_DIR/claude" \
+    FUB_BASE="$FUB_BASE" \
     BASH_DEFAULT_TIMEOUT_MS=3600000 BASH_MAX_TIMEOUT_MS=3600000 \
     env -u CREDENTIALS_DIRECTORY \
     timeout "$FUB_CLAUDE_TIMEOUT" claude -p "$prompt" \
-    --permission-mode dontAsk \
-    --allowedTools Read Edit Write Glob Grep \
-    'Bash(nix:*)' 'Bash(git add:*)' 'Bash(git commit:*)' 'Bash(git diff:*)' \
-    'Bash(git status:*)' 'Bash(git log:*)' 'Bash(git show:*)' \
+    --setting-sources user \
+    --settings "${FUB_CLAUDE_SETTINGS:?}" \
+    --append-system-prompt-file "${FUB_CLAUDE_INSTRUCTIONS:?}" \
     >"$summary" 2>"$FUB_STATE_DIR/claude-stderr.log" || log "claude exited non-zero"
   git reset --hard -q
   git clean -fdq

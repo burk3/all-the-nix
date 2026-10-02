@@ -129,6 +129,14 @@ wait_for_eval "$REV" 100 && rc=0 || rc=$?
 check "unchanged jobs fall back to the latest evaluation" "0 6" "$rc $(jq -r .id <<<"$EVAL_JSON")"
 rm -f "$count_file"
 
+# --- failed_hosts -----------------------------------------------------------
+SUMMARY=$(gating_summary juicy-j freddie-kane <<<"[$ok_j,$bad_f]")
+check "failed_hosts names only the hosts that failed" "freddie-kane" "$(failed_hosts)"
+SUMMARY=$(gating_summary juicy-j freddie-kane <<<"[$ok_j]")
+check "failed_hosts includes hosts missing from the evaluation" "freddie-kane" "$(failed_hosts)"
+SUMMARY=""
+check "failed_hosts falls back to every gating host when nothing evaluated" "juicy-j freddie-kane" "$(failed_hosts)"
+
 # --- success_report --------------------------------------------------------
 FUB_HYDRA_PUBLIC_URL=https://hydra.example
 SUMMARY=$(gating_summary juicy-j <<<"[$ok_j]")

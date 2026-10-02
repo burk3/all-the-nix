@@ -128,7 +128,7 @@ Not chosen:
   `LoadCredential`, the way `monitoring.nix` already passes the Pushover keys.
 - Enabled on juicy-j with `hosts = [ "juicy-j" "freddie-kane" ]`.
 
-The bot works in its own clone at `~/.local/state/flake-update-bot/repo`, never
+The bot works in its own clone at `/var/lib/flake-update-bot/repo`, never
 in `~/src/all-the-nix`.
 
 ### 4. `t11s-cached-system` (eval-free switch)
@@ -179,8 +179,11 @@ Up to `maxFixAttempts` (default 3). Each attempt:
 
 1. Run `claude -p` in the bot's clone, 60 minute timeout, with the failing jobs
    and log tails in the prompt. Auth through `CLAUDE_CODE_OAUTH_TOKEN`.
-2. Allowed tools: read, edit and write files; `nix`; `git add`, `git commit`,
-   `git diff`, `git status`, `git log`. No `git push`, no `gh`.
+2. Claude runs with a profile shipped in the package. Its shell is in Claude
+   Code's sandbox (no network, no Nix daemon, home and credentials hidden,
+   writes only inside the clone). `fub`, a wrapper with a fixed set of
+   validated subcommands (`build`, `log`, `eval`, `input-path`, `hold-back`,
+   `fmt`, `commit`), is the one command excluded from the sandbox. No push.
 3. The prompt requires: a minimal fix; verification with a local
    `nix build .#nixosConfigurations.<host>.config.system.build.toplevel` for each
    failing host; a local commit; and a short summary written to a file outside
@@ -197,9 +200,13 @@ the PR open. The bot never merges.
 Claude's local builds populate the store, so Hydra's rebuild is mostly cache
 hits.
 
-**Containment is soft.** Claude runs as burke, and `nix` can execute arbitrary
-code, so the tool allowlist is a guardrail and not a sandbox. This was the
-chosen trade-off (run as burke, subscription token) over a dedicated user.
+**Containment.** The first design used a tool allowlist, which the first live
+test showed was both too narrow to work and not a real boundary. Claude's
+shell now runs in a bubblewrap sandbox and reaches Nix and git commits only
+through `fub`. Remaining limits: it still runs as burke in the same unit as
+the secrets, Claude's file-reading tool is limited by deny rules rather than
+the sandbox, and `fub` itself runs unsandboxed. A dedicated user would close
+those.
 
 ## After merge
 

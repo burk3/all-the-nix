@@ -56,6 +56,10 @@ with lib;
         FUB_MAX_FIX_ATTEMPTS = toString cfg.maxFixAttempts;
         FUB_HYDRA_URL = "http://127.0.0.1:${toString config.services.hydra.port}";
         FUB_HYDRA_PUBLIC_URL = config.services.hydra.hydraURL;
+        # Outside the home directory on purpose: Claude is denied all of home,
+        # which would otherwise include the clone it works in. The path is
+        # also named in packages/flake-update-bot/claude-settings.json.
+        FUB_STATE_DIR = "/var/lib/flake-update-bot";
       };
       serviceConfig = {
         Type = "oneshot";
@@ -65,6 +69,7 @@ with lib;
         User = config.t11s.mainUser.name;
         ExecStart = getExe pkgs.t11s.flake-update-bot;
         TimeoutStartSec = "24h";
+        StateDirectory = "flake-update-bot";
         LoadCredential = [
           "gh-token:${secret "flake-update-bot-gh-token"}"
           "claude-token:${secret "claude-oauth-token"}"
