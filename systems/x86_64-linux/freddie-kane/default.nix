@@ -51,6 +51,7 @@ in
   ];
   environment.systemPackages = with pkgs; [
     dnsmasq
+    t11s.t11s-cached-system
   ];
 
   hardware.hackrf.enable = true;
