@@ -19,6 +19,14 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  # Expire old generations under ~/.local/state/nix/profiles, which the
+  # system-wide nix.gc (run as root) does not touch. Scheduled just before it.
+  nix.gc = {
+    automatic = true;
+    dates = "Sun 02:30";
+    options = "--delete-older-than 30d";
+  };
+
   # the good stuff
   t11s = {
     enable = true;

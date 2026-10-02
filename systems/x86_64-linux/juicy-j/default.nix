@@ -39,6 +39,21 @@ in
 
   stylix.targets.console.enable = true;
 
+  ### Nix store upkeep
+  # determinate-nixd already collects garbage on its own, but only under disk
+  # pressure and only unrooted paths: it never expires old generations. These
+  # timers do the scheduled part. User profiles (home-manager, `nix profile`)
+  # are pruned by the matching nix.gc in homes/x86_64-linux/burke@juicy-j.
+  nix.gc = {
+    automatic = true;
+    dates = "Sun 03:00";
+    options = "--delete-older-than 30d";
+  };
+  nix.optimise = {
+    automatic = true;
+    dates = [ "Sun 05:00" ]; # after the GC, so it only hardlinks what survived
+  };
+
   ### firmware/hardware/lowlevel
   boot = {
     lanzaboote = {
