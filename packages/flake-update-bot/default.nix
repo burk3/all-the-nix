@@ -1,5 +1,6 @@
 {
   pkgs,
+  inputs,
   writeShellApplication,
   git,
   gh,
@@ -22,7 +23,7 @@ writeShellApplication {
     util-linux
     coreutils
     gnugrep
-    pkgs.unstable.claude-code
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
   ];
   # SC2016: the script prints markdown, so backticks inside single-quoted
   # printf formats are literal, not forgotten expansions.

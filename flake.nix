@@ -72,6 +72,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-amd-ai.url = "github:noamsto/nix-amd-ai";
+    # claude-code for the flake update bot. Keeps its own nixpkgs so its builds
+    # come from cache.numtide.com.
+    llm-agents.url = "github:numtide/llm-agents.nix";
     tuigreet = {
       url = "github:tuigreet/tuigreet";
       inputs.nixpkgs.follows = "nixpkgs";
