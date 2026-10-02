@@ -129,6 +129,14 @@ in
           api -b cookie -X PUT -d @${jobsetJson name checkinterval} "$url/jobset/${project}/${name}" >/dev/null
         '') jobsets
       )}
+      # Jobsets that are not declared above are removed, so what Hydra builds
+      # is exactly what this file says.
+      api "$url/project/${project}" | jq -r '.jobsets[]' | while read -r name; do
+        case " ${toString (lib.attrNames jobsets)} " in
+          *" $name "*) ;;
+          *) api -b cookie -X DELETE "$url/jobset/${project}/$name" >/dev/null ;;
+        esac
+      done
     '';
   };
 

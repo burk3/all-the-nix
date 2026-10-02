@@ -166,6 +166,10 @@
         nixos = inputs.nixpkgs.lib.mapAttrs (
           _: cfg: cfg.config.system.build.toplevel
         ) flake.nixosConfigurations;
+        # x86_64-linux only: that is the one platform Hydra has a builder for
+        devShell = {
+          inherit (flake.devShells.x86_64-linux) default;
+        };
       };
     };
 }
