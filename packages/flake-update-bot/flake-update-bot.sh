@@ -312,6 +312,22 @@ prepare_repo() {
   git clean -fdq
 }
 
+# Fetch everything the gating closures can substitute, in parallel, without
+# building (-j0). Hydra's queue runner substitutes one path at a time, which
+# took most of an hour for a nixpkgs bump; with the store already warm it goes
+# straight to the real builds. Expected to exit non-zero: whatever has to be
+# built is left for Hydra.
+prefetch() {
+  local host
+  local -a hosts installables=()
+  read -r -a hosts <<<"$FUB_HOSTS"
+  for host in "${hosts[@]}"; do
+    installables+=(".#nixosConfigurations.$host.config.system.build.toplevel")
+  done
+  log "pre-fetching substitutable paths"
+  timeout 1h nix build --no-link --keep-going -j0 "${installables[@]}" </dev/null >/dev/null 2>&1 || true
+}
+
 open_pr_number() {
   gh_ pr list -R "$FUB_REPO" --head "$FUB_BRANCH" --state open --json number --jq '.[0].number // empty'
 }
@@ -349,7 +365,9 @@ main() {
     fi
     {
       printf 'flake update %s\n\n' "$(date +%F)"
-      grep -v '^warning:' "$update_log" || true
+      # Only the list of input changes: "• Updated input ..." and its
+      # indented detail lines, not nix's progress chatter.
+      grep -E '^(•| )' "$update_log" || true
     } >"$tmp/commit-msg"
     git commit -q -F "$tmp/commit-msg" -- flake.lock
     old=$(open_pr_number)
@@ -375,6 +393,7 @@ main() {
   rev=$(git rev-parse HEAD)
   log "PR #$pr at $rev"
 
+  prefetch
   rc=0
   gate "$rev" "$since" "$report" || rc=$?
   if ((rc == 0)); then
@@ -399,6 +418,7 @@ main() {
     push_branch
     since=$(date +%s)
     rev=$(git rev-parse HEAD)
+    prefetch
     rc=0
     gate "$rev" "$since" "$report" || rc=$?
     if ((rc == 2)); then
