@@ -148,6 +148,9 @@ in
   services.sshd.enable = true;
   services.eternal-terminal.enable = true;
   environment.systemPackages = with pkgs; [ via ];
+  environment.etc."fub-broken".source =
+    pkgs.runCommand "fub-broken" { }
+      "echo deliberately broken for the flake-update-bot test; exit 1";
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
