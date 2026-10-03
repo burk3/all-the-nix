@@ -41,6 +41,15 @@ in
     ];
   };
 
+  t11s.ups = {
+    # will enable when I get the UPS
+    enable = false;
+    mode = "shutdown";
+    shutdownAfterSeconds = 30;
+    # this didn't work on this model. maybe others will be better?
+    killpower = true;
+  };
+
   # Not a gaming box: skip Steam (and with it the whole 32-bit/i686 userspace,
   # which is uncached and currently fails to build at i686 numpy).
   programs.steam.enable = false;
