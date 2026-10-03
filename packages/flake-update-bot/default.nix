@@ -11,6 +11,7 @@
   gnugrep,
   bubblewrap,
   socat,
+  ripgrep,
   ...
 }:
 let
@@ -41,7 +42,10 @@ writeShellApplication {
     gnugrep
     inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
     fub
-    # Claude Code's sandbox on Linux
+    # Claude Code's Grep tool runs rg from its own PATH
+    ripgrep
+    # Claude Code's sandbox on Linux. Also installed system-wide by the
+    # module, because the sandbox is launched from a shell that resets PATH.
     bubblewrap
     socat
   ];

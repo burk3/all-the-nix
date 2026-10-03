@@ -79,5 +79,14 @@ with lib;
       };
     };
     systemd.timers.flake-update-bot.timerConfig.Persistent = true;
+
+    # Claude Code launches its sandbox by running `bwrap` (and `socat`) from
+    # the Bash tool's shell. That shell re-reads the login environment, which
+    # resets PATH to the system profile and drops the package's own PATH, so
+    # these must be installed system-wide.
+    environment.systemPackages = [
+      pkgs.bubblewrap
+      pkgs.socat
+    ];
   };
 }
