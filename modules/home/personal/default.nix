@@ -26,6 +26,8 @@ with lib;
     programs.btop.enable = true;
     programs.bottom.enable = true;
     programs.bat.enable = true;
+    programs.ripgrep.enable = true;
+    programs.fd.enable = true;
     programs.nh.enable = true;
     programs.tmux = {
       enable = true;
