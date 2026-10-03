@@ -273,7 +273,8 @@ failed_hosts() {
 # puts its shell in a sandbox (no network, no Nix daemon, home hidden) and
 # claude-instructions.md tells it to use `fub`, the one command excluded from
 # the sandbox, for builds and commits. Project and local settings are ignored
-# so nothing in the repo can widen that.
+# so nothing in the repo can widen that. SHELL is bash because Claude writes
+# its shell commands for bash; zsh aborts on unmatched globs like *.nix.
 run_claude() {
   local report=$1 summary=$2 before prompt failed
   before=$(git rev-parse HEAD)
@@ -293,6 +294,7 @@ EOF
   CLAUDE_CODE_OAUTH_TOKEN=$(cred claude-token) \
     CLAUDE_CONFIG_DIR="$FUB_STATE_DIR/claude" \
     FUB_BASE="$FUB_BASE" \
+    SHELL=/run/current-system/sw/bin/bash \
     BASH_DEFAULT_TIMEOUT_MS=3600000 BASH_MAX_TIMEOUT_MS=3600000 \
     env -u CREDENTIALS_DIRECTORY \
     timeout "$FUB_CLAUDE_TIMEOUT" claude -p "$prompt" \

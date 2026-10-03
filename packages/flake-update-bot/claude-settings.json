@@ -10,7 +10,6 @@
     "deny": [
       "Read(~/**)",
       "Read(//run/credentials/**)",
-      "Read(//run/agenix/**)",
       "Read(//var/lib/flake-update-bot/claude/**)",
       "WebFetch",
       "WebSearch"

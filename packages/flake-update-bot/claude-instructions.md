@@ -17,7 +17,8 @@ Ordinary shell commands run in a sandbox:
 - `git commit` fails for lack of an identity. Do not commit with git.
 
 Read-only git (`git diff`, `git log`, `git show`), `grep`, `ls`, `cat` and the
-Read, Edit, Glob and Grep tools all work normally. `git revert --no-commit`,
+Read, Edit and Glob tools work normally. The Grep tool may be unavailable; use
+`grep` in the shell instead. `git revert --no-commit`,
 `git restore` and `git checkout -- <file>` work for changing files.
 
 ## `fub` does everything that needs Nix or a commit
