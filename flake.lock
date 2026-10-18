@@ -706,11 +706,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1778301597,
-        "narHash": "sha256-uEQrpN6qrElRqNTXy6ENcRtR8852GzQrWzA3pzqC4SE=",
+        "lastModified": 1792283119,
+        "narHash": "sha256-/FucNHVf0GNoTviC3dwP8stek16dNYqe2LXvdbLpm9I=",
         "owner": "burk3",
         "repo": "mikrotik-exporter",
-        "rev": "b771bec07edfa1b465f53bb045149ef4e68ad20e",
+        "rev": "61920bbf4a3593289a58200b5d762f2d5a04f903",
         "type": "github"
       },
       "original": {
