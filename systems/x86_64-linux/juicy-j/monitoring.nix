@@ -62,6 +62,10 @@ in
         firmware = true;
         optics = true;
         ethernet = true;
+        # LTE failover alerting: wintermute's OSPF route count > 0 means it's
+        # following molly's LTE default; netwatch on molly probes the LTE path.
+        routes = true;
+        netwatch = true;
       };
     };
   };
