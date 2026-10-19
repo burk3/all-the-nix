@@ -18,5 +18,8 @@ in
   "secrets/claude-oauth-token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/upsmon.password.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/private-nix.conf.age".publicKeys = burke;
-  "secrets/nixbuild-dot-net.ssh-key.age".publicKeys = burke ++ [ freddie-kane juicy-j ];
+  "secrets/nixbuild-dot-net.ssh-key.age".publicKeys = burke ++ [
+    freddie-kane
+    juicy-j
+  ];
 }
