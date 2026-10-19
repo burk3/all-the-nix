@@ -82,21 +82,6 @@ with lib;
     nix.settings.trusted-users = [ cfg.mainUser.name ];
     nixpkgs.config.allowUnfree = true;
 
-    # for nixbuild.net
-    programs.ssh.extraConfig = ''
-      Host eu.nixbuild.net
-        PubkeyAcceptedKeyTypes ssh-ed25519
-        ServerAliveInterval 60
-        IPQoS throughput
-        IdentityFile /root/.ssh/nixbuild-dot-net
-    '';
-    programs.ssh.knownHosts = {
-      nixbuild = {
-        hostNames = [ "eu.nixbuild.net" ];
-        publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPIQCZc54poJ8vqawd8TraNryQeJnvH1eLpIDgbiqymM";
-      };
-    };
-
     # enable tpm2 and some features
     security.tpm2 = mkIf (!isWsl) {
       enable = true;

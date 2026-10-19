@@ -5,6 +5,7 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICArqGPqspAdGZswjWOtfHjJ+BWtWjR234InGSzrzaRR burke@freddie-kane"
   ];
   juicy-j = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOqCimSANQl9QYxDnkwiAnU+mJGYMdwwMDcpFUJFBatL root@juicy-j";
+  freddie-kane = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPQ3ecd8+ZGsPbqWTUqmGywcXWdCIaG2ZuYU2zqtRom7 root@freddie-kane";
 in
 {
   "secrets/mikrotik-exporter.password.age".publicKeys = burke ++ [ juicy-j ];
@@ -17,4 +18,5 @@ in
   "secrets/claude-oauth-token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/upsmon.password.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/private-nix.conf.age".publicKeys = burke;
+  "secrets/nixbuild-dot-net.ssh-key.age".publicKeys = burke ++ [ freddie-kane juicy-j ];
 }

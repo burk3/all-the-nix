@@ -7,4 +7,6 @@ Two complementary modes via the same module:
 
 Per-builder parameters (system, max-jobs, supportedFeatures, etc.) are hardcoded in the module's `hostConfigs` table. To add a new builder, add it there first; clients then refer to it by name in `hosts = [ ... ]`.
 
+Builds go over `ssh-ng`, and each builder's ssh host key is pinned in `hostConfigs.<host>.publicHostKey` (base64), used by both the machines entry and the substituter URL.
+
 Clients also **substitute** from each builder over `ssh-ng`, as the same `remotebuild` user with the same root key. The stores are unsigned, so the substituter URL carries `trusted=true`. A `Host` block in the client's system `ssh_config` sets a 5 second connect timeout so an unreachable builder does not hang builds. On juicy-j, Hydra keeps the closures of `master` built, which is what makes `nh os switch` on a client fetch instead of build.

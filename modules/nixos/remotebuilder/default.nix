@@ -7,9 +7,11 @@ let
   cfg = config.t11s.remotebuild;
   hostConfigs = {
     "juicy-j.dab-ling.ts.net" = {
-      maxJobs = 4;
+      maxJobs = 32;
       speedFactor = 4;
       system = "x86_64-linux";
+      # base64 of the ssh-ed25519 host key (same key as root@juicy-j in agenix-rules.nix)
+      publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSU9xQ2ltU0FOUWw5UVl4RG5rd2lBblUrbUpHWU1kd3dNRGNwRlVKRkJhdEw=";
     };
   };
 in
@@ -56,7 +58,10 @@ with lib;
       # paths from them; it is scoped to these stores only.
       nix.settings.substituters = mkIfRemotes (
         map (
-          hostName: "ssh-ng://remotebuild@${hostName}?ssh-key=/root/.ssh/remotebuild&trusted=true"
+          hostName:
+          "ssh-ng://remotebuild@${hostName}?ssh-key=/root/.ssh/remotebuild&trusted=true&base64-ssh-public-host-key=${
+            hostConfigs.${hostName}.publicHostKey
+          }"
         ) cfg.hosts
       );
       # Nix shells out to OpenSSH for builders and ssh-ng substituters. Without
@@ -76,7 +81,13 @@ with lib;
       nix.buildMachines = mkIfRemotes (
         map (hostName: {
           inherit hostName;
-          inherit (hostConfigs.${hostName}) maxJobs speedFactor system;
+          inherit (hostConfigs.${hostName})
+            maxJobs
+            speedFactor
+            system
+            publicHostKey
+            ;
+          protocol = "ssh-ng";
           sshUser = "remotebuild";
           sshKey = "/root/.ssh/remotebuild";
           supportedFeatures = [

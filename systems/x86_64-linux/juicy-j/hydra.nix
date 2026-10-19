@@ -7,7 +7,7 @@
 }:
 let
   # Hydra reads only this file. Keeping the localhost builder out of
-  # nix.buildMachines means /etc/nix/machines is never written, so interactive
+  # nix.buildMachines (which holds only nixbuild.net here) means interactive
   # `nix build` does not try to SSH into this machine. i686-linux is listed
   # because Steam on other hosts pulls in 32-bit derivations.
   machines = pkgs.writeText "hydra-machines" ''

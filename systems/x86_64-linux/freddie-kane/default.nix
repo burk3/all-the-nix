@@ -55,26 +55,9 @@ in
   ];
 
   hardware.hackrf.enable = true;
-  ### nixbuild.net
-  nix = {
-    # settings = {
-    #   substituters = [ "ssh://eu.nixbuild.net?priority=100" ];
-    #   trusted-public-keys = [ "nixbuild.net/GLER5I-1:2UGRxSmQWU22LD27+UepgZlASKaFyk4YOwXoH/Wln9U=" ];
-    # };
-    distributedBuilds = true;
-    buildMachines = [
-      {
-        hostName = "eu.nixbuild.net";
-        system = "aarch64-linux";
-        maxJobs = 100;
-        supportedFeatures = [
-          "benchmark"
-          "big-parallel"
-        ];
-        sshKey = "/root/.ssh/nixbuild-dot-net";
-      }
-    ];
-  };
+  t11s.nixbuild-dot-net.enable = true;
+  # No sshd here, so agenix has no default identity; this host key is made by hand.
+  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   ### firmware/hardware/lowlevel
   boot = {

@@ -31,6 +31,7 @@ in
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
   t11s.remotebuild.serveBuilds = true;
+  t11s.nixbuild-dot-net.enable = true;
   t11s.internalCA.enable = true;
   t11s.flakeUpdateBot = {
     enable = true;
