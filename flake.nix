@@ -79,6 +79,10 @@
       url = "github:tuigreet/tuigreet";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    herdr = {
+      url = "github:herdrdev/herdr/v0.9.5";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -125,6 +129,7 @@
           )
           systemctl-toggle.overlays.default
           niri.overlays.niri
+          herdr.overlays.default
         ];
         alias = {
           shells.default = "nix-dev";

@@ -27,6 +27,10 @@
     options = "--delete-older-than 30d";
   };
 
+  home.packages = [
+    pkgs.herdr
+  ];
+
   # the good stuff
   t11s = {
     enable = true;
