@@ -46,7 +46,7 @@ in
     # will enable when I get the UPS
     enable = false;
     mode = "shutdown";
-    shutdownAfterSeconds = 30;
+    shutdownAfterSeconds = 60;
     # this didn't work on this model. maybe others will be better?
     killpower = true;
   };
@@ -70,6 +70,11 @@ in
   nix.optimise = {
     automatic = true;
     dates = [ "Sun 05:00" ]; # after the GC, so it only hardlinks what survived
+  };
+  nix.settings = {
+    auto-allocate-uids = true;
+    extra-system-features = [ "uid-range" ];
+    experimental-features = [ "auto-allocate-uids" "cgroups" ];
   };
 
   ### firmware/hardware/lowlevel
