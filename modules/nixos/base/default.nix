@@ -370,6 +370,7 @@ with lib;
         pciutils
         ethtool
         usbutils
+        ghostty.terminfo # just the xterm-ghostty entry, for ssh/et in from ghostty
       ]
       ++ optionals hasScreen [
         wooting-udev-rules
