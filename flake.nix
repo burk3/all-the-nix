@@ -71,6 +71,8 @@
       url = "github:burk3/mikrotik-exporter";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Keeps its own nixpkgs so the exporter comes prebuilt from burk3.cachix.org.
+    nix-exporter.url = "https://flakehub.com/f/burk3/nix-exporter/0.0";
     nix-amd-ai.url = "github:noamsto/nix-amd-ai";
     # claude-code for the flake update bot. Keeps its own nixpkgs so its builds
     # come from cache.numtide.com.
@@ -163,6 +165,12 @@
         ];
         systems.hosts.lofty305-wsl-nixos.modules = with inputs; [
           nixos-wsl.nixosModules.default
+        ];
+        systems.hosts.juicy-j.modules = with inputs; [
+          nix-exporter.nixosModules.default
+        ];
+        systems.hosts.swaine.modules = with inputs; [
+          nix-exporter.nixosModules.default
         ];
 
         outputs-builder = channels: { formatter = channels.nixpkgs.nixfmt-tree; };

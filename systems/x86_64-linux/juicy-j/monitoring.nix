@@ -16,6 +16,15 @@ in
     port = 9100;
   };
 
+  ### nix-exporter — Nix store and daemon metrics, local-only
+  services.nix-exporter = {
+    enable = true;
+    listenAddress = "127.0.0.1";
+    port = 9944;
+    # Hydra's localhost builder lives in its own machines file.
+    extraMachinesFiles = config.services.hydra.buildMachinesFiles;
+  };
+
   ### agenix-managed password for mikrotik-exporter
   # systemd LoadCredential below reads this as root and republishes it into
   # the unit's credentials dir, so no owner/group/mode tweaks are needed.
@@ -90,6 +99,19 @@ in
           job_name = "node-tailnet";
           scrape_interval = "15s";
           static_configs = [ { targets = [ "swaine.dab-ling.ts.net:9100" ]; } ];
+        }
+        {
+          # nix-exporter: juicy-j locally, other hosts over the tailnet
+          job_name = "nix";
+          scrape_interval = "15s";
+          static_configs = [
+            {
+              targets = [
+                "127.0.0.1:9944"
+                "swaine.dab-ling.ts.net:9944"
+              ];
+            }
+          ];
         }
         {
           job_name = "mikrotik";

@@ -36,6 +36,12 @@ in
   t11s.remotebuild.serveBuilds = true;
   t11s.internalCA.enable = true;
   t11s.nodeMetrics.enable = true;
+  # Nix store/daemon metrics; juicy-j scrapes it over the tailnet.
+  services.nix-exporter = {
+    enable = true;
+    listenAddress = "0.0.0.0";
+    firewallInterfaces = [ "tailscale0" ];
+  };
   # nix build .#nixosConfigurations.swaine.config.system.build.for-real-installer-iso
   # (the first install used nixos-anywhere from the stock ISO instead)
   t11s.forRealInstaller = {
