@@ -75,7 +75,11 @@ in
   nix.settings = {
     auto-allocate-uids = true;
     extra-system-features = [ "uid-range" ];
-    experimental-features = [ "auto-allocate-uids" "cgroups" ];
+    use-cgroups = true;
+    experimental-features = [
+      "auto-allocate-uids"
+      "cgroups"
+    ];
   };
 
   ### firmware/hardware/lowlevel

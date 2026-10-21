@@ -1,5 +1,4 @@
 {
-  config,
   inputs,
   lib,
   pkgs,
@@ -14,6 +13,7 @@ let
   vendorKernel = false;
 
   board = inputs.nixos-cix-cd8180.nixosModules.orangepi6plus;
+  ccacheDir = "/var/cache/ccache";
 in
 {
   # With vendorKernel the board module supplies the kernel, firmware and the
@@ -97,33 +97,50 @@ in
   # hostConfigs and juicy-j's Hydra machines file.
   nix.settings.max-jobs = "auto";
   nix.settings.cores = 0;
+  # Container (systemd-nspawn) NixOS tests, as on juicy-j: each build gets
+  # its own auto-allocated uid range. Settings from the nixpkgs manual,
+  # "Running Tests"; clients learn of uid-range from remotebuilder hostConfigs.
+  nix.settings.auto-allocate-uids = true;
+  nix.settings.extra-system-features = [ "uid-range" ];
+  nix.settings.use-cgroups = true;
+  nix.settings.experimental-features = [
+    "auto-allocate-uids"
+    "cgroups"
+  ];
 
   # A persistent ccache for builds that opt into it, mainly kernels while
   # iterating on aarch64 closures. The vendor kernel derivation hardcodes
   # CCACHE_DIR=/tmp/ccache, so the cache is also mounted there; ccacheStdenv
-  # uses the cacheDir path itself. `nix-ccache -s` shows stats.
+  # uses the real path. `CCACHE_DIR=/var/cache/ccache ccache -s` shows stats.
+  #
+  # World-writable, not programs.ccache's 0770 root:nixbld: with
+  # auto-allocate-uids each build runs as its own uid and gid (start-id plus
+  # a slot), outside nixbld, and the next build may get a different slot.
+  # So entries must be writable by anyone. The price: any build or local
+  # user can plant objects, and clients substitute this store unsigned.
   #
   # ccache.conf in the cache dir holds defaults for builds that don't set
   # their own (CCACHE_* env wins), which the vendor kernel doesn't:
-  # - umask: builds run as different nixbldN users, so entries must stay
-  #   group-writable.
+  # - umask: 000, for the reason above.
   # - sloppiness: kernels regenerate autoconf.h and friends every build, so
   #   compare include contents, not timestamps; otherwise ccache drops out of
   #   direct mode for every file that includes them.
-  programs.ccache.enable = true;
-  nix.settings.extra-sandbox-paths = with config.programs.ccache; [
-    cacheDir
-    "/tmp/ccache=${cacheDir}"
+  nix.settings.extra-sandbox-paths = [
+    ccacheDir
+    "/tmp/ccache=${ccacheDir}"
   ];
+  environment.systemPackages = [ pkgs.ccache ];
   systemd.tmpfiles.rules =
     let
       ccacheConf = lib.concatMapStrings (line: "${line}\\n") [
-        "umask = 007"
+        "umask = 000"
         "sloppiness = include_file_mtime,include_file_ctime,time_macros"
       ];
     in
-    with config.programs.ccache;
-    [ "f+ ${cacheDir}/ccache.conf 0664 ${owner} ${group} - ${ccacheConf}" ];
+    [
+      "d ${ccacheDir} 0777 root root -"
+      "f+ ${ccacheDir}/ccache.conf 0644 root root - ${ccacheConf}"
+    ];
 
   ### net
   # DHCP on whichever wired port is plugged in (two RTL8126 ports).

@@ -23,6 +23,7 @@ let
         "nixos-test"
         "big-parallel"
         "kvm"
+        "uid-range"
       ];
     };
     swaine = {
@@ -42,6 +43,7 @@ let
         "nixos-test"
         "big-parallel"
         "kvm"
+        "uid-range"
       ];
     };
   };

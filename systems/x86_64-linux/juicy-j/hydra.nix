@@ -14,8 +14,8 @@ let
   # trusted through the t11s CA; the queue runner's key is authorized in the
   # remotebuilder module.
   machines = pkgs.writeText "hydra-machines" ''
-    localhost x86_64-linux,i686-linux - 16 1 kvm,big-parallel,nixos-test,benchmark - -
-    ssh://remotebuild@swaine.lan aarch64-linux /var/lib/hydra/queue-runner/.ssh/id_ed25519 12 2 big-parallel,kvm,nixos-test - -
+    localhost x86_64-linux,i686-linux - 16 1 kvm,big-parallel,nixos-test,benchmark,uid-range - -
+    ssh://remotebuild@swaine.lan aarch64-linux /var/lib/hydra/queue-runner/.ssh/id_ed25519 12 2 big-parallel,kvm,nixos-test,uid-range - -
   '';
 
   project = "all-the-nix";
