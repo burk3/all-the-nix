@@ -86,6 +86,12 @@ in
           static_configs = [ { targets = [ "127.0.0.1:9100" ]; } ];
         }
         {
+          # other hosts' node-exporter (t11s.nodeMetrics), over the tailnet
+          job_name = "node-tailnet";
+          scrape_interval = "15s";
+          static_configs = [ { targets = [ "swaine.dab-ling.ts.net:9100" ]; } ];
+        }
+        {
           job_name = "mikrotik";
           scrape_interval = "30s";
           static_configs = [ { targets = [ "127.0.0.1:9436" ]; } ];

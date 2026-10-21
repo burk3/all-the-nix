@@ -83,6 +83,11 @@
       url = "github:herdrdev/herdr/v0.9.5";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Orange Pi 6 Plus (CIX CD8180): vendor kernel, firmware and board module, for swaine
+    nixos-cix-cd8180 = {
+      url = "github:i-am-logger/nixos-cix-cd8180";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

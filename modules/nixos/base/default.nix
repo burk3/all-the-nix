@@ -96,14 +96,15 @@ with lib;
 
     # Bootloader.
     boot = mkIf (!isWsl) {
-      # Enable "Silent Boot"
-      consoleLogLevel = 0;
+      # "Silent Boot" where someone watches the screen; headless boxes keep
+      # warnings on the console for whoever plugs in to debug them
+      consoleLogLevel = if hasScreen then 0 else 4;
       initrd.verbose = true;
       # Hide the OS choice for bootloaders.
       # It's still possible to open the bootloader list by pressing any key
       # It will just not appear on screen unless a key is pressed
       loader.timeout = mkDefault 2;
-      kernelModules = [ "ntsync" ]; # for wine/proton!
+      kernelModules = optional hasScreen "ntsync"; # for wine/proton!
     };
 
     # lets try resolved for dns stuff?
@@ -322,6 +323,11 @@ with lib;
 
     # zsh
     programs.zsh.enable = true;
+
+    # home-manager writes dconf settings on every host (stylix's gtk/gnome
+    # targets among them), and activation fails without the dconf D-Bus
+    # service. Desktops get it from their compositor; servers would not.
+    programs.dconf.enable = true;
 
     # Install firefox.
     programs.firefox.enable = hasScreen;

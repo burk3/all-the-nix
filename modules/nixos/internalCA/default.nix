@@ -55,6 +55,34 @@ in
       }
       (lib.mkIf config.services.openssh.enable {
 
+        # First signing of the host key, and re-signing after the cert has
+        # expired (the CA does not renew expired certs). Prompts for the
+        # burke@t11s.net provisioner password. The renewal timer below takes
+        # over from there.
+        environment.systemPackages = [
+          (pkgs.writeShellApplication {
+            name = "t11s-sign-host-key";
+            runtimeInputs = [
+              pkgs.t11s.t11s-step
+              pkgs.openssh
+            ];
+            text = ''
+              if [[ $EUID -ne 0 ]]; then
+                echo "the host key is only readable by root: sudo t11s-sign-host-key" >&2
+                exit 1
+              fi
+              host=${config.networking.hostName}
+              t11s-step ssh certificate --host --sign --force \
+                --provisioner burke@t11s.net \
+                --principal "$host.lan" \
+                --principal "$host.dab-ling.ts.net" \
+                "$host.t11s.net" ${sshHostKey}.pub
+              ssh-keygen -L -f ${sshHostCert}
+              systemctl reload sshd.service
+            '';
+          })
+        ];
+
         # Renew ssh host key cert
         systemd.services.step-ssh-renew = {
           description = "Renew SSH host certificate via step-ca";

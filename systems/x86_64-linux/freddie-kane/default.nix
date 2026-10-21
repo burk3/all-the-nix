@@ -35,7 +35,10 @@ in
   t11s.systemType = "laptop";
   t11s.mainUser.name = "burke";
   t11s.mainUser.description = "Burke Cates";
-  t11s.remotebuild.hosts = [ "juicy-j.dab-ling.ts.net" ];
+  t11s.remotebuild.hosts = [
+    "juicy-j"
+    "swaine"
+  ];
   t11s.internalCA.enable = true;
   # offline reinstall ISO: nix build .#nixosConfigurations.freddie-kane.config.system.build.for-real-installer-iso
   t11s.forRealInstaller.enable = true;
@@ -55,7 +58,7 @@ in
   ];
 
   hardware.hackrf.enable = true;
-  t11s.nixbuild-dot-net.enable = true;
+  t11s.nixbuild-dot-net.enable = false; # swaine builds aarch64-linux now
   # No sshd here, so agenix has no default identity; this host key is made by hand.
   age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 

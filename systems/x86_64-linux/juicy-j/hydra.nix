@@ -7,11 +7,15 @@
 }:
 let
   # Hydra reads only this file. Keeping the localhost builder out of
-  # nix.buildMachines (which holds only nixbuild.net here) means interactive
-  # `nix build` does not try to SSH into this machine. i686-linux is listed
-  # because Steam on other hosts pulls in 32-bit derivations.
+  # nix.buildMachines (which holds only the aarch64 builders here) means
+  # interactive `nix build` does not try to SSH into this machine. i686-linux
+  # is listed because Steam on other hosts pulls in 32-bit derivations.
+  # swaine builds the aarch64-linux jobs (its own closure). Its host key is
+  # trusted through the t11s CA; the queue runner's key is authorized in the
+  # remotebuilder module.
   machines = pkgs.writeText "hydra-machines" ''
     localhost x86_64-linux,i686-linux - 16 1 kvm,big-parallel,nixos-test,benchmark - -
+    ssh://remotebuild@swaine.lan aarch64-linux /var/lib/hydra/queue-runner/.ssh/id_ed25519 12 2 big-parallel,kvm,nixos-test - -
   '';
 
   project = "all-the-nix";
