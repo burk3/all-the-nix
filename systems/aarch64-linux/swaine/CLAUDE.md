@@ -48,7 +48,7 @@ In both modes, `efi=noruntime` leaves no EFI variables, so systemd-boot runs fro
 
 ## ccache
 
-`/var/cache/ccache` is in every build's sandbox, and is also mounted at `/tmp/ccache`, the path the vendor kernel hard-codes. It is world-writable (`0777`), and `ccache.conf` there supplies `umask = 000` and the kernel sloppiness flags to builds that don't set their own.
+`/var/cache/ccache` is in every build's sandbox, and is also mounted at `/tmp/ccache`, the path the vendor kernel hard-codes. It is world-writable (`0777`), and `ccache.conf` there supplies `umask = 000`, the kernel sloppiness flags and `max_size = 50G` (the default is 5G) to builds that don't set their own.
 
 That is because of `auto-allocate-uids` (on for container tests). Each build runs as its own uid and gid (`start-id` plus a slot), outside `nixbld`, so NixOS's `programs.ccache` (`0770 root:nixbld`) would be unwritable, and a group-writable entry from one slot is not writable from another. A ccache user that sets `CCACHE_UMASK=007` itself defeats this. The cost: any build or local user can plant objects in it. Stats: `CCACHE_DIR=/var/cache/ccache ccache -s`.
 

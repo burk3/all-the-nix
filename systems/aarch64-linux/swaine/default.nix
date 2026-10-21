@@ -125,6 +125,9 @@ in
   # - sloppiness: kernels regenerate autoconf.h and friends every build, so
   #   compare include contents, not timestamps; otherwise ccache drops out of
   #   direct mode for every file that includes them.
+  # - max_size: 50G instead of the 5G default, so a few kernel variants and
+  #   configs fit without evicting each other. CCACHE_MAXSIZE (which the
+  #   vendor kernel sets to 10G) overrides it per build.
   nix.settings.extra-sandbox-paths = [
     ccacheDir
     "/tmp/ccache=${ccacheDir}"
@@ -135,6 +138,7 @@ in
       ccacheConf = lib.concatMapStrings (line: "${line}\\n") [
         "umask = 000"
         "sloppiness = include_file_mtime,include_file_ctime,time_macros"
+        "max_size = 50G"
       ];
     in
     [
