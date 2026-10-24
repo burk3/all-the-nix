@@ -161,8 +161,17 @@ in
   # Match the Aquantia (atlantic) NIC by driver rather than MAC: the adapter is
   # USB4/Thunderbolt-attached, so its PCIe bus address is enumerated at hotplug
   # and isn't stable, while the driver name is. sfp0 is the only atlantic NIC.
+  #
+  # Being behind a USB4 port, the NIC is marked untrusted, so its IOMMU group
+  # defaults to strict mode: every RX page unmap in aq_ring_rx_fill blocks on an
+  # IOTLB flush (iommu_completion_wait), pinning a core in softirq and capping
+  # RX at ~2.3 Gbit/s. Switching the group to lazy flushing (DMA-FQ) keeps
+  # translation on but batches invalidations. The kernel allows this live
+  # switch even for untrusted devices, so do it as soon as the driver binds.
+  # Measured vs lofty305: RX 2.3 -> 9.2 Gbit/s, bidir 6.2 -> ~15 Gbit/s.
   services.udev.extraRules = ''
     SUBSYSTEM=="net", ACTION=="add", DRIVERS=="atlantic", NAME="sfp0"
+    SUBSYSTEM=="pci", ACTION=="bind", DRIVER=="atlantic", RUN+="${pkgs.runtimeShell} -c 'echo DMA-FQ > /sys%p/iommu_group/type'"
   '';
 
   ### Software
