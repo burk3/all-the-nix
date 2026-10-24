@@ -20,6 +20,7 @@ in
     ./ai.nix
     ./jane.nix
     ./rescue-terminal.nix
+    ./samba.nix
   ];
   ### identity
   networking.hostName = "juicy-j";
