@@ -6,6 +6,7 @@ let
   ];
   juicy-j = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOqCimSANQl9QYxDnkwiAnU+mJGYMdwwMDcpFUJFBatL root@juicy-j";
   freddie-kane = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPQ3ecd8+ZGsPbqWTUqmGywcXWdCIaG2ZuYU2zqtRom7 root@freddie-kane";
+  swaine = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOJuWH2H38kO9Wo0Jzxfq+cSp42309OtqnNxHIXYzvyA root@swaine";
 in
 {
   "secrets/mikrotik-exporter.password.age".publicKeys = burke ++ [ juicy-j ];

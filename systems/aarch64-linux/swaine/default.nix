@@ -174,6 +174,47 @@ in
 
   services.openssh.enable = true;
 
+  ### logs to juicy-j
+  # swaine has powered off without a trace (2026-10-21, 2026-10-22): the
+  # journal's last seconds never reach the disk. So the journal streams to
+  # juicy-j's systemd-journal-remote as it is written, and the kernel's own
+  # messages go out by netconsole, which still sends from a dying kernel.
+  # The receiving side is in juicy-j's monitoring.nix.
+  services.journald.upload = {
+    enable = true;
+    settings.Upload.URL = "http://juicy-j.lan:19532";
+  };
+  systemd.services.netconsole = {
+    description = "Send kernel messages to juicy-j (netconsole)";
+    wantedBy = [ "multi-user.target" ];
+    wants = [ "network-online.target" ];
+    after = [ "network-online.target" ];
+    path = [
+      pkgs.kmod
+      pkgs.iproute2
+      pkgs.iputils
+      pkgs.getent
+      pkgs.gawk
+    ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStop = "${pkgs.kmod}/bin/modprobe -r netconsole";
+    };
+    # Resolved at start: whichever port carries the route to juicy-j, its
+    # DHCP address, and juicy-j's MAC (netconsole sends raw frames, so it
+    # needs one; it would broadcast without). "+" adds sequence numbers and
+    # levels to each message.
+    script = ''
+      target=$(getent ahostsv4 juicy-j.lan | awk '{ print $1; exit }')
+      dev=$(ip -4 route get "$target" | awk '{ for (i = 1; i < NF; i++) if ($i == "dev") { print $(i + 1); exit } }')
+      ping -c 1 -W 2 "$target" > /dev/null || true
+      mac=$(ip neigh show "$target" dev "$dev" | awk '{ for (i = 1; i < NF; i++) if ($i == "lladdr") { print $(i + 1); exit } }')
+      echo "netconsole: $dev -> $target ($mac)"
+      modprobe netconsole netconsole="+@/$dev,6666@$target/$mac"
+    '';
+  };
+
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
   # on your system were taken. It‘s perfectly fine and recommended to leave

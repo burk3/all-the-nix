@@ -1,5 +1,12 @@
-{ config, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 let
+  # the wired LAN links (ether and sfp0), as default.nix configures them
+  lanInterfaces = lib.mapAttrsToList (_: n: n.matchConfig.Name) config.systemd.network.networks;
   # Hardcoded because the exporter doesn't expand env vars or systemd
   # specifiers inside its YAML config. The unit name is stable.
   passwordFile = "/run/credentials/prometheus-mikrotik-exporter.service/mikrotik-exporter.password";
@@ -205,6 +212,38 @@ in
     "pushover_api_token:${config.age.secrets."pushover-api-token".path}"
   ];
 
-  ### Firewall — open Grafana only on the tailscale interface
-  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 3000 ];
+  ### Firewall — Grafana only on the tailscale interface; the log sinks
+  # below only on the wired LAN
+  networking.firewall.interfaces = {
+    tailscale0.allowedTCPPorts = [ 3000 ];
+  }
+  // lib.genAttrs lanInterfaces (_: {
+    allowedTCPPorts = [ config.services.journald.remote.port ];
+    allowedUDPPorts = [ 6666 ];
+  });
+
+  ### Logs from other hosts (swaine)
+  # Whole journals over HTTP via systemd-journal-upload, kept per host under
+  # /var/log/journal/remote/ (journalctl -D /var/log/journal/remote). And
+  # netconsole: kernel messages as UDP datagrams, sent the moment they are
+  # printed, even from a dying kernel; they land in this journal as
+  # `journalctl -t netconsole`. netconsole carries no hostname, so this
+  # assumes one sender (swaine).
+  services.journald.remote = {
+    enable = true;
+    listen = "http";
+  };
+  # the received journals are 0640 systemd-journal-remote; read them without sudo
+  users.users.${config.t11s.mainUser.name}.extraGroups = [ "systemd-journal-remote" ];
+  systemd.services.netconsole-sink = {
+    description = "Receive netconsole kernel messages";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    serviceConfig = {
+      ExecStart = "${pkgs.socat}/bin/socat -u UDP-RECV:6666 STDOUT";
+      DynamicUser = true;
+      Restart = "always";
+      SyslogIdentifier = "netconsole";
+    };
+  };
 }
