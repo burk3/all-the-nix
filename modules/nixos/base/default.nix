@@ -256,6 +256,8 @@ with lib;
       settings.General.Enable = "Source,Sink,Media,Socket";
     };
 
+    hardware.keyboard.qmk.enable = hasScreen;
+
     # Enable sound with pipewire.
     services.pulseaudio.enable = false;
     security.rtkit.enable = mkIf hasScreen true;
