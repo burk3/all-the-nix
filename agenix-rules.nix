@@ -3,6 +3,7 @@ let
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINB1Sw6DgkSfZhsFcNig7dY3IcFbyCYCvIp4gvr9gDeY burke@juicy-j"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFssPVej1nLwAQwHSCUbA3h5Cqz2kj1lSKPmdl+6SIAn burke@freddie-kane"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICArqGPqspAdGZswjWOtfHjJ+BWtWjR234InGSzrzaRR burke@freddie-kane"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIMg3iSlBWmImrX9QBcs4KlaXK+79DmuLp0v1GLKVCah burke@zenbook-a16"
   ];
   juicy-j = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOqCimSANQl9QYxDnkwiAnU+mJGYMdwwMDcpFUJFBatL root@juicy-j";
   freddie-kane = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPQ3ecd8+ZGsPbqWTUqmGywcXWdCIaG2ZuYU2zqtRom7 root@freddie-kane";

@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   lib,
   config,
@@ -51,9 +52,17 @@
         juicy-j.settings.theme = "Birds Of Paradise";
         bronson.host = "bronson.dab-ling.ts.net";
         bronson.settings.theme = "Tomorrow Night Eighties";
+        zenbook-a16 = {
+          host = "zenbook-a16.lan";
+          settings.theme = "zenbook-a16";
+        };
       };
     };
   };
+
+  # Reuse the host's generated palette so its local and remote terminals match.
+  programs.ghostty.themes.zenbook-a16 =
+    inputs.self.homeConfigurations."burke@zenbook-a16".config.programs.ghostty.themes.stylix;
 
   stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/rose-pine-moon.yaml";
   stylix.image = pkgs.fetchurl {

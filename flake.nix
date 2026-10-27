@@ -30,6 +30,7 @@
     # upstream stalled 2026-08-04 and breaks on 26.11 (libdisplay-info_0_2
     # removed); sodiboo/niri-flake#1853 carries the fix. Back to upstream once merged.
     niri.url = "github:bugeats/niri-flake/update-libdisplay-info";
+    spotifast.url = "github:crmne/spotifast";
     programsdb = {
       url = "github:wamserma/flake-programs-sqlite";
       inputs.nixpkgs.follows = "nixpkgs";

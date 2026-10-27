@@ -13,6 +13,9 @@ in
 {
   options.t11s.desktop.compositor.niri.enable = mkEnableOption "enable niri compositor config";
   config = lib.mkIf cfg.enable {
+    # Match NixOS when validating standalone homes; background-effect needs unstable.
+    programs.niri.package = lib.mkDefault pkgs.niri-unstable;
+
     # dpms used to be wired by hand here; noctalia screen_off drives niri IPC now
     home.packages = with pkgs; [
       brightnessctl

@@ -1,5 +1,6 @@
 {
   config,
+  inputs,
   lib,
   pkgs,
   ...
@@ -16,7 +17,12 @@ in
     home.packages = with pkgs; [
       vscode.fhs
       legcord
-      spotify
+      (
+        if stdenv.hostPlatform.system == "aarch64-linux" then
+          inputs.spotifast.packages.${stdenv.hostPlatform.system}.default
+        else
+          spotify
+      )
       playerctl
       pinta
       remmina
