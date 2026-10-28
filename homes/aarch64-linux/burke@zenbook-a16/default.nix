@@ -46,7 +46,7 @@
   programs.ghostty.package = pkgs.unstable.ghostty;
 
   stylix.autoEnable = true;
-  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/charcoal-light.yaml";
+  stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/terracotta.yaml";
   # Use Charcoal Light instead of guiCommon's shared Ghostty theme.
   programs.ghostty.settings.theme = lib.mkForce "stylix";
   #stylix.image = pkgs.fetchurl {
