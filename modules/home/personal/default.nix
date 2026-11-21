@@ -10,6 +10,7 @@ let
 in
 with lib;
 {
+  imports = [ ./kernel-mail.nix ];
   options.t11s.personal = with types; {
     enable = mkEnableOption "Enable my personal configuration";
   };
