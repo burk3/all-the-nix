@@ -59,6 +59,10 @@ in
     package = pkgs.postgresql_16;
   };
 
+  # GHSA-rqvm-hhh5-vrx7: nixpkgs marks this Hydra insecure. It listens on
+  # localhost only, behind the tailnet proxy.
+  nixpkgs.config.permittedInsecurePackages = [ "hydra-0-unstable-2026-03-13" ];
+
   services.hydra = {
     enable = true;
     listenHost = "127.0.0.1";
