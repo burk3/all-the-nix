@@ -716,11 +716,11 @@
         "zenbook-a16-linux": "zenbook-a16-linux"
       },
       "locked": {
-        "lastModified": 1795324433,
-        "narHash": "sha256-NWwpcV8PWeJPx/GAHRENGuq2t58D23/xrvlR4q4gmlE=",
+        "lastModified": 1795343504,
+        "narHash": "sha256-wOb0y0XFtcFFqZA7rOe501+iz/m2bi/ezX51fEKutHo=",
         "owner": "burk3",
         "repo": "glymur-flake",
-        "rev": "588583a851e0fbe7738af6ed0ea380b8ff773071",
+        "rev": "cf9ff8759f4adbb2f8396f79f91165be10aa9bf1",
         "type": "github"
       },
       "original": {

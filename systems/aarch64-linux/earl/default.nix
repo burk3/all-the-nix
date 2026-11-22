@@ -61,6 +61,11 @@
     # because LUKS/TPM plans depend on it). systemd's TPM2 units stay off
     # (the board default) until the driver has many boots behind it.
     tpm.enable = true;
+    # cam/qcam and v4l-utils for the cameras' raw path.
+    camera.tools.enable = true;
+    # The Hexagon NPU model server (inference.*) stays off: the bring-up
+    # system's catalog was three ~2.3 GB GGUFs fetched at build time; a
+    # catalog would live here (bead snapx2ee-bringup-jka.17).
   };
 
   ### lab (glymur-flake's lab module, this lab's values)
@@ -171,8 +176,6 @@
   services.udisks2.enable = true;
 
   ### base-module overrides for this machine
-  # Firmware/BIOS/EC updates only with Burke's explicit approval, by hand.
-  services.fwupd.enable = lib.mkForce false;
   # Native arm64 Steam (the steam-aarch64 input, flake.nix) on the 4 KiB-page
   # kernel; it provides `steam` itself and asserts that nixpkgs' x86
   # programs.steam (on by default in the base module) is off. Unfree: the
@@ -203,9 +206,17 @@
     usbutils
     nvme-cli
     smartmontools
-    libcamera
-    v4l-utils
     tpm2-tools
+    # GPU checks and benchmarks, as on the bring-up system (glmark2 and
+    # vkmark also come with a16-bench).
+    glmark2
+    vkmark
+    mesa-demos # eglinfo, glxinfo
+    vulkan-tools # vulkaninfo, vkcube
+    libdrm # modetest
+    # FurMark with its arm64 unpack fixed. Unfree: glymur-flake builds it
+    # with an allowance for furmark alone.
+    inputs.glymur-flake.packages.${pkgs.stdenv.hostPlatform.system}.furmark
   ];
 
   # A fresh install (the btrfs reinstall), on 26.11.
