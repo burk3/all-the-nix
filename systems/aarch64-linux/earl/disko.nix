@@ -14,8 +14,10 @@
 # passphrase alone would stop unattended lab reboots. No swap partition
 # (hibernation is off; zram below). The microSD rescue uses other filesystem
 # labels (LABESP/a16-nixos); disko mounts by partlabel, so they never clash.
-# Install with the installer's disko mode (planned) from the microSD
-# rescue; don't restart before \EFI\BOOT\BOOTAA64.EFI exists on the new ESP.
+# Install with `sudo install-for-real` from earl's installer ISO
+# (t11s.forRealInstaller in default.nix), which refuses a device that isn't
+# on NVMe and checks \EFI\BOOT\BOOTAA64.EFI on the new ESP before it says
+# done; don't restart without it.
 let
   luks = false;
 

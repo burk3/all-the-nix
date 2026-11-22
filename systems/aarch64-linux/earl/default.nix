@@ -108,6 +108,62 @@
     fi
   '';
 
+  ### installer: `nix build .#nixosConfigurations.earl.config.system.build.for-real-installer-iso`,
+  ### dd to a USB stick, boot it from the Esc menu, `sudo install-for-real`.
+  t11s.forRealInstaller = {
+    enable = true;
+    # The firmware gives no usable devicetree: systemd-boot loads the
+    # live system's DTB (the board's, with its overlays) before the kernel.
+    efiBootloader = "systemd-boot";
+    liveModules = [
+      inputs.glymur-flake.nixosModules.default
+      {
+        # earl's kernel settings (pinned package set, lab patches, the lab
+        # module's Kconfig, ccache), so the live system boots the same
+        # kernel derivation: one build, the kernel the bring-up tested.
+        hardware.asus-zenbook-a16.kernel = {
+          inherit (config.hardware.asus-zenbook-a16.kernel)
+            pkgs
+            variant
+            config
+            labPatches
+            extraPatches
+            ccache
+            ;
+        };
+        # ... and the same DTB overlays (the board's plus this one).
+        hardware.asus-zenbook-a16.irEmitter.stage = config.hardware.asus-zenbook-a16.irEmitter.stage;
+        # The board's curated initrd list and firmware subset, not the
+        # installer's generic PC modules and all of linux-firmware. The DSPs
+        # still start in the initrd (firmware.dsp.mode = "initrd", as on
+        # earl and the microSD rescue), before the ISO's USB stick is used;
+        # `lab.a16.dsp=off` at the systemd-boot editor skips them.
+        hardware.enableAllHardware = lib.mkForce false;
+        # Nothing to play or seal in an installer.
+        hardware.asus-zenbook-a16.audio.enable = false;
+        hardware.asus-zenbook-a16.tpm.enable = false;
+        boot.kernelParams = [
+          # The ISO is on USB: no autosuspend (dwc3/PHY suspend bugs).
+          "usbcore.autosuspend=-1"
+          # Kernel messages also on the lab's FTDI serial line (a16-obs
+          # records it); the last console, the screen, gets the shell.
+          "console=ttyUSB0,115200"
+          "console=tty0"
+        ];
+      }
+    ];
+    # Only the internal NVMe: never the microSD reader or the USB stick.
+    preInstallChecks = map (disk: ''
+      tran=$(lsblk -dno TRAN ${disk})
+      if [[ $tran != nvme ]]; then
+        echo "${disk} is on '$tran', not the internal NVMe:" >&2
+        lsblk -o NAME,SIZE,TRAN,MODEL,SERIAL >&2
+        exit 1
+      fi
+      echo "    ${disk}: $(lsblk -dno MODEL,SERIAL,SIZE ${disk})"
+    '') (lib.mapAttrsToList (_: d: d.device) config.disko.devices.disk);
+  };
+
   ### desktop services the bring-up system had through Plasma (gen 119):
   ### battery state for noctalia, power profiles, removable media.
   services.upower.enable = true;
