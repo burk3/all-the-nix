@@ -22,7 +22,7 @@
     # deliberately not followed: earl's kernel is built with that pin
     # (hardware.asus-zenbook-a16.kernel.pkgs), so it stays the tested kernel
     # across bumps of this flake's nixpkgs.
-    glymur-flake.url = "github:burk3/glymur-flake/update-2611";
+    glymur-flake.url = "github:burk3/glymur-flake";
     # Native arm64 Steam client (earl; x86 Steam needs FEX/box64 there).
     steam-aarch64 = {
       url = "github:kossLAN/steam-aarch64-nix";

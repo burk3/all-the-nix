@@ -725,7 +725,6 @@
       },
       "original": {
         "owner": "burk3",
-        "ref": "update-2611",
         "repo": "glymur-flake",
         "type": "github"
       }
