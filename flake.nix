@@ -12,8 +12,10 @@
   };
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    #nixpkgs.url = "github:NixOS/nixpkgs/release-26.05";
+    # 26.11 prep: release-26.11 branches off master on 2026-11-23. Until the
+    # nixos-26.11 channel exists, nixos-unstable is the cached 26.11 tree.
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    #nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
     # upstream is unmaintained (README call for maintainers); github:anntnzrb/snowfall-lib is the active fork
@@ -22,10 +24,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-26.05";
+      url = "github:nix-community/home-manager"; # release-26.11 once it exists
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    niri.url = "github:sodiboo/niri-flake";
+    # upstream stalled 2026-08-04 and breaks on 26.11 (libdisplay-info_0_2
+    # removed); sodiboo/niri-flake#1853 carries the fix. Back to upstream once merged.
+    niri.url = "github:bugeats/niri-flake/update-libdisplay-info";
     programsdb = {
       url = "github:wamserma/flake-programs-sqlite";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -47,7 +51,7 @@
     # and does not evaluate against a newer nix-src.
     nix-eval-jobs.url = "https://flakehub.com/f/DeterminateSystems/nix-eval-jobs/*";
     stylix = {
-      url = "github:nix-community/stylix/release-26.05";
+      url = "github:nix-community/stylix"; # release-26.11 once it exists
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-wsl = {
