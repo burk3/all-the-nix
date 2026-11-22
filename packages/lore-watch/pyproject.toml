@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lore-watch"
+dynamic = ["version"]
+description = "Saved lei searches of lore.kernel.org, indexed with notmuch, and the lore-new reader"
+requires-python = ">=3.11"
+
+[project.scripts]
+lore-new = "lore_watch.cli:main"
+lore-watch-sync = "lore_watch.sync:main"
+
+[tool.setuptools]
+packages = ["lore_watch"]
+
+[tool.setuptools.dynamic]
+version = { attr = "lore_watch.__version__" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

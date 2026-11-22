@@ -1,6 +1,12 @@
 { pkgs, ... }:
 {
   imports = [ ./ai.nix ];
+  # saved lei searches of lore, notmuch-indexed (modules/home/lore-watch)
+  t11s.loreWatch = {
+    enable = true;
+    ownAddresses = [ "burke.cates@gmail.com" ];
+    searches = import ./lore-searches.nix;
+  };
 
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
