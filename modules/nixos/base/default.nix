@@ -330,6 +330,13 @@ with lib;
     # service. Desktops get it from their compositor; servers would not.
     programs.dconf.enable = true;
 
+    # home.packages go into the system closure (/etc/profiles/per-user/<user>)
+    # instead of a nix-env profile built at activation. That nix-env step
+    # queried the substituters, so home-manager-<user> failed at boot when it
+    # ran before DNS was up (swaine, 2026-11-21). Packages installed by hand
+    # with `nix profile install` stay in ~/.nix-profile.
+    home-manager.useUserPackages = true;
+
     # Install firefox.
     programs.firefox.enable = hasScreen;
 
