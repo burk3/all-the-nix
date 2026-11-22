@@ -129,7 +129,6 @@ in
   };
 
   ### music making stuff?
-  services.pipewire.jack.enable = true;
   services.pipewire.alsa.enable = true;
   security.rtkit.enable = true; # for pipewire rt scheduling
   # lower buffer sizes
