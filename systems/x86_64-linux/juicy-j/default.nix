@@ -11,6 +11,8 @@ let
 in
 {
   imports = [
+    # the A16 observability container and the a16 CLI
+    inputs.glymur-flake.nixosModules.observer-host
     inputs.nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
     ./hardware-configuration.nix
     ./rke2.nix
@@ -22,6 +24,32 @@ in
     ./rescue-terminal.nix
     ./samba.nix
   ];
+  # The A16 (earl) lab: a16-obs owns the null-modem cable's host end,
+  # receives heartbeats/netconsole, scrapes the A16's node_exporter.
+  lab.a16Obs = {
+    enable = true;
+    users = [ "burke" ];
+    openFirewall = true;
+    lanInterfaces = [ "sfp0" ];
+    # The A16's host name for journal/log queries: zenbook-a16 while it runs
+    # the bring-up system; "earl" after the btrfs reinstall into this flake.
+    # Metrics keep host="zenbook-a16" either way.
+    a16Hostname = "zenbook-a16";
+    # The host end of the A16 null-modem cable.
+    serial.usbSerial = "A601HIHT";
+    # The A16's node_exporter: USB NIC, Wi-Fi (also the a16 CLI's A16_HOSTS).
+    vmagent.targets = [
+      {
+        address = "10.1.1.165:9100";
+        nic = "usb";
+      }
+      {
+        address = "10.1.1.167:9100";
+        nic = "wifi";
+      }
+    ];
+  };
+
   ### identity
   networking.hostName = "juicy-j";
   time.timeZone = "America/Los_Angeles";

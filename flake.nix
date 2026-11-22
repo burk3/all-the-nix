@@ -17,6 +17,13 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     #nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+    # ASUS Zenbook A16 (Snapdragon X2 Elite, "Glymur") support: hardware
+    # module, lab harness, observer host. Local until Burke publishes it,
+    # then github:burk3/glymur-flake (or wherever it lands). Its nixpkgs is
+    # deliberately not followed: earl's kernel is built with that pin
+    # (hardware.asus-zenbook-a16.kernel.pkgs), so it stays the tested kernel
+    # across bumps of this flake's nixpkgs.
+    glymur-flake.url = "git+file:///home/burke/src/glymur-flake?ref=update-2611";
 
     # upstream is unmaintained (README call for maintainers); github:anntnzrb/snowfall-lib is the active fork
     snowfall-lib = {
