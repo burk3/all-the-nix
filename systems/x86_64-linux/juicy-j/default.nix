@@ -15,7 +15,6 @@ in
     inputs.glymur-flake.nixosModules.observer-host
     inputs.nixos-hardware.nixosModules.framework-desktop-amd-ai-max-300-series
     ./hardware-configuration.nix
-    ./rke2.nix
     ./monitoring.nix
     ./hydra.nix
     ./openclaw-host.nix

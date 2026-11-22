@@ -1,6 +1,6 @@
 # juicy-j
 
-Framework Desktop (AMD AI Max 300). Workstation. Runs RKE2 (see `rke2.nix`), lanzaboote secure boot, internal CA.
+Framework Desktop (AMD AI Max 300). Workstation. Runs lanzaboote secure boot, internal CA.
 
 **Serves remote builds** to other hosts in this repo via `t11s.remotebuilder.serveBuilds = true`. Builder-side changes here affect how the other hosts (notably freddie-kane) get their closures.
 
