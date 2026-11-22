@@ -30,6 +30,18 @@
     shell.enable = true;
     git.enable = true;
     eternal-terminal.enable = true;
+    desktop = {
+      enable = true;
+      compositor.niri.enable = true;
+      # pick the session in tuigreet (Ctrl-S / F3); the system side is already
+      # enabled in modules/nixos/base
+      compositor.hyprland.enable = true;
+      launcher = "noctalia";
+      bluetoothSupport.enable = true;
+      networkManager.enable = true;
+      services.gnome-keyring.enable = true;
+      noctalia.pinnedApps = [ "firefox" ];
+    };
     helix.enable = true;
     et-ghostty = {
       enable = true;
@@ -46,13 +58,16 @@
   programs.ghostty.package = pkgs.unstable.ghostty;
 
   stylix.autoEnable = true;
+  # t11s.desktop's hyprland module sets its own decoration colours
+  stylix.targets.hyprland.enable = false;
   stylix.base16Scheme = "${pkgs.base16-schemes}/share/themes/terracotta.yaml";
   # Use Charcoal Light instead of guiCommon's shared Ghostty theme.
   programs.ghostty.settings.theme = lib.mkForce "stylix";
-  #stylix.image = pkgs.fetchurl {
-  #  url = "https://raw.githubusercontent.com/rose-pine/wallpapers/refs/heads/main/generative/contour-line.png";
-  #  hash = "sha256-8OQCXMy27IImp1Oc/X4i14/8k9XjuuU+6clh0rRcAQY=";
-  #};
+  # noctalia's wallpaper comes from stylix.image
+  stylix.image = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/rose-pine/wallpapers/refs/heads/main/generative/contour-line.png";
+    hash = "sha256-8OQCXMy27IImp1Oc/X4i14/8k9XjuuU+6clh0rRcAQY=";
+  };
   stylix.fonts = {
     sansSerif = {
       package = pkgs.inter;
