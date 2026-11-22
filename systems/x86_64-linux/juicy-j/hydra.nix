@@ -24,6 +24,7 @@ let
   jobsets = {
     master = 300;
     flake-update = 60;
+    prep-2611 = 300;
   };
 
   projectJson = pkgs.writeText "hydra-project.json" (
