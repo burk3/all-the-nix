@@ -173,8 +173,17 @@
   ### base-module overrides for this machine
   # Firmware/BIOS/EC updates only with Burke's explicit approval, by hand.
   services.fwupd.enable = lib.mkForce false;
-  # x86 Steam can't run here (steam-aarch64 would be a separate input).
+  # Native arm64 Steam (the steam-aarch64 input, flake.nix) on the 4 KiB-page
+  # kernel; it provides `steam` itself and asserts that nixpkgs' x86
+  # programs.steam (on by default in the base module) is off. Unfree: the
+  # base module's allowUnfree covers it.
   programs.steam.enable = false;
+  programs.steam-aarch64.enable = true;
+  hardware.steam-hardware.enable = true;
+  # The arm64 client uses host libraries, gtk2 among them, which this nixpkgs
+  # marks broken ahead of its removal (before 27.05, NixOS/nixpkgs#410814).
+  # Allowed for gtk2 only, as a warning, until steam-aarch64 drops it.
+  nixpkgs.config.problems.handlers."gtk+".broken = "warn";
 
   ### suspend: s2idle only (mem_sleep_default comes from the hardware module)
   systemd.sleep.settings.Sleep = {

@@ -23,6 +23,11 @@
     # (hardware.asus-zenbook-a16.kernel.pkgs), so it stays the tested kernel
     # across bumps of this flake's nixpkgs.
     glymur-flake.url = "github:burk3/glymur-flake/update-2611";
+    # Native arm64 Steam client (earl; x86 Steam needs FEX/box64 there).
+    steam-aarch64 = {
+      url = "github:kossLAN/steam-aarch64-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # upstream is unmaintained (README call for maintainers); github:anntnzrb/snowfall-lib is the active fork
     snowfall-lib = {
@@ -182,10 +187,11 @@
         ];
         # earl, the ASUS Zenbook A16: glymur-flake's hardware module and
         # its lab harness (boot counting, serial console, heartbeat,
-        # observability, a16-snap, bench).
+        # observability, a16-snap, bench), and native arm64 Steam.
         systems.hosts.earl.modules = with inputs; [
           glymur-flake.nixosModules.default
           glymur-flake.nixosModules.lab
+          steam-aarch64.nixosModules.default
         ];
         systems.hosts.swaine.modules = with inputs; [
           nix-exporter.nixosModules.default
