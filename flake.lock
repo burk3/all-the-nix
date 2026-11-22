@@ -718,16 +718,16 @@
       "locked": {
         "lastModified": 1795324433,
         "narHash": "sha256-NWwpcV8PWeJPx/GAHRENGuq2t58D23/xrvlR4q4gmlE=",
-        "ref": "update-2611",
+        "owner": "burk3",
+        "repo": "glymur-flake",
         "rev": "588583a851e0fbe7738af6ed0ea380b8ff773071",
-        "revCount": 7,
-        "type": "git",
-        "url": "file:///home/burke/src/glymur-flake"
+        "type": "github"
       },
       "original": {
+        "owner": "burk3",
         "ref": "update-2611",
-        "type": "git",
-        "url": "file:///home/burke/src/glymur-flake"
+        "repo": "glymur-flake",
+        "type": "github"
       }
     },
     "gnome-shell": {
