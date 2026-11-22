@@ -181,6 +181,13 @@
         systems.hosts.juicy-j.modules = with inputs; [
           nix-exporter.nixosModules.default
         ];
+        # earl, the ASUS Zenbook A16: glymur-flake's hardware module and
+        # its lab harness (boot counting, serial console, heartbeat,
+        # observability, a16-snap, bench).
+        systems.hosts.earl.modules = with inputs; [
+          glymur-flake.nixosModules.default
+          glymur-flake.nixosModules.lab
+        ];
         systems.hosts.swaine.modules = with inputs; [
           nix-exporter.nixosModules.default
         ];
