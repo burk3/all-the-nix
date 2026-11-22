@@ -65,8 +65,8 @@
   programs.ghostty.settings.theme = lib.mkForce "stylix";
   # noctalia's wallpaper comes from stylix.image
   stylix.image = pkgs.fetchurl {
-    url = "https://raw.githubusercontent.com/rose-pine/wallpapers/refs/heads/main/generative/contour-line.png";
-    hash = "sha256-8OQCXMy27IImp1Oc/X4i14/8k9XjuuU+6clh0rRcAQY=";
+    url = "https://raw.githubusercontent.com/dharmx/walls/e8d8a42e4fbecb2cf9619995edbc7ce19610bbd8/anime/a_bird_on_a_branch.png";
+    hash = "sha256-3x0BwyKCKiTXLw+4Y8M8b4g7iI0rbUlZ+ILDEjpsob8=";
   };
   stylix.fonts = {
     sansSerif = {
@@ -104,6 +104,10 @@
   home.packages = with pkgs; [
     mcomix
     kubectl
+    brogue-ce
+    # GNOME Camera: the RGB webcam through PipeWire's libcamera camera node
+    # (the camera portal); no camera app comes with niri/Hyprland.
+    snapshot
   ];
 
 }
