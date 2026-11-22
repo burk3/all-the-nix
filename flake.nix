@@ -12,7 +12,9 @@
   };
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    # 26.05 until prep-2611 lands; "0" (latest stable) would let the weekly update
+    # bot move this to 26.11 on its own.
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.2605";
     #nixpkgs.url = "github:NixOS/nixpkgs/release-26.05";
     unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
 
