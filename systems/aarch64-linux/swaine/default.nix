@@ -100,9 +100,22 @@ in
 
   ### nix
   # One build per CPU (12). Clients are told the same in remotebuilder
-  # hostConfigs and juicy-j's Hydra machines file.
+  # hostConfigs, and Hydra in the builder settings below.
   nix.settings.max-jobs = "auto";
   nix.settings.cores = 0;
+  # Hydra's aarch64-linux builder: dials juicy-j's queue runner over gRPC.
+  t11s.hydraBuilder.enable = true;
+  services.hydra-builder.settings = {
+    systems = [ "aarch64-linux" ];
+    maxJobs = 12;
+    speedFactor = 2;
+    supportedFeatures = [
+      "big-parallel"
+      "kvm"
+      "nixos-test"
+      "uid-range"
+    ];
+  };
   # Container (systemd-nspawn) NixOS tests, as on juicy-j: each build gets
   # its own auto-allocated uid range. Settings from the nixpkgs manual,
   # "Running Tests"; clients learn of uid-range from remotebuilder hostConfigs.

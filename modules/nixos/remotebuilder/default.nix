@@ -48,11 +48,10 @@ let
     };
   };
   # Clients that may build here, as the remotebuild user: root on each client
-  # (key at /root/.ssh/remotebuild) and juicy-j's Hydra queue runner.
+  # (key at /root/.ssh/remotebuild).
   clientKeys = [
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBIEsaehwxAc2Bz4XGSn6ab46TypW4v/Bt2ZrhUO3dBm root@freddie-kane"
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDIj01SWmT0epSkhhyK5L29ojolctN9mR+EDHbM/o2Hh root@juicy-j"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPqCGEOVzu/h5eTCfwNXG62H9Q44Mk0q4Dqu41E/F/L6 hydra-queue-runner@juicy-j"
   ];
 in
 with lib;

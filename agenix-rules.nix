@@ -18,6 +18,12 @@ in
   "secrets/flake-update-bot-gh-token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/claude-oauth-token.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/upsmon.password.age".publicKeys = burke ++ [ juicy-j ];
+  # hydra-builder tokens: each builder holds its own; juicy-j's queue runner checks all
+  "secrets/hydra-builder-juicy-j.token.age".publicKeys = burke ++ [ juicy-j ];
+  "secrets/hydra-builder-swaine.token.age".publicKeys = burke ++ [
+    juicy-j
+    swaine
+  ];
   "secrets/private-nix.conf.age".publicKeys = burke;
   "secrets/nixbuild-dot-net.ssh-key.age".publicKeys = burke ++ [
     freddie-kane

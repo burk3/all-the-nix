@@ -6,17 +6,17 @@
   ...
 }:
 let
-  # Hydra reads only this file. Keeping the localhost builder out of
-  # nix.buildMachines (which holds only the aarch64 builders here) means
-  # interactive `nix build` does not try to SSH into this machine. i686-linux
-  # is listed because Steam on other hosts pulls in 32-bit derivations.
-  # swaine builds the aarch64-linux jobs (its own closure). Its host key is
-  # trusted through the t11s CA; the queue runner's key is authorized in the
-  # remotebuilder module.
-  machines = pkgs.writeText "hydra-machines" ''
-    localhost x86_64-linux,i686-linux - 16 1 kvm,big-parallel,nixos-test,benchmark,uid-range - -
-    ssh://remotebuild@swaine.lan aarch64-linux /var/lib/hydra/queue-runner/.ssh/id_ed25519 12 2 big-parallel,kvm,nixos-test,uid-range - -
-  '';
+  # Builders dial in to the queue runner over gRPC (services.hydra-builder,
+  # via t11s.hydraBuilder) and authenticate with a per-host token. Each one's
+  # secrets/hydra-builder-<host>.token.age is listed here so the queue runner
+  # accepts it. swaine builds the aarch64-linux jobs (its own closure).
+  builders = [
+    "juicy-j"
+    "swaine"
+  ];
+  # the wired LAN links, as default.nix configures them; swaine connects over these
+  lanInterfaces = lib.mapAttrsToList (_: n: n.matchConfig.Name) config.systemd.network.networks;
+  grpcPort = config.services.hydra.queueRunner.grpc.port;
 
   project = "all-the-nix";
   repo = "https://github.com/burk3/all-the-nix";
@@ -67,7 +67,15 @@ in
     hydraURL = "https://hydra.ts.t11s.net";
     notificationSender = "hydra@juicy-j.lan";
     useSubstitutes = true;
-    buildMachinesFiles = [ "${machines}" ];
+    queueRunner = {
+      # Plain gRPC: the tokens cross the LAN in the clear, like
+      # journal-upload's HTTP from swaine. The firewall below keeps it off
+      # the tailnet and the internet.
+      grpc.address = "[::]";
+      # [::1]:8080 by default, which sits next to ad-hoc servers on 8080
+      rest.port = 3002;
+      settings.tokenPaths = map (host: config.age.secrets."hydra-builder-${host}-token".path) builders;
+    };
     # nixpkgs' Hydra links upstream Nix, but it runs nix-eval-jobs as a
     # separate program. Swapping that for Determinate's build makes Hydra
     # produce the same derivations as `nh os switch` on the other hosts, which
@@ -99,7 +107,8 @@ in
       pkgs.coreutils
     ];
     environment = {
-      HYDRA_DBI = config.services.hydra.dbi;
+      # % doubled: systemd's Environment= would read the URL's %2F as a specifier
+      HYDRA_DATABASE_URL = lib.replaceStrings [ "%" ] [ "%%" ] config.services.hydra.dbUrl;
       HYDRA_CONFIG = "/var/lib/hydra/hydra.conf";
       HYDRA_DATA = "/var/lib/hydra";
       PGPASSFILE = "/var/lib/hydra/pgpass";
@@ -160,5 +169,41 @@ in
     '';
   };
 
+  # The queue runner (hydra-queue-runner:hydra) reads every builder's token;
+  # juicy-j's own builder reads its copy through t11s.hydraBuilder.
+  age.secrets = lib.genAttrs' builders (
+    host:
+    lib.nameValuePair "hydra-builder-${host}-token" {
+      file = ../../../secrets/hydra-builder-${host}.token.age;
+      group = "hydra";
+      mode = "0440";
+    }
+  );
+
+  # The local builder takes the x86_64 jobs. i686-linux is listed because
+  # Steam on other hosts pulls in 32-bit derivations.
+  t11s.hydraBuilder = {
+    enable = true;
+    queueRunnerAddr = "http://[::1]:${toString grpcPort}";
+  };
+  services.hydra-builder.settings = {
+    systems = [
+      "x86_64-linux"
+      "i686-linux"
+    ];
+    maxJobs = 16;
+    speedFactor = 1;
+    supportedFeatures = [
+      "kvm"
+      "big-parallel"
+      "nixos-test"
+      "benchmark"
+      "uid-range"
+    ];
+  };
+
   networking.firewall.allowedTCPPorts = [ 443 ];
+  networking.firewall.interfaces = lib.genAttrs lanInterfaces (_: {
+    allowedTCPPorts = [ grpcPort ];
+  });
 }

@@ -28,8 +28,6 @@ in
     enable = true;
     listenAddress = "127.0.0.1";
     port = 9944;
-    # Hydra's localhost builder lives in its own machines file.
-    extraMachinesFiles = config.services.hydra.buildMachinesFiles;
   };
 
   ### agenix-managed password for mikrotik-exporter
