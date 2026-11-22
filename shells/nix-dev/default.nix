@@ -10,11 +10,11 @@ mkShell {
     lorri
     niv
     nil
-    nixfmt-rfc-style
+    nixfmt
     nixfmt-tree
     statix
     # vulnix
     haskellPackages.dhall-nix
-    inputs.agenix.packages.${pkgs.system}.default
+    inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

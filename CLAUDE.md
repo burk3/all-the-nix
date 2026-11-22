@@ -38,7 +38,7 @@ When adding a new host, set the standard knobs in its `default.nix`: `t11s.enabl
 
 ## Common commands
 
-Default dev shell (`nix develop`) provides `cachix`, `lorri`, `niv`, `nil`, `nixfmt-rfc-style`, `nixfmt-tree`, `statix`, `dhall-nix`, `agenix`. `direnv` (`use flake`) is wired up via `.envrc`.
+Default dev shell (`nix develop`) provides `cachix`, `lorri`, `niv`, `nil`, `nixfmt`, `nixfmt-tree`, `statix`, `dhall-nix`, `agenix`. `direnv` (`use flake`) is wired up via `.envrc`.
 
 ```sh
 nix develop                                 # enter dev shell
