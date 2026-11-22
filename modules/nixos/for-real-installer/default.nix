@@ -10,7 +10,9 @@
 #
 # Requires the host to use disko (provides `system.build.diskoScript`). A host
 # the stock installer kernel cannot boot or drive passes the modules that fix
-# that (its kernel, firmware) in `liveModules`.
+# that (its kernel, firmware) in `liveModules`; a devicetree board whose
+# firmware supplies no usable DT sets `efiBootloader = "systemd-boot"`, so the
+# live system's DTB is loaded before the kernel.
 #
 # Build:  nix build .#nixosConfigurations.<host>.config.system.build.for-real-installer-iso
 {
@@ -32,6 +34,25 @@ with lib;
       type = types.listOf types.deferredModule;
       default = [ ];
       description = "extra NixOS modules for the live system, e.g. a board module that supplies the kernel";
+    };
+    efiBootloader = mkOption {
+      type = types.enum [
+        "grub"
+        "systemd-boot"
+      ];
+      default = "grub";
+      description = ''
+        What the ISO's El Torito EFI image boots.
+        - grub: nixpkgs' stock ISO menu (kernel and initrd on the ISO9660).
+          Off x86 the ISO has no partition table, so a dd'ed stick needs
+          firmware that reads El Torito from a disk.
+        - systemd-boot: a Type #1 loader entry with the live kernel, initrd
+          and, when the live system sets hardware.deviceTree.name, its DTB
+          (`devicetree`), all in the EFI image, which a GPT in the ISO also
+          lists as the ESP (for a dd'ed stick). For boards whose firmware
+          gives no usable devicetree. The entry can be edited at the menu
+          (`e`).
+      '';
     };
     preInstallChecks = mkOption {
       type = types.listOf types.str;
@@ -150,6 +171,7 @@ with lib;
             imports = [
               "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
             ]
+            ++ optional (cfg.efiBootloader == "systemd-boot") ./systemd-boot-iso.nix
             ++ cfg.liveModules;
 
             # pkgs.nixos hands the live system this host's pkgs instance, which
