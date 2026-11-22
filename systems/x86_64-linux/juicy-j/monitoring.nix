@@ -229,10 +229,7 @@ in
   # printed, even from a dying kernel; they land in this journal as
   # `journalctl -t netconsole`. netconsole carries no hostname, so this
   # assumes one sender (swaine).
-  services.journald.remote = {
-    enable = true;
-    listen = "http";
-  };
+  services.journald.remote.enable = true;
   # the received journals are 0640 systemd-journal-remote; read them without sudo
   users.users.${config.t11s.mainUser.name}.extraGroups = [ "systemd-journal-remote" ];
   systemd.services.netconsole-sink = {

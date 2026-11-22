@@ -99,7 +99,6 @@ with lib;
       # "Silent Boot" where someone watches the screen; headless boxes keep
       # warnings on the console for whoever plugs in to debug them
       consoleLogLevel = if hasScreen then 0 else 4;
-      initrd.verbose = true;
       # Hide the OS choice for bootloaders.
       # It's still possible to open the bootloader list by pressing any key
       # It will just not appear on screen unless a key is pressed
@@ -243,10 +242,10 @@ with lib;
       enable = true;
       nssmdns4 = true;
       openFirewall = true;
-      publish = {
-        enable = true;
-        addresses = true;
-        workstation = hasScreen;
+      settings.publish = {
+        disable-publishing = false;
+        publish-addresses = true;
+        publish-workstation = hasScreen;
       };
     };
 
@@ -350,7 +349,7 @@ with lib;
     # mullvad vpn?
     services.mullvad-vpn = mkIf hasScreen {
       enable = true;
-      package = pkgs.mullvad-vpn;
+      gui.enable = true;
     };
 
     # List packages installed in system profile. To search, run:

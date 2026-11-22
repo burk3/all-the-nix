@@ -63,6 +63,7 @@ in
         };
 
         home.pointerCursor = {
+          enable = true;
           name = "Posy_Cursor_Black";
           package = pkgs.posy-cursors;
           x11.enable = true;

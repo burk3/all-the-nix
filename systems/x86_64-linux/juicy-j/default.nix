@@ -92,7 +92,6 @@ in
     # loader.systemd-boot.enable = true;
     loader.systemd-boot.enable = lib.mkForce false;
     loader.efi.canTouchEfiVariables = true;
-    initrd.systemd.enable = true;
     initrd.systemd.tpm2.enable = true;
 
     # set max memory that can be used for GPU

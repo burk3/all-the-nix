@@ -100,7 +100,6 @@ in
     # systemd-boot for the plain install; lanzaboote replaces it once secureBoot.
     loader.systemd-boot.enable = lib.mkForce (!secureBoot);
     loader.efi.canTouchEfiVariables = true;
-    initrd.systemd.enable = true;
     initrd.systemd.tpm2.enable = true;
     extraModprobeConfig = ''
       options cfg80211 ieee80211_regdom="US"
