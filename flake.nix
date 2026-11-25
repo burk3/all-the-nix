@@ -12,9 +12,10 @@
   };
 
   inputs = {
-    # 26.11 prep: release-26.11 branches off master on 2026-11-23. Until the
-    # nixos-26.11 channel exists, nixos-unstable is the cached 26.11 tree.
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    # 26.11 prep: nixos-unstable is 27.05 since the branch-off, and the
+    # nixos-26.11 channel doesn't exist yet. release-26.11 is untested and
+    # may be partly uncached; move to nixos-26.11 as soon as it appears.
+    nixpkgs.url = "github:NixOS/nixpkgs/release-26.11";
     #nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
     # ASUS Zenbook A16 (Snapdragon X2 Elite, "Glymur") support: hardware
