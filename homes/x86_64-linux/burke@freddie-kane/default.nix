@@ -26,6 +26,7 @@
   t11s = {
     enable = true;
     personal.enable = true;
+    personal.kernel-mail.enable = true;
     guiCommon.enable = true;
     neovim.enable = true;
     shell.enable = true;
