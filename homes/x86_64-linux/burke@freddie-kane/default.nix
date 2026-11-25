@@ -111,6 +111,7 @@
     mcomix
     kubectl
     winbox4
+    herdr-desktop
   ];
 
   dconf.settings = {

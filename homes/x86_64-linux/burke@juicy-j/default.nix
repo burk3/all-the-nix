@@ -35,6 +35,7 @@
 
   home.packages = [
     pkgs.herdr
+    pkgs.herdr-core
   ];
 
   # the good stuff
