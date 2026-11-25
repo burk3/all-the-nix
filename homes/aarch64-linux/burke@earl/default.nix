@@ -108,6 +108,7 @@
     # GNOME Camera: the RGB webcam through PipeWire's libcamera camera node
     # (the camera portal); no camera app comes with niri/Hyprland.
     snapshot
+    herdr-desktop
   ];
 
 }
