@@ -18,6 +18,19 @@ let
   lanInterfaces = lib.mapAttrsToList (_: n: n.matchConfig.Name) config.systemd.network.networks;
   grpcPort = config.services.hydra.queueRunner.grpc.port;
 
+  # Hydra account for Claude Code sessions on this host. Reading needs no
+  # login; these roles add starting evaluations and restarting, cancelling
+  # and bumping builds. The password is decrypted twice: for hydra-provision,
+  # which sets it, and for burke, whose sessions log in with it.
+  claudeUser = "claude";
+  claudeRoles = [
+    "eval-jobset"
+    "restart-jobs"
+    "cancel-build"
+    "bump-to-front"
+  ];
+  claudePassword = config.age.secrets.hydra-claude-password;
+
   project = "all-the-nix";
   repo = "https://github.com/burk3/all-the-nix";
   # Jobset name = git branch. Value = how often Hydra polls it, in seconds.
@@ -105,6 +118,7 @@ in
       pkgs.curl
       pkgs.jq
       pkgs.coreutils
+      pkgs.libargon2
     ];
     environment = {
       # % doubled: systemd's Environment= would read the URL's %2F as a specifier
@@ -151,6 +165,15 @@ in
           *) api -b cookie -X DELETE "$url/jobset/${project}/$name" >/dev/null ;;
         esac
       done
+
+      # The account Claude Code sessions use: it can start evaluations and
+      # restart, cancel or bump builds, but not change projects or jobsets.
+      # Its password is hashed here because --password-prompt expects a
+      # terminal; the hash only reaches hydra-create-user's arguments.
+      hash=$(tr -d '\n' <${claudePassword.path} |
+        argon2 "$(head -c 16 /dev/urandom | base64)" -id -t 3 -m 18 -p 1 -e)
+      hydra-create-user ${claudeUser} --full-name "Claude Code" --password-hash "$hash" \
+        --wipe-roles ${lib.concatMapStringsSep " " (r: "--role ${r}") claudeRoles}
     '';
   };
 
@@ -171,14 +194,27 @@ in
 
   # The queue runner (hydra-queue-runner:hydra) reads every builder's token;
   # juicy-j's own builder reads its copy through t11s.hydraBuilder.
-  age.secrets = lib.genAttrs' builders (
-    host:
-    lib.nameValuePair "hydra-builder-${host}-token" {
-      file = ../../../secrets/hydra-builder-${host}.token.age;
-      group = "hydra";
-      mode = "0440";
-    }
-  );
+  age.secrets =
+    lib.genAttrs' builders (
+      host:
+      lib.nameValuePair "hydra-builder-${host}-token" {
+        file = ../../../secrets/hydra-builder-${host}.token.age;
+        group = "hydra";
+        mode = "0440";
+      }
+    )
+    // {
+      hydra-claude-password = {
+        file = ../../../secrets/hydra-claude.password.age;
+        owner = "hydra";
+        mode = "0400";
+      };
+      hydra-claude-password-burke = {
+        file = ../../../secrets/hydra-claude.password.age;
+        owner = "burke";
+        mode = "0400";
+      };
+    };
 
   # The local builder takes the x86_64 jobs. i686-linux is listed because
   # Steam on other hosts pulls in 32-bit derivations.

@@ -25,6 +25,8 @@ in
     juicy-j
     swaine
   ];
+  # Hydra login for Claude Code sessions on juicy-j (see systems/x86_64-linux/juicy-j/hydra.nix)
+  "secrets/hydra-claude.password.age".publicKeys = burke ++ [ juicy-j ];
   "secrets/private-nix.conf.age".publicKeys = burke;
   "secrets/nixbuild-dot-net.ssh-key.age".publicKeys = burke ++ [
     freddie-kane
